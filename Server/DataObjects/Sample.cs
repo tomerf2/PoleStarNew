@@ -12,5 +12,6 @@ namespace Server.DataObjects
         public string PatientID { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
+        public int Heartrate { get; set; }
     }
 }

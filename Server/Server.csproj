@@ -205,6 +205,10 @@
     <Compile Include="Migrations\201702011355268_wholeDB.Designer.cs">
       <DependentUpon>201702011355268_wholeDB.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702011456029_addedHeartRate.cs" />
+    <Compile Include="Migrations\201702011456029_addedHeartRate.Designer.cs">
+      <DependentUpon>201702011456029_addedHeartRate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MobileServiceContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -231,6 +235,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702011355268_wholeDB.resx">
       <DependentUpon>201702011355268_wholeDB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702011456029_addedHeartRate.resx">
+      <DependentUpon>201702011456029_addedHeartRate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

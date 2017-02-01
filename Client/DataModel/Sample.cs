@@ -22,5 +22,8 @@ namespace PoleStar.DataModel
 
         [JsonProperty(PropertyName = "longitude")]
         public float Longitude { get; set; }
+
+        [JsonProperty(PropertyName = "heartrate")]
+        public int HeartRate { get; set; }
     }
 }

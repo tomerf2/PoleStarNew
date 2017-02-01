@@ -13,5 +13,6 @@ namespace Server.DataObjects
         public float Latitude { get; set; }
         public float Longitude { get; set; }
         public string Description { get; set; }
+        public int HeartRate { get; set; }
     }
 }
