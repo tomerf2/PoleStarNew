@@ -9,6 +9,7 @@ using Microsoft.Azure.Mobile.Server.Config;
 using Server.DataObjects;
 using Server.Models;
 using Owin;
+using System.Data.Entity.Migrations;
 
 namespace Server
 {
@@ -22,8 +23,9 @@ namespace Server
                 .UseDefaultConfiguration()
                 .ApplyTo(config);
 
-            // Use Entity Framework Code First to create database tables based on your DbContext
-            Database.SetInitializer(new MobileServiceInitializer());
+            // Automatic Code First Migrations
+            var migrator = new DbMigrator(new Migrations.Configuration());
+            migrator.Update();
 
             MobileAppSettingsDictionary settings = config.GetMobileAppSettingsProvider().GetMobileAppSettings();
 
@@ -46,21 +48,21 @@ namespace Server
 
     public class MobileServiceInitializer : CreateDatabaseIfNotExists<MobileServiceContext>
     {
-        protected override void Seed(MobileServiceContext context)
-        {
-            List<TodoItem> todoItems = new List<TodoItem>
-            {
-                new TodoItem { Id = Guid.NewGuid().ToString(), Text = "First item", Complete = false },
-                new TodoItem { Id = Guid.NewGuid().ToString(), Text = "Second item", Complete = false }
-            };
+        //protected override void Seed(MobileServiceContext context)
+        //{
+        //    List<TodoItem> todoItems = new List<TodoItem>
+        //    {
+        //        new TodoItem { Id = Guid.NewGuid().ToString(), Text = "First item", Complete = false },
+        //        new TodoItem { Id = Guid.NewGuid().ToString(), Text = "Second item", Complete = false }
+        //    };
 
-            foreach (TodoItem todoItem in todoItems)
-            {
-                context.Set<TodoItem>().Add(todoItem);
-            }
+        //    foreach (TodoItem todoItem in todoItems)
+        //    {
+        //        context.Set<TodoItem>().Add(todoItem);
+        //    }
 
-            base.Seed(context);
-        }
+        //    base.Seed(context);
+        //}
     }
 }
 

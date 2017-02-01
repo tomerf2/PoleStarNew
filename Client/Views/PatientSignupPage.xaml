@@ -1,0 +1,68 @@
+﻿<Page
+    x:Class="PoleStar.Views.PatientSignupPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PoleStar.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="White">
+
+        <Grid Margin="30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Patient Sign-up" Grid.Row="0" Padding="0"
+                       Style="{ThemeResource BodyTextBlockStyle}" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Top" FontFamily="Roboto Black" FontWeight="Light"/>
+
+            <Grid Grid.Row="1" Width="235" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="txtName" Text="Full name" Foreground="Gray" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,5" GotFocus="txtName_GotFocus" LostFocus="txtName_LostFocus" />
+                <TextBox x:Name="txtEmail" Text="Email" Foreground="Gray" Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,5" GotFocus="txtEmail_GotFocus" LostFocus="txtEmail_LostFocus" />
+                <PasswordBox x:Name="txtPassword" PasswordRevealMode="Visible" Password="Private password" Foreground="Gray" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,0" GotFocus="txtPassword_GotFocus" LostFocus="txtPassword_LostFocus" />
+
+                <Line Grid.Row="3" Grid.ColumnSpan="2" Stretch="Fill" Stroke="Gray" X2="1" Margin="10" />
+
+                <TextBox x:Name="txtGroupname" Text="Groupname" Foreground="Gray" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,0,0,5" GotFocus="txtGroupname_GotFocus" LostFocus="txtGroupname_LostFocus" />
+                <PasswordBox x:Name="txtCode" PasswordRevealMode="Visible" Password="Code" Foreground="Gray" Grid.Row="5" Grid.ColumnSpan="2" Margin="0,0,0,5" GotFocus="txtCode_GotFocus" LostFocus="txtCode_LostFocus" />
+            </Grid>
+
+            <Grid Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button x:Name="btnBack" Grid.Row="0" Grid.Column="0" BorderThickness="-9" Margin="0" Click="btnBack_Click">
+                    <Image Source="../Assets/back.png" Stretch="None" />
+                </Button>
+
+                <Button x:Name="btnForward" Grid.Row="0" Grid.Column="1" BorderThickness="-9" Margin="0" HorizontalAlignment="Right">
+                    <Image Source="../Assets/forward.png" Stretch="None" />
+                </Button>
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
