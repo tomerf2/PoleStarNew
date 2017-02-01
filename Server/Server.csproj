@@ -182,7 +182,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\Startup.MobileApp.cs" />
+    <Compile Include="Controllers\CaregiverController.cs" />
+    <Compile Include="Controllers\GroupCaregiverController.cs" />
     <Compile Include="Controllers\GroupController.cs" />
+    <Compile Include="Controllers\LocationController.cs" />
+    <Compile Include="Controllers\PatientController.cs" />
+    <Compile Include="Controllers\SampleController.cs" />
     <Compile Include="Controllers\TodoItemController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DataObjects\Caregiver.cs" />
@@ -196,9 +201,9 @@
     <Compile Include="Migrations\201701311530442_Initial.Designer.cs">
       <DependentUpon>201701311530442_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201701311614472_addedGroup.cs" />
-    <Compile Include="Migrations\201701311614472_addedGroup.Designer.cs">
-      <DependentUpon>201701311614472_addedGroup.cs</DependentUpon>
+    <Compile Include="Migrations\201702011355268_wholeDB.cs" />
+    <Compile Include="Migrations\201702011355268_wholeDB.Designer.cs">
+      <DependentUpon>201702011355268_wholeDB.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MobileServiceContext.cs" />
@@ -224,8 +229,8 @@
     <EmbeddedResource Include="Migrations\201701311530442_Initial.resx">
       <DependentUpon>201701311530442_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701311614472_addedGroup.resx">
-      <DependentUpon>201701311614472_addedGroup.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201702011355268_wholeDB.resx">
+      <DependentUpon>201702011355268_wholeDB.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

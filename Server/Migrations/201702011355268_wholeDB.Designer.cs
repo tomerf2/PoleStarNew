@@ -7,13 +7,13 @@ namespace Server.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class addedGroup : IMigrationMetadata
+    public sealed partial class wholeDB : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addedGroup));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(wholeDB));
         
         string IMigrationMetadata.Id
         {
-            get { return "201701311614472_addedGroup"; }
+            get { return "201702011355268_wholeDB"; }
         }
         
         string IMigrationMetadata.Source

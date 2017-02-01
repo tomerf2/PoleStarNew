@@ -36,5 +36,15 @@ namespace Server.Models
         }
 
         public System.Data.Entity.DbSet<Server.DataObjects.Group> Groups { get; set; }
+
+        public System.Data.Entity.DbSet<Server.DataObjects.Caregiver> Caregivers { get; set; }
+
+        public System.Data.Entity.DbSet<Server.DataObjects.GroupCaregiver> GroupCaregivers { get; set; }
+
+        public System.Data.Entity.DbSet<Server.DataObjects.Location> Locations { get; set; }
+
+        public System.Data.Entity.DbSet<Server.DataObjects.Patient> Patients { get; set; }
+
+        public System.Data.Entity.DbSet<Server.DataObjects.Sample> Samples { get; set; }
     }
 }

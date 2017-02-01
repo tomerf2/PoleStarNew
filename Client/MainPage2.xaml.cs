@@ -129,7 +129,7 @@ namespace PoleStar
             TextInput.Text = "";
             await InsertTodoItem(todoItem);
 
-            var groupItem = new Group { Name = "Test Group Name", Code = "Test Code" };
+            var groupItem = new Group { Name = "Test 2 Group Name", Code = "Test 2 Code" };
             await InsertGroupItem(groupItem);
         }
 
