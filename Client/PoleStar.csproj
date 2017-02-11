@@ -115,6 +115,9 @@
     <Compile Include="Views\CaregiverLoginPage.xaml.cs">
       <DependentUpon>CaregiverLoginPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CaregiverMainPage.xaml.cs">
+      <DependentUpon>CaregiverMainPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CaregiverSignupPage.xaml.cs">
       <DependentUpon>CaregiverSignupPage.xaml</DependentUpon>
     </Compile>
@@ -137,6 +140,8 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\back.png" />
+    <Content Include="Assets\forward.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -162,6 +167,10 @@
     <Page Include="Views\CaregiverLoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CaregiverMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CaregiverSignupPage.xaml">
       <Generator>MSBuild:Compile</Generator>

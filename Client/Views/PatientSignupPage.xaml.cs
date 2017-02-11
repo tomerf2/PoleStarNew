@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.MobileServices;
+using PoleStar.DataModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,6 +25,12 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class PatientSignupPage : Page
     {
+        private MobileServiceCollection<Group, Group> groups;
+        private MobileServiceCollection<Patient, Patient> patients;
+
+        private IMobileServiceTable<Group> groupTable = App.MobileService.GetTable<Group>();
+        private IMobileServiceTable<Patient> patientTable = App.MobileService.GetTable<Patient>();
+
         public PatientSignupPage()
         {
             this.InitializeComponent();
@@ -145,6 +153,11 @@ namespace PoleStar.Views
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(PatientLoginPage), null);
+        }
+
+        private void btnForward_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

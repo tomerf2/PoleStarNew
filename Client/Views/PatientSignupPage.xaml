@@ -59,7 +59,7 @@
                     <Image Source="../Assets/back.png" Stretch="None" />
                 </Button>
 
-                <Button x:Name="btnForward" Grid.Row="0" Grid.Column="1" BorderThickness="-9" Margin="0" HorizontalAlignment="Right">
+                <Button x:Name="btnForward" Grid.Row="0" Grid.Column="1" BorderThickness="-9" Margin="0" HorizontalAlignment="Right" Click="btnForward_Click">
                     <Image Source="../Assets/forward.png" Stretch="None" />
                 </Button>
             </Grid>

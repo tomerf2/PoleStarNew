@@ -40,7 +40,7 @@ namespace PoleStar
             this.InitializeComponent();
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
 #if OFFLINE_SYNC_ENABLED
             await InitLocalStoreAsync(); // offline sync

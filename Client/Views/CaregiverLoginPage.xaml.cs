@@ -98,7 +98,7 @@ namespace PoleStar.Views
 
         private void btnSignUp_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Frame.Navigate(typeof(CaregiverSignupPage), null);
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
@@ -108,7 +108,7 @@ namespace PoleStar.Views
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Frame.Navigate(typeof(CaregiverMainPage), null);
         }
 
 
