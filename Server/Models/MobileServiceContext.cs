@@ -26,8 +26,6 @@ namespace Server.Models
         {
         }
 
-        public DbSet<TodoItem> TodoItems { get; set; }
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Add(
@@ -38,8 +36,6 @@ namespace Server.Models
         public System.Data.Entity.DbSet<Server.DataObjects.Group> Groups { get; set; }
 
         public System.Data.Entity.DbSet<Server.DataObjects.Caregiver> Caregivers { get; set; }
-
-        public System.Data.Entity.DbSet<Server.DataObjects.GroupCaregiver> GroupCaregivers { get; set; }
 
         public System.Data.Entity.DbSet<Server.DataObjects.Location> Locations { get; set; }
 

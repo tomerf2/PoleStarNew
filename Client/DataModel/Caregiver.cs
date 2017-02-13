@@ -19,5 +19,8 @@ namespace PoleStar.DataModel
 
         [JsonProperty(PropertyName = "isapproved")]
         public bool IsApproved { get; set; }
+
+        [JsonProperty(PropertyName = "groupid")]
+        public string GroupID { get; set; }
     }
 }

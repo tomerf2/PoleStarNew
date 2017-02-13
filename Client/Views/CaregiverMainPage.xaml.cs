@@ -29,10 +29,6 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class CaregiverMainPage : Page
     {
-        private MobileServiceCollection<GroupCaregiver, GroupCaregiver> groupCargivers;
-
-        private IMobileServiceTable<GroupCaregiver> groupCargiverTable = App.MobileService.GetTable<GroupCaregiver>();
-
         public CaregiverMainPage()
         {
             this.InitializeComponent();
@@ -68,9 +64,9 @@ namespace PoleStar.Views
             {
                 // This code refreshes the entries in the list view by querying the TodoItems table.
                 // The query excludes completed TodoItems.
-                groupCargivers = await groupCargiverTable
+                /*groupCargivers = await groupCargiverTable
                     .Where(groupCargiver => groupCargiver.CaregiverID == "123" && groupCargiver.GroupID == "123")
-                    .ToCollectionAsync();
+                    .ToCollectionAsync();*/
             }
             catch (MobileServiceInvalidOperationException e)
             {

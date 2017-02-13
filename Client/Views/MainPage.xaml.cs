@@ -1,4 +1,5 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
+using PoleStar.DataModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,10 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private MobileServiceCollection<Group, Group> groups;
+
+        private IMobileServiceTable<Group> groupTable = App.MobileService.GetTable<Group>();
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -38,10 +43,10 @@ namespace PoleStar.Views
             this.Frame.Navigate(typeof(CaregiverLoginPage), null);
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            //group g = new group { id = guid.newguid().tostring(), name = "blabla", code = 1234 };
-            //await app.mobileservice.gettable<group>().insertasync(g);
+            groups = await groupTable.ToCollectionAsync();
+            // groups[0].Code
         }
     }
 

@@ -103,7 +103,6 @@
     </Compile>
     <Compile Include="DataModel\Caregiver.cs" />
     <Compile Include="DataModel\Group.cs" />
-    <Compile Include="DataModel\GroupCaregiver.cs" />
     <Compile Include="DataModel\Location.cs" />
     <Compile Include="DataModel\Patient.cs" />
     <Compile Include="DataModel\Sample.cs" />

@@ -5,7 +5,7 @@ namespace Server.Migrations
     using System.Data.Entity.Infrastructure.Annotations;
     using System.Data.Entity.Migrations;
     
-    public partial class wholeDB : DbMigration
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
@@ -24,6 +24,7 @@ namespace Server.Migrations
                         Email = c.String(),
                         Phone = c.String(),
                         IsApproved = c.Boolean(nullable: false),
+                        GroupID = c.String(nullable: false, maxLength: 128),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion",
                             annotations: new Dictionary<string, AnnotationValues>
                             {
@@ -58,10 +59,12 @@ namespace Server.Migrations
                             }),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Groups", t => t.GroupID, cascadeDelete: true)
+                .Index(t => t.GroupID)
                 .Index(t => t.CreatedAt, clustered: true);
             
             CreateTable(
-                "dbo.GroupCaregivers",
+                "dbo.Groups",
                 c => new
                     {
                         Id = c.String(nullable: false, maxLength: 128,
@@ -72,8 +75,8 @@ namespace Server.Migrations
                                     new AnnotationValues(oldValue: null, newValue: "Id")
                                 },
                             }),
-                        GroupID = c.String(),
-                        CaregiverID = c.String(),
+                        Name = c.String(),
+                        Code = c.String(),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion",
                             annotations: new Dictionary<string, AnnotationValues>
                             {
@@ -122,11 +125,11 @@ namespace Server.Migrations
                                     new AnnotationValues(oldValue: null, newValue: "Id")
                                 },
                             }),
-                        CaregiverID = c.String(),
-                        PatientID = c.String(),
                         Latitude = c.Single(nullable: false),
                         Longitude = c.Single(nullable: false),
                         Description = c.String(),
+                        HeartRate = c.Int(nullable: false),
+                        PatientID = c.String(nullable: false, maxLength: 128),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion",
                             annotations: new Dictionary<string, AnnotationValues>
                             {
@@ -161,6 +164,8 @@ namespace Server.Migrations
                             }),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Patients", t => t.PatientID, cascadeDelete: true)
+                .Index(t => t.PatientID)
                 .Index(t => t.CreatedAt, clustered: true);
             
             CreateTable(
@@ -175,9 +180,9 @@ namespace Server.Migrations
                                     new AnnotationValues(oldValue: null, newValue: "Id")
                                 },
                             }),
-                        GroupID = c.String(),
                         Name = c.String(),
                         Email = c.String(),
+                        GroupID = c.String(maxLength: 128),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion",
                             annotations: new Dictionary<string, AnnotationValues>
                             {
@@ -212,6 +217,8 @@ namespace Server.Migrations
                             }),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Groups", t => t.GroupID)
+                .Index(t => t.GroupID)
                 .Index(t => t.CreatedAt, clustered: true);
             
             CreateTable(
@@ -226,10 +233,10 @@ namespace Server.Migrations
                                     new AnnotationValues(oldValue: null, newValue: "Id")
                                 },
                             }),
-                        CaregiverID = c.String(),
-                        PatientID = c.String(),
                         Latitude = c.Single(nullable: false),
                         Longitude = c.Single(nullable: false),
+                        HeartRate = c.Int(nullable: false),
+                        PatientID = c.String(nullable: false, maxLength: 128),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion",
                             annotations: new Dictionary<string, AnnotationValues>
                             {
@@ -264,17 +271,27 @@ namespace Server.Migrations
                             }),
                     })
                 .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Patients", t => t.PatientID, cascadeDelete: true)
+                .Index(t => t.PatientID)
                 .Index(t => t.CreatedAt, clustered: true);
             
         }
         
         public override void Down()
         {
+            DropForeignKey("dbo.Locations", "PatientID", "dbo.Patients");
+            DropForeignKey("dbo.Samples", "PatientID", "dbo.Patients");
+            DropForeignKey("dbo.Patients", "GroupID", "dbo.Groups");
+            DropForeignKey("dbo.Caregivers", "GroupID", "dbo.Groups");
             DropIndex("dbo.Samples", new[] { "CreatedAt" });
+            DropIndex("dbo.Samples", new[] { "PatientID" });
             DropIndex("dbo.Patients", new[] { "CreatedAt" });
+            DropIndex("dbo.Patients", new[] { "GroupID" });
             DropIndex("dbo.Locations", new[] { "CreatedAt" });
-            DropIndex("dbo.GroupCaregivers", new[] { "CreatedAt" });
+            DropIndex("dbo.Locations", new[] { "PatientID" });
+            DropIndex("dbo.Groups", new[] { "CreatedAt" });
             DropIndex("dbo.Caregivers", new[] { "CreatedAt" });
+            DropIndex("dbo.Caregivers", new[] { "GroupID" });
             DropTable("dbo.Samples",
                 removedColumnAnnotations: new Dictionary<string, IDictionary<string, object>>
                 {
@@ -392,7 +409,7 @@ namespace Server.Migrations
                         }
                     },
                 });
-            DropTable("dbo.GroupCaregivers",
+            DropTable("dbo.Groups",
                 removedColumnAnnotations: new Dictionary<string, IDictionary<string, object>>
                 {
                     {
