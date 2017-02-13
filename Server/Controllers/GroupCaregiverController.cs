@@ -15,7 +15,7 @@ namespace Server.Controllers
         {
             base.Initialize(controllerContext);
             MobileServiceContext context = new MobileServiceContext();
-            DomainManager = new EntityDomainManager<GroupCaregiver>(context, Request, enableSoftDelete: true);
+            DomainManager = new EntityDomainManager<GroupCaregiver>(context, Request);
         }
 
         // GET tables/GroupCaregiver

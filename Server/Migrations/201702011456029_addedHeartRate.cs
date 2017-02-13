@@ -7,8 +7,8 @@ namespace Server.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.Locations", "HeartRate", c => c.Int(nullable: false));
-            AddColumn("dbo.Samples", "Heartrate", c => c.Int(nullable: false));
+            AddColumn("dbo.Locations", "HeartRate", c => c.Int(nullable: true));
+            AddColumn("dbo.Samples", "Heartrate", c => c.Int(nullable: true));
         }
         
         public override void Down()

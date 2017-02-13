@@ -15,7 +15,7 @@ namespace Server.Controllers
         {
             base.Initialize(controllerContext);
             MobileServiceContext context = new MobileServiceContext();
-            DomainManager = new EntityDomainManager<Patient>(context, Request, enableSoftDelete: true);
+            DomainManager = new EntityDomainManager<Patient>(context, Request);
         }
 
         // GET tables/Patient

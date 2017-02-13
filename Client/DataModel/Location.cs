@@ -11,9 +11,6 @@ namespace PoleStar.DataModel
     {
         public string Id { get; set; }
 
-        [JsonProperty(PropertyName = "caregiverid")]
-        public string CaregiverID { get; set; }
-
         [JsonProperty(PropertyName = "patientid")]
         public string PatientID { get; set; }
 
@@ -28,5 +25,8 @@ namespace PoleStar.DataModel
 
         [JsonProperty(PropertyName = "heartrate")]
         public int HeartRate { get; set; }
+
+        [JsonProperty(PropertyName = "patient")]
+        public Patient Patient { get; set; }
     }
 }

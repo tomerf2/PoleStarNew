@@ -16,5 +16,14 @@ namespace PoleStar.DataModel
 
         [JsonProperty(PropertyName = "caregiverid")]
         public string CaregiverID { get; set; }
+
+        [JsonProperty(PropertyName = "group")]
+        public Group Group { get; set; }
+
+        [JsonProperty(PropertyName = "caregiver")]
+        public Caregiver Caregiver { get; set; }
+
+        [JsonProperty(PropertyName = "lastupdated")]
+        public DateTimeOffset LastUpdated { get; set; }
     }
 }

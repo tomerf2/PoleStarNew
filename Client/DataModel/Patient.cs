@@ -14,6 +14,9 @@ namespace PoleStar.DataModel
         [JsonProperty(PropertyName = "groupid")]
         public string GroupID { get; set; }
 
+        [JsonProperty(PropertyName = "group")]
+        public Group Group { get; set; }
+
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 

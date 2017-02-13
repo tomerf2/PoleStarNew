@@ -209,6 +209,14 @@
     <Compile Include="Migrations\201702011456029_addedHeartRate.Designer.cs">
       <DependentUpon>201702011456029_addedHeartRate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702131522463_new.cs" />
+    <Compile Include="Migrations\201702131522463_new.Designer.cs">
+      <DependentUpon>201702131522463_new.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702131530582_new21.cs" />
+    <Compile Include="Migrations\201702131530582_new21.Designer.cs">
+      <DependentUpon>201702131530582_new21.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MobileServiceContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -239,9 +247,18 @@
     <EmbeddedResource Include="Migrations\201702011456029_addedHeartRate.resx">
       <DependentUpon>201702011456029_addedHeartRate.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702131522463_new.resx">
+      <DependentUpon>201702131522463_new.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702131530582_new21.resx">
+      <DependentUpon>201702131530582_new21.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\PoleStar - Web Deploy.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
