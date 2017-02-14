@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.MobileServices;
+using PoleStar.DataModel;
+using PoleStar.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,9 +26,21 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class PatientLoginPage : Page
     {
+        private MobileServiceCollection<Group, Group> groups;
+        private MobileServiceCollection<Patient, Patient> patients;
+
+        private IMobileServiceTable<Group> groupTable = App.MobileService.GetTable<Group>();
+        private IMobileServiceTable<Patient> patientTable = App.MobileService.GetTable<Patient>();
+
         public PatientLoginPage()
         {
             this.InitializeComponent();
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            groups = await groupTable.ToCollectionAsync();
+            patients = await patientTable.ToCollectionAsync();
         }
 
         private void txtGroupname_GotFocus(object sender, RoutedEventArgs e)
@@ -76,18 +91,47 @@ namespace PoleStar.Views
 
         private void btnSignUp_Click(object sender, RoutedEventArgs e)
         {
+            symLoading.IsActive = true;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
             this.Frame.Navigate(typeof(PatientSignupPage), null);
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
+            symLoading.IsActive = true;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
             this.Frame.Navigate(typeof(MainPage), null);
         }
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PatientMainPage), null);
-        }
+            symLoading.IsActive = true;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
+            if ((txtGroupname.Text != "Groupname") && (txtPassword.Password != "Password"))
+            {
+                var resultGroups = groups.Where(g => g.Name == txtGroupname.Text);
+                if (resultGroups.Count() > 0)
+                {
+                    Group group = resultGroups.ToList()[0];
+                    var resultPatients = patients.Where(p => p.GroupID == group.Id);
+                    Patient patient = resultPatients.ToList()[0];
+
+                    if(patient.Password == Crypto.CreateMD5Hash(txtPassword.Password))
+                        this.Frame.Navigate(typeof(PatientMainPage), null);
+                    else
+                        DialogBox.ShowOk("Error", "Wrong Groupname or Password. Please try again.");
+                }
+                else
+                    DialogBox.ShowOk("Error", "Wrong Groupname or Password. Please try again.");
+            }
+            else
+                DialogBox.ShowOk("Error", "Please fill all the fields to login.");
+
+            symLoading.IsActive = false;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+        }
     }
 }

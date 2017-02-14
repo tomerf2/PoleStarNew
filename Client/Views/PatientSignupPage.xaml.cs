@@ -40,6 +40,7 @@ namespace PoleStar.Views
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             groups = await groupTable.ToCollectionAsync();
+            patients = await patientTable.ToCollectionAsync();
         }
 
         private void txtName_GotFocus(object sender, RoutedEventArgs e)
