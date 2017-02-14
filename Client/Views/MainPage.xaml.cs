@@ -24,10 +24,6 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private MobileServiceCollection<Group, Group> groups;
-
-        private IMobileServiceTable<Group> groupTable = App.MobileService.GetTable<Group>();
-
         public MainPage()
         {
             this.InitializeComponent();
@@ -43,10 +39,8 @@ namespace PoleStar.Views
             this.Frame.Navigate(typeof(CaregiverLoginPage), null);
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            groups = await groupTable.ToCollectionAsync();
-            // groups[0].Code
         }
     }
 

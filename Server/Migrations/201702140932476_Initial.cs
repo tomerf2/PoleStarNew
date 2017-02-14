@@ -182,6 +182,7 @@ namespace Server.Migrations
                             }),
                         Name = c.String(),
                         Email = c.String(),
+                        Password = c.String(),
                         GroupID = c.String(maxLength: 128),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion",
                             annotations: new Dictionary<string, AnnotationValues>

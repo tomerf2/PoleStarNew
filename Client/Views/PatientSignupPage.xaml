@@ -5,10 +5,14 @@
     xmlns:local="using:PoleStar.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    xmlns:controls="using:WinUX.Xaml.Controls"
+    xmlns:rules="using:WinUX.Xaml.Controls.Validation"
+    xmlns:validation="using:WinUX.Xaml.Controls.Validation"
+    mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="White">
-
+        <ProgressRing Name="symLoading" Width="50" Height="50" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        
         <Grid Margin="30">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -36,12 +40,11 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox x:Name="txtName" Text="Full name" Foreground="Gray" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,5" GotFocus="txtName_GotFocus" LostFocus="txtName_LostFocus" />
+
                 <TextBox x:Name="txtEmail" Text="Email" Foreground="Gray" Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,5" GotFocus="txtEmail_GotFocus" LostFocus="txtEmail_LostFocus" />
+                <TextBox x:Name="txtName" Text="Full name" Foreground="Gray" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,5" GotFocus="txtName_GotFocus" LostFocus="txtName_LostFocus" />
                 <PasswordBox x:Name="txtPassword" PasswordRevealMode="Visible" Password="Private password" Foreground="Gray" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,0,0,0" GotFocus="txtPassword_GotFocus" LostFocus="txtPassword_LostFocus" />
-
                 <Line Grid.Row="3" Grid.ColumnSpan="2" Stretch="Fill" Stroke="Gray" X2="1" Margin="10" />
-
                 <TextBox x:Name="txtGroupname" Text="Groupname" Foreground="Gray" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,0,0,5" GotFocus="txtGroupname_GotFocus" LostFocus="txtGroupname_LostFocus" />
                 <PasswordBox x:Name="txtCode" PasswordRevealMode="Visible" Password="Code" Foreground="Gray" Grid.Row="5" Grid.ColumnSpan="2" Margin="0,0,0,5" GotFocus="txtCode_GotFocus" LostFocus="txtCode_LostFocus" />
             </Grid>

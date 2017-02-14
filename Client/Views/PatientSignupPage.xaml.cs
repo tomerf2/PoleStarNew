@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
 using PoleStar.DataModel;
+using PoleStar.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +35,11 @@ namespace PoleStar.Views
         public PatientSignupPage()
         {
             this.InitializeComponent();
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            groups = await groupTable.ToCollectionAsync();
         }
 
         private void txtName_GotFocus(object sender, RoutedEventArgs e)
@@ -155,9 +161,32 @@ namespace PoleStar.Views
             this.Frame.Navigate(typeof(PatientLoginPage), null);
         }
 
-        private void btnForward_Click(object sender, RoutedEventArgs e)
+        private async void btnForward_Click(object sender, RoutedEventArgs e)
         {
+            symLoading.IsActive = true;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
+            if ((txtEmail.Text != "Email") && (txtName.Text != "Full name") && (txtPassword.Password != "Private password") &&
+                (txtGroupname.Text != "Groupname") && (txtCode.Password != "Code"))
+            {
+                if (groups.Where(group => group.Name == txtGroupname.Text).Count() == 0)
+                {
+                    Group newGroup = new Group() { Id = Guid.NewGuid().ToString(), Name = txtGroupname.Text, Code = txtCode.Password };
+                    Patient newPatient = new Patient() { Id = Guid.NewGuid().ToString(), GroupID = newGroup.Id, Name = txtName.Text, Email = txtEmail.Text, Password = Crypto.CreateMD5Hash(txtPassword.Password) };
+
+                    await groupTable.InsertAsync(newGroup);
+                    await patientTable.InsertAsync(newPatient);
+
+                    this.Frame.Navigate(typeof(PatientMainPage), null);
+                }
+                else
+                    DialogBox.ShowOk("Error", "Group's name already exists. Please choose a different name.");
+            }
+            else
+                DialogBox.ShowOk("Error", "Please fill all the fields.");
+
+            symLoading.IsActive = false;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
     }
 }

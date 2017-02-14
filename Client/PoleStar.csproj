@@ -111,6 +111,8 @@
       <DependentUpon>MainPage2.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Crypto.cs" />
+    <Compile Include="Utils\DialogBox.cs" />
     <Compile Include="Views\CaregiverLoginPage.xaml.cs">
       <DependentUpon>CaregiverLoginPage.xaml</DependentUpon>
     </Compile>

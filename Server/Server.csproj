@@ -193,9 +193,9 @@
     <Compile Include="DataObjects\Location.cs" />
     <Compile Include="DataObjects\Patient.cs" />
     <Compile Include="DataObjects\Sample.cs" />
-    <Compile Include="Migrations\201702131814118_Initial.cs" />
-    <Compile Include="Migrations\201702131814118_Initial.Designer.cs">
-      <DependentUpon>201702131814118_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201702140932476_Initial.cs" />
+    <Compile Include="Migrations\201702140932476_Initial.Designer.cs">
+      <DependentUpon>201702140932476_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\MobileServiceContext.cs" />
@@ -225,8 +225,8 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201702131814118_Initial.resx">
-      <DependentUpon>201702131814118_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201702140932476_Initial.resx">
+      <DependentUpon>201702140932476_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
