@@ -17,12 +17,18 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="0" x:Name="btnPatient" HorizontalAlignment="Center" Margin="10" VerticalAlignment="Center" Height="299" Width="340" FontSize="55" FontFamily="MV Boli" BorderThickness="0" Background="{x:Null}" Foreground="#FF34822C" Click="btnPatient_Click">
-            <TextBlock Text="I'm a patient" TextWrapping="Wrap" TextAlignment="Center" Foreground="#FFC21A1A" FontFamily="Roboto Black" FontWeight="Bold"></TextBlock>
+        <Button Grid.Row="0" x:Name="btnPatient" HorizontalAlignment="Center" Margin="10 0 10 10" VerticalAlignment="Center" Height="299" Width="340" FontSize="55" FontFamily="MV Boli" BorderThickness="0" Background="{x:Null}" Foreground="#FF34822C" Click="btnPatient_Click">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Patient" FontSize="30" FontWeight="Light" Foreground="Black" HorizontalAlignment="Center"></TextBlock>
+                <Image Source="../Assets/patient.png" Stretch="None" Height="250" />
+            </StackPanel>
         </Button>
         <Line Grid.Row="1" Stretch="Fill" Stroke="Black" X2="1" Margin="10 0 10 0" />
-        <Button Grid.Row="2" x:Name="btnCaregiver" HorizontalAlignment="Center" Margin="10" VerticalAlignment="Center" Height="299" Width="340" FontSize="55" FontFamily="MV Boli" BorderThickness="0" Background="{x:Null}" Foreground="#FF34822C" Click="btnCaregiver_Click">
-            <TextBlock Text="I'm a caregiver" TextWrapping="Wrap" TextAlignment="Center" FontFamily="Roboto Black" FontWeight="Bold"></TextBlock>
+        <Button Grid.Row="2" x:Name="btnCaregiver" HorizontalAlignment="Center" Margin="10 0 10 10" VerticalAlignment="Center" Height="299" Width="340" FontSize="55" FontFamily="MV Boli" BorderThickness="0" Background="{x:Null}" Foreground="#FF34822C" Click="btnCaregiver_Click">
+            <StackPanel Orientation="Vertical">
+                <Image Source="../Assets/caregiver.png" Stretch="None" Height="250" />
+                <TextBlock Text="Caregiver" FontSize="30" FontWeight="Light" Foreground="Black" HorizontalAlignment="Center"></TextBlock>
+            </StackPanel>
         </Button>
     </Grid>
 </Page>
