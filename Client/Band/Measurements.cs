@@ -12,12 +12,12 @@ namespace PoleStar.Band
     class Measurements
     {
         //boolean fields that indicate what values are stored
-        private bool has_loc = false;
-        private bool has_heart = false;
-        private bool has_distance = false;
-        private bool has_worn = false;
-        private bool has_steps = false;
-        private bool has_pace = false;
+        public bool has_loc = false;
+        public bool has_heart = false;
+        public bool has_distance = false;
+        public bool has_worn = false;
+        public bool has_steps = false;
+        public bool has_pace = false;
 
         //data fields
         private DateTime timestamp;
@@ -39,7 +39,7 @@ namespace PoleStar.Band
             {
                 Location = await LocationManager.GetPosition(); //location
                 Timestamp = DateTime.Now; //timestamp
-                await bandInstance.GetSensorReadings(this, 60, true, true, true, true);
+                await bandInstance.GetSensorReadings(this, 60, true, true, false, false);
 
 
                 int test = 0;

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Band;
 using Microsoft.Band.Sensors;
+using PoleStar.Utils;
 
 namespace PoleStar.Band
 {
@@ -12,9 +13,6 @@ namespace PoleStar.Band
     {
         IBandInfo[] pairedBands;
         public IBandClient bandClient;
-
-
-
 
         public async Task BandInit()
         {
@@ -33,7 +31,7 @@ namespace PoleStar.Band
             }
             catch (BandException e1)
             {
-                //TODO
+                DialogBox.ShowOk("Error", "Not connected to Microsoft Band. Please verfiy connection and restart app.");
             }
             catch (IndexOutOfRangeException e1)
             {
@@ -41,9 +39,9 @@ namespace PoleStar.Band
             }
             catch (Exception e3)
             {
-                //TODO - unknown exception
+                DialogBox.ShowOk("Error", "Not connected to Microsoft Band. Please verfiy connection and restart app.");
             }
-  
+
         }
 
         public async Task GetSensorReadings(Measurements measurements, int measuretime, bool worn, bool heart, bool steps, bool distance)

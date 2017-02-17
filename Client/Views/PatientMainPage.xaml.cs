@@ -15,6 +15,8 @@ using Windows.UI.Xaml.Navigation;
 using Microsoft.Band;
 using System.Threading.Tasks;
 using PoleStar.Band;
+using Microsoft.WindowsAzure.MobileServices;
+using PoleStar.DataModel;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -25,7 +27,14 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class PatientMainPage : Page
     {
-        static BandManager bandInstance;
+        private MobileServiceCollection<Sample, Sample> samples;
+#if OFFLINE_SYNC_ENABLED
+        private IMobileServiceSyncTable<Sample> sampleTable = App.MobileService.GetSyncTable<Sample>(); // offline sync
+#else
+        private IMobileServiceTable<Sample> sampleTable = App.MobileService.GetTable<Sample>();
+#endif
+
+        //static BandManager bandInstance;
         Measurements measurements;
 
         public PatientMainPage()
@@ -35,19 +44,45 @@ namespace PoleStar.Views
 
         private async void Grid_Loaded(object sender, RoutedEventArgs e)
         {
-            bandInstance = new BandManager();
-            await bandInstance.BandInit();
-
+            //samples = await sampleTable.ToCollectionAsync();
+            //bandInstance = new BandManager();
+            //await bandInstance.BandInit();
             measurements = new Measurements();
-            await measurements.GetAllMeasurements(bandInstance);
+        }
 
- 
+        private async Task InsertSample(Measurements measurement)
+        {
+            //initiate new sample object with current meassurement parameters
+            Sample sample = new Sample();
+            sample.Id = Guid.NewGuid().ToString();
+            sample.PatientID = "Tomer"; ///WHAT IS PATIENT ID????
+            //if (measurement.has_loc)
+            //{
+            //    sample.Latitude = (float)measurement.Location.Coordinate.Latitude;
+            //    sample.Latitude = (float)measurement.Location.Coordinate.Longitude;
+            //}
+            //if (measurement.has_heart)
+            //{
+            //    sample.HeartRate = measurement.Heartrate;
+            //}
+            //save on server
+            sample.Latitude = (float)0.1;
+            sample.Longitude = (float)0.2;
+            sample.HeartRate = 100;
+            await sampleTable.InsertAsync(sample);
+            //samples.Add(sample);
+
+#if OFFLINE_SYNC_ENABLED
+            await App.MobileService.SyncContext.PushAsync(); // offline sync
+#endif
         }
 
         private async void btnAssist_Click(object sender, RoutedEventArgs e)
         {
 
-            await measurements.GetAllMeasurements(bandInstance);
+            //await measurements.GetAllMeasurements(bandInstance);
+            await InsertSample(this.measurements);
+
 
         }
     }
