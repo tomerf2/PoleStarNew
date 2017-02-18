@@ -42,20 +42,24 @@ namespace PoleStar.Views
             this.InitializeComponent();
         }
 
-        private async void Grid_Loaded(object sender, RoutedEventArgs e)
+        private /*async*/ void Grid_Loaded(object sender, RoutedEventArgs e)
         {
             //samples = await sampleTable.ToCollectionAsync();
             //bandInstance = new BandManager();
             //await bandInstance.BandInit();
-            measurements = new Measurements();
+            //measurements = new Measurements();
         }
 
-        private async Task InsertSample(Measurements measurement)
+        private async Task InsertSample(/*Measurements measurement*/)
         {
             //initiate new sample object with current meassurement parameters
-            Sample sample = new Sample();
-            sample.Id = Guid.NewGuid().ToString();
-            sample.PatientID = "Tomer"; ///WHAT IS PATIENT ID????
+            Sample sample = new Sample() {
+                Id = Guid.NewGuid().ToString(),
+                HeartRate = 100,
+                Latitude = 32.1F,
+                Longitude = 33.2F,
+                PatientID = "6a758ca8-dc2a-4e35-ba12-82a92b7919cf"
+            };
             //if (measurement.has_loc)
             //{
             //    sample.Latitude = (float)measurement.Location.Coordinate.Latitude;
@@ -66,9 +70,6 @@ namespace PoleStar.Views
             //    sample.HeartRate = measurement.Heartrate;
             //}
             //save on server
-            sample.Latitude = (float)0.1;
-            sample.Longitude = (float)0.2;
-            sample.HeartRate = 100;
             await sampleTable.InsertAsync(sample);
             //samples.Add(sample);
 
@@ -81,7 +82,7 @@ namespace PoleStar.Views
         {
 
             //await measurements.GetAllMeasurements(bandInstance);
-            await InsertSample(this.measurements);
+            await InsertSample(/*this.measurements*/);
 
 
         }

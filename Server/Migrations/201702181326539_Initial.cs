@@ -24,7 +24,7 @@ namespace Server.Migrations
                         Email = c.String(),
                         Phone = c.String(),
                         IsApproved = c.Boolean(nullable: false),
-                        GroupID = c.String(nullable: false, maxLength: 128),
+                        GroupID = c.String(maxLength: 128),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion",
                             annotations: new Dictionary<string, AnnotationValues>
                             {
@@ -59,7 +59,7 @@ namespace Server.Migrations
                             }),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Groups", t => t.GroupID, cascadeDelete: true)
+                .ForeignKey("dbo.Groups", t => t.GroupID)
                 .Index(t => t.GroupID)
                 .Index(t => t.CreatedAt, clustered: true);
             
@@ -129,7 +129,7 @@ namespace Server.Migrations
                         Longitude = c.Single(nullable: false),
                         Description = c.String(),
                         HeartRate = c.Int(nullable: false),
-                        PatientID = c.String(nullable: false, maxLength: 128),
+                        PatientID = c.String(maxLength: 128),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion",
                             annotations: new Dictionary<string, AnnotationValues>
                             {
@@ -164,7 +164,7 @@ namespace Server.Migrations
                             }),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Patients", t => t.PatientID, cascadeDelete: true)
+                .ForeignKey("dbo.Patients", t => t.PatientID)
                 .Index(t => t.PatientID)
                 .Index(t => t.CreatedAt, clustered: true);
             
@@ -237,7 +237,7 @@ namespace Server.Migrations
                         Latitude = c.Single(nullable: false),
                         Longitude = c.Single(nullable: false),
                         HeartRate = c.Int(nullable: false),
-                        PatientID = c.String(nullable: false, maxLength: 128),
+                        PatientID = c.String(maxLength: 128),
                         Version = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion",
                             annotations: new Dictionary<string, AnnotationValues>
                             {
@@ -272,7 +272,7 @@ namespace Server.Migrations
                             }),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Patients", t => t.PatientID, cascadeDelete: true)
+                .ForeignKey("dbo.Patients", t => t.PatientID)
                 .Index(t => t.PatientID)
                 .Index(t => t.CreatedAt, clustered: true);
             
@@ -280,8 +280,8 @@ namespace Server.Migrations
         
         public override void Down()
         {
-            DropForeignKey("dbo.Locations", "PatientID", "dbo.Patients");
             DropForeignKey("dbo.Samples", "PatientID", "dbo.Patients");
+            DropForeignKey("dbo.Locations", "PatientID", "dbo.Patients");
             DropForeignKey("dbo.Patients", "GroupID", "dbo.Groups");
             DropForeignKey("dbo.Caregivers", "GroupID", "dbo.Groups");
             DropIndex("dbo.Samples", new[] { "CreatedAt" });

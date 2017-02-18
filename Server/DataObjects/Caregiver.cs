@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -14,7 +15,7 @@ namespace Server.DataObjects
         public bool IsApproved { get; set; }
 
         public string GroupID { get; set; }
-        [Required]
+        [ForeignKey("GroupID")]
         public virtual Group Group { get; set; }
     }
 }

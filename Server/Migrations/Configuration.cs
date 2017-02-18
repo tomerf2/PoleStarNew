@@ -13,6 +13,7 @@ namespace Server.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
             SetSqlGenerator("System.Data.SqlClient", new EntityTableSqlGenerator());
         }
 
