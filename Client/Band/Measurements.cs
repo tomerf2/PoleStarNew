@@ -39,7 +39,7 @@ namespace PoleStar.Band
             {
                 Location = await LocationManager.GetPosition(); //location
                 Timestamp = DateTime.Now; //timestamp
-                await bandInstance.GetSensorReadings(this, 60, true, true, false, false);
+                await bandInstance.GetSensorReadings(this, 30, true, true, false, false);
 
 
                 int test = 0;

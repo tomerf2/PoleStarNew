@@ -101,8 +101,8 @@ namespace PoleStar.Band
                 //Stop all readings
                 await bandClient.SensorManager.HeartRate.StopReadingsAsync();
                 await bandClient.SensorManager.Contact.StopReadingsAsync();
-                await bandClient.SensorManager.Pedometer.StopReadingsAsync();
-                await bandClient.SensorManager.Distance.StopReadingsAsync();
+                //await bandClient.SensorManager.Pedometer.StopReadingsAsync();
+                //await bandClient.SensorManager.Distance.StopReadingsAsync();
             }
 
             catch (BandException e1)
