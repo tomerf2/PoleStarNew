@@ -3,9 +3,11 @@ using PoleStar.Views;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Background;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Windows.ApplicationModel.AppService;
 
 namespace PoleStar
 {
@@ -99,5 +101,10 @@ namespace PoleStar
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }
+
+//        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+//        {
+//            base.OnBackgroundActivated(args);
+//        }
     }
 }
