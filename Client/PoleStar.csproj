@@ -115,6 +115,8 @@
     <Compile Include="Utils\DialogBox.cs" />
     <Compile Include="Utils\Coordinates.cs" />
     <Compile Include="Utils\HeatMap.cs" />
+    <Compile Include="Utils\SMS.cs" />
+    <Compile Include="Utils\StoredData.cs" />
     <Compile Include="Views\CaregiverLoginPage.xaml.cs">
       <DependentUpon>CaregiverLoginPage.xaml</DependentUpon>
     </Compile>
