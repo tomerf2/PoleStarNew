@@ -97,6 +97,6 @@ namespace PoleStar.Utils
             localSettings.Values.Remove("userGUID");
             localSettings.Values.Remove("hashedPassword");
         }
-
+        //this is a useless comment
     }
 }

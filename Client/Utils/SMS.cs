@@ -93,6 +93,7 @@ namespace PoleStar.Utils
                 DialogBox.ShowOk("Error", "Failed to find SMS device");
             }
         }
+        //this is a useless comment
     }
 }
 
