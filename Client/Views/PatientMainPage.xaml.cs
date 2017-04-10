@@ -93,6 +93,9 @@ namespace PoleStar.Views
             await InsertSample();
         }
 
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
 
+        }
     }
 }

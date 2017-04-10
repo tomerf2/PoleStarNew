@@ -106,65 +106,102 @@ namespace PoleStar.Views
                 }
             }
 
-            foreach(var sampleGroup in sampleGroups)
+            /*foreach(var sampleGroup in sampleGroups)
             {
-                var polygon = new MapPolygon();
+                if (sampleGroup.Count == 1)
+                {
+                    MapIcon mi = new MapIcon();
+                    mi.Visible = true;
+                    mi.Title = "One sample group";
+                    mi.Location = new Geopoint(new BasicGeoposition() { Latitude = sampleGroup[0].Latitude, Longitude = sampleGroup[0].Longitude });
+                    mcMap.MapElements.Add(mi);
+                }
+                else
+                {
+                    var polygon = new MapPolygon();
 
-                //Set appearance
-                polygon.FillColor = HeatMap.GetColorByDensity(sampleGroup.Count, maxGroupCount);
-                polygon.StrokeThickness = 0;
+                    //Set appearance
+                    polygon.FillColor = HeatMap.GetColorByDensity(sampleGroup.Count, maxGroupCount);
+                    polygon.StrokeThickness = 0;
 
-                var geoPosList = new List<BasicGeoposition>();
+                    var geoPosList = new List<BasicGeoposition>();
 
-                for (int i = 0; i < sampleGroup.Count; i++)
-                    geoPosList.Add(new BasicGeoposition() { Latitude = sampleGroup[i].Latitude, Longitude = sampleGroup[i].Longitude });
+                    for (int i = 0; i < sampleGroup.Count; i++)
+                        geoPosList.Add(new BasicGeoposition() { Latitude = sampleGroup[i].Latitude, Longitude = sampleGroup[i].Longitude });
 
-                //Create path
-                polygon.Path = new Geopath(geoPosList);
+                    //Create path
+                    polygon.Path = new Geopath(geoPosList);
 
-                //Add to map
-                mcMap.MapElements.Add(polygon);
-            }
+                    //Add to map
+                    mcMap.MapElements.Add(polygon);
+                }
+            }*/
 
-            /*var polygon = new MapPolygon();
+            /*var polygon1 = new MapPolygon();
 
-            // set appearance
-            polygon.FillColor = Color.FromArgb(100, 255, 255, 0);
-            polygon.StrokeThickness = 0;
+            //Set appearance
+            polygon1.FillColor = Colors.Red;
+            polygon1.StrokeThickness = 0;
 
-            //create path
-            polygon.Path = new Geopath(new List<BasicGeoposition>()
-            {
-                new BasicGeoposition() {Latitude=32.119, Longitude=34.825 },
-                new BasicGeoposition() {Latitude=32.119, Longitude=34.845 },
-                new BasicGeoposition() {Latitude=32.149, Longitude=34.845 },
-                new BasicGeoposition() {Latitude=32.149, Longitude=34.825 },
-            });
+            var geoPosList1 = new List<BasicGeoposition>();
 
-            // add to map
-            mcMap.MapElements.Add(polygon);
+            geoPosList1.Add(new BasicGeoposition() { Latitude = 32.3029161, Longitude = 34.8761978 });
+            geoPosList1.Add(new BasicGeoposition() { Latitude = 32.3023161, Longitude = 34.8761978 });
+            geoPosList1.Add(new BasicGeoposition() { Latitude = 32.3023161, Longitude = 34.8766978 });
+            geoPosList1.Add(new BasicGeoposition() { Latitude = 32.3027161, Longitude = 34.8769978 });
+            geoPosList1.Add(new BasicGeoposition() { Latitude = 32.3029161, Longitude = 34.8766978 });
 
-            polygon = new MapPolygon();
+            //Create path
+            polygon1.Path = new Geopath(geoPosList1);
 
-            // set appearance
-            polygon.FillColor = Color.FromArgb(200, 255, 255, 0);
-            polygon.StrokeThickness = 0;
+            //Add to map
+            mcMap.MapElements.Add(polygon1);
 
-            //create path
-            polygon.Path = new Geopath(new List<BasicGeoposition>()
-            {
-                new BasicGeoposition() {Latitude=32.129, Longitude=34.835 },
-                new BasicGeoposition() {Latitude=32.129, Longitude=34.840 },
-                new BasicGeoposition() {Latitude=32.139, Longitude=34.840 },
-                new BasicGeoposition() {Latitude=32.139, Longitude=34.835 },
-            });
+            var polygon2 = new MapPolygon();
+            polygon2.FillColor = Colors.Yellow;
+            polygon2.StrokeThickness = 0;
 
-            // add to map
-            mcMap.MapElements.Add(polygon);*/
+            var geoPosList2 = new List<BasicGeoposition>();
 
-            mcMap.ZoomLevel = 14;
-            //CenterMap(32.109333, 34.855499);
-            CenterMap(32.3026161, 34.8761978);
+            geoPosList2.Add(new BasicGeoposition() { Latitude = 32.3036161, Longitude = 34.8731978 });
+            geoPosList2.Add(new BasicGeoposition() { Latitude = 32.3015, Longitude = 34.8717978 });
+            geoPosList2.Add(new BasicGeoposition() { Latitude = 32.3009, Longitude = 34.8725978 });
+            geoPosList2.Add(new BasicGeoposition() { Latitude = 32.3011161, Longitude = 34.8731978 });
+            geoPosList2.Add(new BasicGeoposition() { Latitude = 32.3011161, Longitude = 34.8736978 });
+            geoPosList2.Add(new BasicGeoposition() { Latitude = 32.3027, Longitude = 34.8739978 });
+            geoPosList2.Add(new BasicGeoposition() { Latitude = 32.3036161, Longitude = 34.8736978 });
+
+            //Create path
+            polygon2.Path = new Geopath(geoPosList2);
+
+            //Add to map
+            mcMap.MapElements.Add(polygon2);
+
+            var polygon3 = new MapPolygon();
+            polygon3.FillColor = Colors.DarkOrange;
+            polygon3.StrokeThickness = 0;
+
+            var geoPosList3 = new List<BasicGeoposition>();
+
+            geoPosList3.Add(new BasicGeoposition() { Latitude = 32.3022161, Longitude = 34.8755 });
+            geoPosList3.Add(new BasicGeoposition() { Latitude = 32.3017, Longitude = 34.87494 });
+            geoPosList3.Add(new BasicGeoposition() { Latitude = 32.3012, Longitude = 34.87495 });
+            geoPosList3.Add(new BasicGeoposition() { Latitude = 32.30145, Longitude = 34.87595 });
+
+            //Create path
+            polygon3.Path = new Geopath(geoPosList3);
+
+            //Add to map
+            mcMap.MapElements.Add(polygon3);
+
+            MapIcon mi = new MapIcon();
+            mi.Visible = true;
+            mi.Title = "Last patient location (4 min ago)";
+            mi.Location = new Geopoint(new BasicGeoposition() { Latitude = 32.3029140, Longitude = 34.8761971 });
+            mcMap.MapElements.Add(mi);*/
+
+            mcMap.ZoomLevel = 16;
+            CenterMap(32.3026161, 34.8748978);
         }
 
         private async Task GetLatestSamples()
