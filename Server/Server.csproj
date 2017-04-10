@@ -201,6 +201,7 @@
     <Compile Include="Models\MobileServiceContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Utils\WanderingAlgo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Web.config" />

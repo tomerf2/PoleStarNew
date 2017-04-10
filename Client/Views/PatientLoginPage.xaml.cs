@@ -119,8 +119,11 @@ namespace PoleStar.Views
                     var resultPatients = patients.Where(p => p.GroupID == group.Id);
                     Patient patient = resultPatients.ToList()[0];
 
-                    if(patient.Password == Crypto.CreateMD5Hash(txtPassword.Password))
+                    if (patient.Password == Crypto.CreateMD5Hash(txtPassword.Password))
+                    {
+                        StoredData.storePatientData(patient.Id, patient.Password); //store in local app data
                         this.Frame.Navigate(typeof(PatientMainPage), null);
+                    }
                     else
                         DialogBox.ShowOk("Error", "Wrong Groupname or Password. Please try again.");
                 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
 using PoleStar.DataModel;
+using PoleStar.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +25,7 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class MainPage : Page
     {
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -41,6 +43,19 @@ namespace PoleStar.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            //uncomment to remove all stored data and start app from main screen
+            //StoredData.removeAllSavedData();
+
+            //Example Patient Data
+            //StoredData.storePatientData("Patient Guid", "Password");
+
+            if (StoredData.checkForPreviousLogin()) //also loads user data, if found
+            {
+                if (StoredData.isCaregiver())
+                    this.Frame.Navigate(typeof(CaregiverMainPage), null);
+                else if (StoredData.isPatient())
+                    this.Frame.Navigate(typeof(PatientMainPage), null);
+            }
         }
     }
 

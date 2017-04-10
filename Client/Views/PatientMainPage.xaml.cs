@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Navigation;
 using Microsoft.Band;
 using System.Threading.Tasks;
 using PoleStar.Band;
+using PoleStar.Utils;
 using Microsoft.WindowsAzure.MobileServices;
 using PoleStar.DataModel;
 using Windows.System.Threading;
@@ -67,7 +68,7 @@ namespace PoleStar.Views
             //initiate new sample object with current measurement parameters
             Sample sample = new Sample();
             sample.Id = Guid.NewGuid().ToString();
-            sample.PatientID = "6a758ca8-dc2a-4e35-ba12-82a92b7919cf";
+            sample.PatientID = StoredData.getUserGUID(); // previously "6a758ca8-dc2a-4e35-ba12-82a92b7919cf";
             if (measurements.has_loc)
             {
                 sample.Latitude = (float)measurements.Location.Coordinate.Latitude;
