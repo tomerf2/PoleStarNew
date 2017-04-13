@@ -20,6 +20,7 @@ using PoleStar.Utils;
 using Microsoft.WindowsAzure.MobileServices;
 using PoleStar.DataModel;
 using Windows.System.Threading;
+using Windows.UI.Core;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -55,12 +56,18 @@ namespace PoleStar.Views
             //await InsertSample();
 
             TimeSpan period = TimeSpan.FromMinutes(SendRateMinutes);
+
             ThreadPoolTimer PeriodicTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
             {
-                await measurements.GetAllMeasurements(bandInstance);
-                await InsertSample();
+                await Dispatcher.RunAsync(CoreDispatcherPriority.High,
+                    async () =>
+                    {
+                        await measurements.GetAllMeasurements(bandInstance);
+                        await InsertSample();
+                    });
 
             }, period);
+
         }
 
         private async Task InsertSample()
