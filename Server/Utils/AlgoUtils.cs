@@ -5,7 +5,6 @@ using System.Web;
 using System.Device.Location;
 using Server.DataObjects;
 using Server.Models;
-using PoleStar.Utils;
 
 namespace Server.Utils
 {
