@@ -72,7 +72,7 @@ namespace Server.Utils
 
         public static bool isHeartRateInSafeRange(double currentHR)
         {
-            if (currentHR >= WanderingDetectionAlgo.HEART_RATE_BOTTOM_LIMIT && currentHR <= WanderingDetectionAlgo.HEART_RATE_TOP_LIMIT)
+            if (currentHR >= WanderingAlgo.HEART_RATE_BOTTOM_LIMIT && currentHR <= WanderingAlgo.HEART_RATE_TOP_LIMIT)
             {
                 return true;
             }
@@ -84,8 +84,8 @@ namespace Server.Utils
 
         public static bool isTimeInSafeRange(int currentHour)
         {
-            if (currentHour < WanderingDetectionAlgo.emergencyTimeRangeSTART.Hour
-                && currentHour > WanderingDetectionAlgo.emergencyTimeRangeEND.Hour)
+            if (currentHour < WanderingAlgo.emergencyTimeRangeSTART.Hour
+                && currentHour > WanderingAlgo.emergencyTimeRangeEND.Hour)
             {
                 return true;
             }
@@ -108,8 +108,8 @@ namespace Server.Utils
 
         public static bool isTimeInNormalRange(int currentHour)
         {
-            if (currentHour > WanderingDetectionAlgo.bottomNormalTimeRange
-                && currentHour < WanderingDetectionAlgo.topNormalTimeRange)
+            if (currentHour > WanderingAlgo.bottomNormalTimeRange
+                && currentHour < WanderingAlgo.topNormalTimeRange)
             {
                 return true;
             }
