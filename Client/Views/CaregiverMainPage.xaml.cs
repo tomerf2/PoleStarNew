@@ -108,63 +108,46 @@ namespace PoleStar.Views
 
             foreach(var sampleGroup in sampleGroups)
             {
-                var polygon = new MapPolygon();
+                //TODO: Prevent showing groups with up to 20 samples
+                if (sampleGroup.Count == 1)
+                {
+                    MapIcon mi = new MapIcon();
+                    mi.Visible = true;
+                    mi.Title = "One sample group";
+                    mi.Location = new Geopoint(new BasicGeoposition() { Latitude = sampleGroup[0].Latitude, Longitude = sampleGroup[0].Longitude });
+                    mcMap.MapElements.Add(mi);
+                }
+                else
+                {
+                    List<Sample> chSampleGroup = HeatMap.ConvexHull(sampleGroup);
 
-                //Set appearance
-                polygon.FillColor = HeatMap.GetColorByDensity(sampleGroup.Count, maxGroupCount);
-                polygon.StrokeThickness = 0;
+                    var polygon = new MapPolygon();
 
-                var geoPosList = new List<BasicGeoposition>();
+                    //Set appearance
+                    polygon.FillColor = HeatMap.GetColorByDensity(sampleGroup.Count, maxGroupCount);
+                    polygon.StrokeThickness = 0;
 
-                for (int i = 0; i < sampleGroup.Count; i++)
-                    geoPosList.Add(new BasicGeoposition() { Latitude = sampleGroup[i].Latitude, Longitude = sampleGroup[i].Longitude });
+                    var geoPosList = new List<BasicGeoposition>();
 
-                //Create path
-                polygon.Path = new Geopath(geoPosList);
+                    for (int i = 0; i < chSampleGroup.Count; i++)
+                        geoPosList.Add(new BasicGeoposition() { Latitude = chSampleGroup[i].Latitude, Longitude = chSampleGroup[i].Longitude });
 
-                //Add to map
-                mcMap.MapElements.Add(polygon);
+                    //Create path
+                    polygon.Path = new Geopath(geoPosList);
+
+                    //Add to map
+                    mcMap.MapElements.Add(polygon);
+                }
             }
+            
+            /*MapIcon mi = new MapIcon();
+            mi.Visible = true;
+            mi.Title = "Last patient location (4 min ago)";
+            mi.Location = new Geopoint(new BasicGeoposition() { Latitude = 32.3029140, Longitude = 34.8761971 });
+            mcMap.MapElements.Add(mi);*/
 
-            /*var polygon = new MapPolygon();
-
-            // set appearance
-            polygon.FillColor = Color.FromArgb(100, 255, 255, 0);
-            polygon.StrokeThickness = 0;
-
-            //create path
-            polygon.Path = new Geopath(new List<BasicGeoposition>()
-            {
-                new BasicGeoposition() {Latitude=32.119, Longitude=34.825 },
-                new BasicGeoposition() {Latitude=32.119, Longitude=34.845 },
-                new BasicGeoposition() {Latitude=32.149, Longitude=34.845 },
-                new BasicGeoposition() {Latitude=32.149, Longitude=34.825 },
-            });
-
-            // add to map
-            mcMap.MapElements.Add(polygon);
-
-            polygon = new MapPolygon();
-
-            // set appearance
-            polygon.FillColor = Color.FromArgb(200, 255, 255, 0);
-            polygon.StrokeThickness = 0;
-
-            //create path
-            polygon.Path = new Geopath(new List<BasicGeoposition>()
-            {
-                new BasicGeoposition() {Latitude=32.129, Longitude=34.835 },
-                new BasicGeoposition() {Latitude=32.129, Longitude=34.840 },
-                new BasicGeoposition() {Latitude=32.139, Longitude=34.840 },
-                new BasicGeoposition() {Latitude=32.139, Longitude=34.835 },
-            });
-
-            // add to map
-            mcMap.MapElements.Add(polygon);*/
-
-            mcMap.ZoomLevel = 14;
-            //CenterMap(32.109333, 34.855499);
-            CenterMap(32.3026161, 34.8761978);
+            mcMap.ZoomLevel = 16;
+            CenterMap(32.3026161, 34.8748978);
         }
 
         private async Task GetLatestSamples()

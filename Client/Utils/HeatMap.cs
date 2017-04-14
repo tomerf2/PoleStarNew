@@ -1,37 +1,17 @@
-﻿using System;
+﻿using PoleStar.DataModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Xaml.Shapes;
 
 namespace PoleStar.Utils
 {
     public class HeatMap
     {
-        //private static Dictionary<double, Color> mItems = new Dictionary<double, Color>();
-
-        public HeatMap()
-        {
-            //mItems.Add(4.22, Colors.LightBlue);
-            //mItems.Add(10.94, Colors.Blue);
-        }
-
-        /*public static Color GetColorByDistance(double dist)
-        {
-            double bottomBound = 0.0;
-
-            foreach(var item in mItems)
-            {
-                if (dist > bottomBound && dist < item.Key)
-                    return item.Value;
-
-                bottomBound = item.Key;
-            }
-
-            return Colors.Transparent;
-        }*/
-
         public static Color GetColorByDensity(float value, float maxVal)
         {
             if (maxVal == 0) maxVal = 1;
@@ -58,6 +38,44 @@ namespace PoleStar.Utils
             }
 
             return color;
+        }
+
+        public static List<Sample> ConvexHull(List<Sample> sampleGroup)
+        {
+            sampleGroup.Sort(delegate (Sample a, Sample b)
+            {
+                int xdiff = a.Latitude.CompareTo(b.Latitude);
+                if (xdiff != 0) return xdiff;
+                else return a.Longitude.CompareTo(b.Longitude);
+            });
+
+            List<Sample> lower = new List<Sample>();
+            for(int i = 0; i < sampleGroup.Count; i++)
+            {
+                while (lower.Count >= 2 && CHCross(lower[lower.Count - 2], lower[lower.Count - 1], sampleGroup[i]) <= 0)
+                    lower.RemoveAt(lower.Count - 1);
+
+                lower.Add(sampleGroup[i]);
+            }
+
+            List<Sample> upper = new List<Sample>();
+            for (int i = sampleGroup.Count - 1; i >= 0; i--)
+            {
+                while (upper.Count >= 2 && CHCross(upper[upper.Count - 2], upper[upper.Count - 1], sampleGroup[i]) <= 0)
+                    upper.RemoveAt(upper.Count - 1);
+
+                upper.Add(sampleGroup[i]);
+            }
+
+            upper.RemoveAt(upper.Count - 1);
+            lower.RemoveAt(lower.Count - 1);
+
+            return lower.Concat(upper).ToList();
+        }
+
+        private static float CHCross(Sample a, Sample b, Sample o)
+        {
+            return (a.Latitude - o.Latitude) * (b.Longitude - o.Longitude) - (a.Longitude - o.Longitude) * (b.Latitude - o.Latitude);
         }
     }
 }

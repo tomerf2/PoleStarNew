@@ -14,7 +14,7 @@ namespace PoleStar.Utils
         private static bool patient;
         private static bool caregiver;
         private static String userGUID;
-        private static String hashedPassword;
+
 
         public static bool checkForPreviousLogin()
         {
@@ -37,22 +37,20 @@ namespace PoleStar.Utils
         }
 
 
-        public static void storePatientData(String userGUID, String hashedPassword)
+        public static void storePatientData(String userGUID)
         {
             localSettings.Values["loggedIn"] = true;
             localSettings.Values["caregiver"] = false;
             localSettings.Values["patient"] = true;
             localSettings.Values["userGUID"] = userGUID;
-            localSettings.Values["hashedPassword"] = hashedPassword;
         }
 
-        public static void storeCaregiverData(String userGUID, String hashedPassword)
+        public static void storeCaregiverData(String userGUID)
         {
             localSettings.Values["loggedIn"] = true;
             localSettings.Values["caregiver"] = true;
             localSettings.Values["patient"] = false;
             localSettings.Values["userGUID"] = userGUID;
-            localSettings.Values["hashedPassword"] = hashedPassword;
         }
 
         private static void loadUserData()
@@ -65,8 +63,6 @@ namespace PoleStar.Utils
             patient = (bool)patientCheck;
 
             userGUID = localSettings.Values["userGUID"].ToString();
-
-            hashedPassword = localSettings.Values["hashedPassword"].ToString();
 
         }
         public static bool isCaregiver()
@@ -84,19 +80,13 @@ namespace PoleStar.Utils
             return userGUID;
         }
 
-        public static String gethashedPassword()
-        {
-            return hashedPassword;
-        }
-
         public static void removeAllSavedData()
         {
             localSettings.Values.Remove("loggedIn");
             localSettings.Values.Remove("caregiver");
             localSettings.Values.Remove("patient");
             localSettings.Values.Remove("userGUID");
-            localSettings.Values.Remove("hashedPassword");
         }
-        //this is a useless comment
+
     }
 }

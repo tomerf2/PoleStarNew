@@ -9,7 +9,7 @@ using Server.Controllers;
 using Server.Utils;
 using System.Device.Location;
 
-namespace PoleStar.Utils
+namespace Server.Utils
 {
     class WanderingAlgo
     {

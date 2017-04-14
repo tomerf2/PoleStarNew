@@ -178,6 +178,7 @@ namespace PoleStar.Views
                     await groupTable.InsertAsync(newGroup);
                     await patientTable.InsertAsync(newPatient);
 
+                    StoredData.storePatientData(newPatient.Id); //store in local app data
                     this.Frame.Navigate(typeof(PatientMainPage), null);
                 }
                 else

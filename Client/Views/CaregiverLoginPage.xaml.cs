@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.MobileServices;
+using PoleStar.DataModel;
+using PoleStar.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,9 +26,21 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class CaregiverLoginPage : Page
     {
+        private MobileServiceCollection<Group, Group> groups;
+        private MobileServiceCollection<Caregiver, Caregiver> caregivers;
+
+        private IMobileServiceTable<Group> groupTable = App.MobileService.GetTable<Group>();
+        private IMobileServiceTable<Caregiver> caregiverTable = App.MobileService.GetTable<Caregiver>();
+
         public CaregiverLoginPage()
         {
             this.InitializeComponent();
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            groups = await groupTable.ToCollectionAsync();
+            caregivers = await caregiverTable.ToCollectionAsync();
         }
 
         private void txtGroupname_GotFocus(object sender, RoutedEventArgs e)
@@ -108,9 +123,40 @@ namespace PoleStar.Views
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(CaregiverMainPage), null);
+            symLoading.IsActive = true;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+            if ((txtEmail.Text != "Email") && (txtGroupname.Text != "Groupname") && (txtCode.Password != "Code"))
+            {
+                var resultCaregivers = caregivers.Where(c => c.Email == txtEmail.Text);
+                if (resultCaregivers.Count() == 1)
+                {
+                    Caregiver caregiver = resultCaregivers.ToList()[0];
+
+                    var resultGroups = groups.Where(g => g.Id == caregiver.GroupID);
+                    if (resultGroups.Count() > 0)
+                    {
+                        Group group = resultGroups.ToList()[0];
+
+                        if((group.Name == txtGroupname.Text) && (group.Code == txtCode.Password))
+                        {
+                            StoredData.storeCaregiverData(caregiver.Id); //store in local app data
+                            this.Frame.Navigate(typeof(CaregiverMainPage), null);
+                        }
+                        else
+                            DialogBox.ShowOk("Error", "Wrong Email, Groupname or Code. Please try again.");
+                    }
+                    else
+                        DialogBox.ShowOk("Error", "Wrong Email, Groupname or Code. Please try again.");
+                }
+                else
+                    DialogBox.ShowOk("Error", "Wrong Email, Groupname or Code. Please try again.");
+            }
+            else
+                DialogBox.ShowOk("Error", "Please fill all the fields to login.");
+
+            symLoading.IsActive = false;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
-
-
     }
 }
