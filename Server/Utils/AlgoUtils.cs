@@ -7,6 +7,7 @@ using Microsoft.Owin.Security;
 using Server.DataObjects;
 using Server.Models;
 using Server.Hubs;
+using System.Collections;
 
 namespace Server.Utils
 {
@@ -100,13 +101,28 @@ namespace Server.Utils
             }
         }
 
-        public static int[] getSafeTimeRangeForLocation(Location closestLocation, string currentPatientID)
+        public static int[] getSafeTimeRangeForLocation(Sample latestSample, string currentPatientID)
         {
+            //calcs the safe time range for current sample, according to past samples from 0.3 KM away!!//
             MobileServiceContext db = new MobileServiceContext();
             Sample[] samplesArr = db.Samples.Where(p => p.PatientID == currentPatientID).ToArray();
-            int bottomLimit = samplesArr.Min(p => p.CreatedAt.Value.Hour);
-            int topLimit = samplesArr.Max(p => p.CreatedAt.Value.Hour);
-            int averageHour = (int) samplesArr.Average(p => p.CreatedAt.Value.Hour);
+            List<Sample> relevantSamples = new List<Sample>();
+            GeoCoordinate latestSampleLoc = new GeoCoordinate(latestSample.Latitude, latestSample.Longitude);
+            GeoCoordinate someSample = new GeoCoordinate();
+
+            foreach (var sample in samplesArr)
+            {
+                someSample.Latitude = sample.Latitude;
+                someSample.Longitude = sample.Longitude;
+                if (calcDist(latestSampleLoc,someSample) < 0.3)
+                {
+                    relevantSamples.Add(sample);
+                }
+            }
+
+            int bottomLimit = relevantSamples.Min(p => p.CreatedAt.Value.Hour);
+            int topLimit = relevantSamples.Max(p => p.CreatedAt.Value.Hour);
+            int averageHour = (int)relevantSamples.Average(p => p.CreatedAt.Value.Hour);
             int[] result = { bottomLimit, topLimit, averageHour };
             return (result);
         }
