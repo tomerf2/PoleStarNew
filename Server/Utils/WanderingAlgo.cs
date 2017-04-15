@@ -52,7 +52,8 @@ namespace Server.Utils
 
             //insert caregivers to caregiversArr
             PatientController patientController = new PatientController();
-            caregiversArr = patientController.GetCaregiversforPatientID(currentPatientID);
+            CaregiverController caregiverController = new CaregiverController();
+            caregiversArr = caregiverController.GetCaregiversforPatientID(currentPatientID);
             patientName = patientController.GetPatientName(currentPatientID);
             Trace.TraceInformation(String.Format("Patient name is {0}", patientName));
             Trace.TraceInformation(String.Format("Caregivers array first email is {0}", (caregiversArr.First()).Email));
