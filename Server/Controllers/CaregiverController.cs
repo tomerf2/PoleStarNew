@@ -42,10 +42,13 @@ namespace Server.Controllers
             var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID);
 
             Trace.TraceInformation(string.Format("current patient is: {0}"), currentPatient.Id);
+            Trace.Flush();
             Trace.TraceInformation(string.Format("is current patient the correct one? {0}"), currentPatient.Id == patientID);
+            Trace.Flush();
             foreach (var CG in caregiversArr)
             {
                 Trace.TraceInformation(string.Format("caregiver mail is: {0}"), CG.Email);
+                Trace.Flush();
             }
             // ArrayList result = new ArrayList(caregiversArr);
 
