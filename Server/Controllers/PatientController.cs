@@ -7,6 +7,7 @@ using Microsoft.Azure.Mobile.Server;
 using Server.DataObjects;
 using Server.Models;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Server.Controllers
 {
@@ -32,14 +33,14 @@ namespace Server.Controllers
         }
 
         // GET a specific patient's caregivers
-        public ArrayList GetCaregiversforPatientID(string patientID)
+        public IEnumerable<Caregiver> GetCaregiversforPatientID(string patientID)
         {
             MobileServiceContext db = new MobileServiceContext();
             Patient currentPatient = db.Patients.Where(p => p.Id == patientID).FirstOrDefault();
-            Caregiver[] caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID).ToArray();
-            ArrayList result = new ArrayList(caregiversArr);
+            var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID);
+            // ArrayList result = new ArrayList(caregiversArr);
 
-            return result;
+            return caregiversArr;
         }
 
         // GET a specific patient's name

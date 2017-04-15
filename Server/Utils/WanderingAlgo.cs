@@ -19,7 +19,7 @@ namespace Server.Utils
         /// 0.1 load all data on patient
         /// 0.2 load caregivers
         //public static Caregiver[] caregiversArr;
-        public static ArrayList caregiversArr;
+        public static IEnumerable<Caregiver> caregiversArr;
         public static Location[] knownLocations;
         public static Location closestKnownLocation;
         public static GeoCoordinate currentLoc;
@@ -55,7 +55,7 @@ namespace Server.Utils
             caregiversArr = patientController.GetCaregiversforPatientID(currentPatientID);
             patientName = patientController.GetPatientName(currentPatientID);
             Trace.TraceInformation(String.Format("Patient name is {0}", patientName));
-            Trace.TraceInformation(String.Format("Caregivers array first email is {0}", ((Caregiver)caregiversArr[0]).Email));
+            Trace.TraceInformation(String.Format("Caregivers array first email is {0}", (caregiversArr.ToArray())[0].Email));
 
 
             //extract patient's known locations
