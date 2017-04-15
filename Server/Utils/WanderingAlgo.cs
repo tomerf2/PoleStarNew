@@ -122,7 +122,7 @@ namespace Server.Utils
                 return AlgoUtils.Status.ConnectionLost;
             }
 
-
+            Trace.TraceInformation(String.Format("latest sample hour is: {0}", sampleTime.Hour));
             if (lessThanHalf) //patient is very close to a known location
             {
                 //time doesn't matter, just make sure heartRate is okay

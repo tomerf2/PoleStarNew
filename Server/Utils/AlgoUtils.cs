@@ -91,7 +91,7 @@ namespace Server.Utils
         public static bool isTimeInSafeRange(int currentHour)
         {
             if (currentHour < WanderingAlgo.emergencyTimeRangeSTART
-                && currentHour > WanderingAlgo.emergencyTimeRangeEND)
+                || currentHour > WanderingAlgo.emergencyTimeRangeEND)
             {
                 return true;
             }
