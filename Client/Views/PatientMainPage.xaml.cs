@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -117,8 +118,7 @@ namespace PoleStar.Views
         private async void btnAssist_Click(object sender, RoutedEventArgs e)
         {
 
-            await measurements.GetAllMeasurements(bandInstance);
-            await InsertSample();
+            Notifications.startWanderingAlgo();
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
@@ -130,29 +130,30 @@ namespace PoleStar.Views
         {
             
         }
-
-
-        private async Task ConnectToSignalR()
-        {
-            
-            hubConnection = new HubConnection(App.MobileService.MobileAppUri.AbsoluteUri);//App.MobileService.MobileAppUri.AbsoluteUri);
-
-            IHubProxy proxy = hubConnection.CreateHubProxy("NotificationHub");
-            await hubConnection.Start();
-
-            string result = await proxy.Invoke<string>("Send", "Hello World!");
-            var invokeDialog = new MessageDialog(result);
-            await invokeDialog.ShowAsync();
-
-            proxy.On<string>("hello", async msg =>
-            {
-                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-                {
-                    var callbackDialog = new MessageDialog(msg);
-                    callbackDialog.Commands.Add(new UICommand("OK"));
-                    await callbackDialog.ShowAsync();
-                });
-            });
-        }
     }
 }
+
+
+
+//private async Task ConnectToSignalR()
+//{
+
+//hubConnection = new HubConnection(App.MobileService.MobileAppUri.AbsoluteUri);//App.MobileService.MobileAppUri.AbsoluteUri);
+
+//IHubProxy proxy = hubConnection.CreateHubProxy("NotificationHub");
+//await hubConnection.Start();
+
+//string result = await proxy.Invoke<string>("Send", "Hello World!");
+//var invokeDialog = new MessageDialog(result);
+//await invokeDialog.ShowAsync();
+
+//proxy.On<string>("hello", async msg =>
+//{
+//    await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+//    {
+//        var callbackDialog = new MessageDialog(msg);
+//        callbackDialog.Commands.Add(new UICommand("OK"));
+//        await callbackDialog.ShowAsync();
+//    });
+//});
+//}

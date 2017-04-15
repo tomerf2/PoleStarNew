@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using System.Runtime.Remoting.Contexts;
+using Server.Utils;
 
 
 namespace Server.Hubs
@@ -15,25 +16,166 @@ namespace Server.Hubs
 
         public static ConcurrentDictionary<string, string> mapUidToConnection = new ConcurrentDictionary<string, string>();
 
+
         public void Register(string ID)
         {
             try
             {
+                Trace.AutoFlush = true;
                 string deadConnectionId;
                 string ConnID = Context.ConnectionId;
                 mapUidToConnection.TryRemove(ID, out deadConnectionId);
                 mapUidToConnection[ID] = ConnID;
                 Trace.TraceInformation(String.Format("Added user: {0} connectionId {1}", ID, mapUidToConnection[ID]));
-                Trace.Flush();
-                Clients.Client(ConnID).wanderingAlert("This is a test");
             }
             catch (Exception e)
             {
-                Trace.TraceError(e.Message);
+                Trace.TraceError("Registration of " + ID + " failed: " + e.Message);
             }
 
         }
 
+        public void sendNotificationToCareGivers(string ID, string patientName, AlgoUtils.Status type)
+        {
+            if (mapUidToConnection.ContainsKey(ID))
+            {
+                if (type.Equals(AlgoUtils.Status.Wandering))
+                {
+                    Trace.TraceInformation(String.Format("Sending Wandering Alert to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                    try
+                    {
+                        Clients.Client(mapUidToConnection[ID]).receiveWanderingAlert(patientName);
+                    }
+                    catch (Exception e)
+                    {
+                        string deadConnectionId;
+                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
+                    }
+                }
+                else if (type.Equals(AlgoUtils.Status.Distress))
+                {
+                    Trace.TraceInformation(String.Format("Sending Distress Alert to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                    try
+                    {
+                        Clients.Client(mapUidToConnection[ID]).receiveDistressAlert(patientName);
+                    }
+                    catch (Exception e)
+                    {
+                        string deadConnectionId;
+                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
+                    }
+                }
+                else if (type.Equals(AlgoUtils.Status.Risk))
+                {
+                    Trace.TraceInformation(String.Format("Sending Risk Alert to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                    try
+                    {
+                        Clients.Client(mapUidToConnection[ID]).receiveRiskAlert(patientName);
+                    }
+                    catch (Exception e)
+                    {
+                        string deadConnectionId;
+                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
+                    }
+                }
+
+            }
+            else
+            {
+                Trace.TraceError(String.Format("User {0} doesn't exist", ID));
+            }
+        }
+
+
+        public void sendSMSToCareGivers(string ID, string patientName, AlgoUtils.Status type)
+        {
+            if (mapUidToConnection.ContainsKey(ID))
+            {
+                if (type.Equals(AlgoUtils.Status.Wandering))
+                {
+                    Trace.TraceInformation(String.Format("Sending SMS-Status-Message to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                    try
+                    {
+                        Clients.Client(mapUidToConnection[ID]).receiveWanderingSMS(patientName);
+                    }
+                    catch (Exception e)
+                    {
+                        string deadConnectionId;
+                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
+                    }
+                }
+                else if (type.Equals(AlgoUtils.Status.Distress))
+                {
+                    Trace.TraceInformation(String.Format("Sending SMS-Distress-Message to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                    try
+                    {
+                        Clients.Client(mapUidToConnection[ID]).receiveDistressSMS(patientName);
+                    }
+                    catch (Exception e)
+                    {
+                        string deadConnectionId;
+                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
+                    }
+                }
+                else if (type.Equals(AlgoUtils.Status.Risk))
+                {
+                    Trace.TraceInformation(String.Format("Sending SMS-Risk-Message to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                    try
+                    {
+                        Clients.Client(mapUidToConnection[ID]).receiveRiskSMS(patientName);
+                    }
+                    catch (Exception e)
+                    {
+                        string deadConnectionId;
+                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
+                    }
+                }
+
+            }
+            else
+            {
+                Trace.TraceError(String.Format("User {0} doesn't exist", ID));
+            }
+        }
+
+
+
+        public void sendLostConnNotificationToCareGivers(string ID, string patientName)
+        {
+            if (mapUidToConnection.ContainsKey(ID))
+            {
+                Trace.TraceInformation(String.Format("Sending Lost Connection Alert to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                try
+                {
+                    Clients.Client(mapUidToConnection[ID]).receiveConnectionLostAlert(patientName);
+                }
+                catch (Exception e)
+                {
+                    string deadConnectionId;
+                    mapUidToConnection.TryRemove(ID, out deadConnectionId);
+                }
+            }
+            else
+            {
+                Trace.TraceError(String.Format("User {0} doesn't exist", ID));
+            }
+        }
+
+
+
+        //Testing
+        public void startWanderingDetection(string ID)
+        {
+            Trace.TraceInformation("Starting Detection Algo for Patient {0}", ID);
+            WanderingAlgo algo = new WanderingAlgo();
+            algo.wanderingDetectionAlgo(ID);
+        }
+
+
+
+
+
+        //Other
         public string Send(string ID)
         {
             string test;
@@ -51,7 +193,7 @@ namespace Server.Hubs
             {
                 test = e.Message;
             }
-       
+
             return test;
         }
 
@@ -60,28 +202,12 @@ namespace Server.Hubs
             Clients.All.broadcastMessage(message);
         }
 
-        public void SendWanderingAlert(string ID)
-        {
-            if (mapUidToConnection.ContainsKey(ID))
-            {
-                //Trace.TraceInformation(String.Format("Sending to user: {0} connectionId {1}", msg.DestUserId, mapUidToConnection[msg.DestUserId]));
-
-                try
-                {
-                    Clients.Client(mapUidToConnection[ID]).wanderingAlert();
-                }
-                catch (Exception e)
-                {
-                    string deadConnectionId;
-                    mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                }
-            }
-            else
-            {
-                //Trace.TraceInformation(String.Format("User {0} doesn't exist", msg.DestUserId));
-            }
-        }
     }
+
+
+
+
+
 
     //public void Send(string name, string message)
     //{

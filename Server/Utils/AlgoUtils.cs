@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Device.Location;
+using Microsoft.Owin.Security;
 using Server.DataObjects;
 using Server.Models;
+using Server.Hubs;
 
 namespace Server.Utils
 {
@@ -116,6 +118,44 @@ namespace Server.Utils
             else
             {
                 return false;
+            }
+        }
+
+        public static void sendWanderingNotification()
+        {
+            string patientName = WanderingAlgo.patientName;
+            foreach (var caregiver in WanderingAlgo.caregiversArr)
+            {
+                WanderingAlgo.notificationHub.sendNotificationToCareGivers(caregiver.Id, patientName, Status.Wandering);
+            }
+            WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, patientName, Status.Wandering);
+        }
+
+        public static void sendRiskNotification()
+        {
+            string patientName = WanderingAlgo.patientName;
+            foreach (var caregiver in WanderingAlgo.caregiversArr)
+            {
+                WanderingAlgo.notificationHub.sendNotificationToCareGivers(caregiver.Id, patientName, Status.Risk);
+            }
+            WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, patientName, Status.Risk);
+        }
+        public static void sendDistressNotification()
+        {
+            string patientName = WanderingAlgo.patientName;
+            foreach (var caregiver in WanderingAlgo.caregiversArr)
+            {
+                WanderingAlgo.notificationHub.sendNotificationToCareGivers(caregiver.Id, patientName, Status.Distress);
+            }
+            WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, patientName, Status.Distress);
+        }
+
+        public static void sendLostConnNotification()
+        {
+            string patientName = WanderingAlgo.patientName;
+            foreach (var caregiver in WanderingAlgo.caregiversArr)
+            {
+                WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(caregiver.Id, patientName);
             }
         }
     }

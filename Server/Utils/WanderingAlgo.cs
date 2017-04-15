@@ -8,6 +8,7 @@ using System.Web.Http;
 using Server.Controllers;
 using Server.Utils;
 using System.Device.Location;
+using System.Diagnostics;
 
 namespace Server.Utils
 {
@@ -15,12 +16,12 @@ namespace Server.Utils
     {
         /// 0.1 load all data on patient
         /// 0.2 load caregivers
-        Caregiver[] caregiversArr;
-        Location[] knownLocations;
-        Location closestKnownLocation;
-        GeoCoordinate currentLoc;
-        Sample latestSample;
-        DateTimeOffset sampleTime;
+        public static Caregiver[] caregiversArr;
+        public static Location[] knownLocations;
+        public static Location closestKnownLocation;
+        public static GeoCoordinate currentLoc;
+        public static Sample latestSample;
+        public static DateTimeOffset sampleTime;
         public static readonly DateTimeOffset emergencyTimeRangeSTART = new DateTimeOffset(new DateTime(0, 0, 0, 1, 0, 0));
         public static readonly DateTimeOffset emergencyTimeRangeEND = new DateTimeOffset(new DateTime(0, 0, 0, 6, 0, 0));
         double AVG_PATIENT_HR;
@@ -32,12 +33,14 @@ namespace Server.Utils
 
 
 
+
         /// Step A - PREPROCESS
         public void preprocessAlgoData(string currentPatientID)
         {
             /// 1. Get latest sample
             SampleController sampleController = new SampleController();
             latestSample = sampleController.GetLatestSampleForPatient(currentPatientID);
+
 
             //insert caregivers to caregiversArr
             PatientController patientController = new PatientController();
@@ -178,6 +181,7 @@ namespace Server.Utils
         ///////////////TO BE CALLED FROM SERVER//////////////
         public void wanderingDetectionAlgo(string currentPatientID)
         {
+
             preprocessAlgoData(currentPatientID); //update latest sample for our patient & his caregiversArr
             AlgoUtils.Status patientStatus = monitorAndAlert(currentPatientID); //main business logic
 
@@ -192,6 +196,8 @@ namespace Server.Utils
 
                 case AlgoUtils.Status.Wandering:
                     {
+                        
+                        AlgoUtils.sendWanderingNotification();
                         //TODO:WANDERING stuff
                         /// Step C - POSSIBLE_WANDERING_MODE
                         /// 1. send PUSH to caregiver - "Do you know your beloved John is currently at (sample.location)?
@@ -205,6 +211,7 @@ namespace Server.Utils
 
                 case AlgoUtils.Status.Distress:
                     {
+                        AlgoUtils.sendDistressNotification();
                         //TODO:DISTRESS stuff
                         /// Step D - POSSIBLE_DISTRESS_MODE
                         /// 1. send PUSH to caregiver - "Your beloved John is currently at (sample.location)?
@@ -217,6 +224,7 @@ namespace Server.Utils
 
                 case AlgoUtils.Status.Risk:
                     {
+                        AlgoUtils.sendRiskNotification();
                         //TODO:RISK stuff
                         /// Step E - POSSIBLE_RISK_MODE
                         /// 1. Speed up sample rate (?) - every 1-3 minutes

@@ -36,26 +36,39 @@ namespace PoleStar.Utils
             }
 
             //set listeners:
-            NotificationHubProxy.On<string>("wanderingAlert", OnWanderingAlert);
-            //NotificationHubProxy.On<string>("Send", OnSend);
+            NotificationHubProxy.On<string>("receiveWanderingAlert", OnWanderingAlert);
+            NotificationHubProxy.On<string>("receiveRiskAlert", OnRiskAlert);
+            NotificationHubProxy.On<string>("receiveDistressAlert", OnDistressAlert);
+            NotificationHubProxy.On<string>("receiveConnectionLostAlert", OnLostConnAlert);
 
 
+            //register
             await NotificationHubProxy.Invoke("Register", Utils.StoredData.getUserGUID());
-
-
             return true;
         }
 
-        private static void OnWanderingAlert(string obj)
+        public static void startWanderingAlgo()
         {
-            DialogBox.ShowOk("Error", "Wandering Alert!!" + obj);
-
+            NotificationHubProxy.Invoke("startWanderingDetection", Utils.StoredData.getUserGUID());
         }
 
-        private static void OnSend(string obj)
+        private static void OnWanderingAlert(string patientName)
         {
-            DialogBox.ShowOk("Error", obj);
+            DialogBox.ShowOk("Wandering Alert", "PoleStar detects that " + patientName + " is at risk of wandering. Please check the PoleStar app for more details");
+        }
 
+        private static void OnRiskAlert(string patientName)
+        {
+            DialogBox.ShowOk("Serious Risk", "PoleStar detects that " + patientName + " is at risk. Please immediately check the PoleStar app for more details");
+        }
+
+        private static void OnDistressAlert(string patientName)
+        {
+            DialogBox.ShowOk("Distress", "PoleStar detects that " + patientName + " is in distress. Please check the PoleStar app for more details");
+        }
+        private static void OnLostConnAlert(string patientName)
+        {
+            DialogBox.ShowOk("Lost Connection", "PoleStar lost connection with " + patientName + ". Please check the PoleStar app for " + patientName + "'s last known location");
         }
     }
 
