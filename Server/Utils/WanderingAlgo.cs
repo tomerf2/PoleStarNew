@@ -17,6 +17,8 @@ namespace Server.Utils
         /// 0.2 load caregivers
         Caregiver[] caregiversArr;
         Location[] knownLocations;
+        Location closestKnownLocation;
+        GeoCoordinate currentLoc;
         Sample latestSample;
         DateTimeOffset sampleTime;
         public static readonly DateTimeOffset emergencyTimeRangeSTART = new DateTimeOffset(new DateTime(0, 0, 0, 1, 0, 0));
@@ -45,6 +47,10 @@ namespace Server.Utils
             LocationController locationController = new LocationController();
             knownLocations = locationController.GetKnownLocationsforPatientID(currentPatientID);
 
+            //set currentLoc and closestKnowLocation
+            currentLoc = new GeoCoordinate(latestSample.Latitude, latestSample.Longitude);
+            closestKnownLocation = AlgoUtils.closestKnownLocation(currentLoc, knownLocations);
+
             //get latest sample time
             sampleTime = latestSample.CreatedAt.Value;
 
@@ -56,18 +62,15 @@ namespace Server.Utils
         }
 
 
-        /// Step B - MONITORING_MODE
-        /// 
-        public AlgoUtils.Status monitorAndAlert(string currentPatientID, Sample latestSample)
+        /// Step B - MONITORING
+        public AlgoUtils.Status monitorAndAlert(string currentPatientID)
         {
             //***************** SETUP *****************//
             bool lessThanHalf = false;
             bool lessThan2 = false;
             bool lessThan5 = false;
             bool lessThan10 = false;
-            GeoCoordinate currentLoc = new GeoCoordinate(latestSample.Latitude, latestSample.Longitude);
 
-            Location closestKnownLocation = AlgoUtils.closestKnownLocation(currentLoc, knownLocations);
             double minDistToKnownLocation = AlgoUtils.calcDist(currentLoc, new GeoCoordinate(closestKnownLocation.Latitude, closestKnownLocation.Longitude));
 
             //get normal time range parameters for closest known location
@@ -103,7 +106,7 @@ namespace Server.Utils
                 return AlgoUtils.Status.Risk;
             }
 
-            else if (lessThan2 || AlgoUtils.isInDensedHeatMapArea(currentLoc) == AlgoUtils.HeatMapDensity.High)
+            else if (lessThan2 || AlgoUtils.heatMapAreaDensityLevel(currentLoc) == AlgoUtils.HeatMapDensity.High)
             {
                 //patient is somewhat close to a known location, not in a dangerous time
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
@@ -124,7 +127,7 @@ namespace Server.Utils
 
 
             }
-            else if (lessThan5 || AlgoUtils.isInDensedHeatMapArea(currentLoc) == AlgoUtils.HeatMapDensity.Medium)
+            else if (lessThan5 || AlgoUtils.heatMapAreaDensityLevel(currentLoc) == AlgoUtils.HeatMapDensity.Medium)
             {
                 //patient is not too far from a known location
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
@@ -141,7 +144,7 @@ namespace Server.Utils
                 }
 
             }
-            else if (lessThan10 || AlgoUtils.isInDensedHeatMapArea(currentLoc) == AlgoUtils.HeatMapDensity.Low)
+            else if (lessThan10 || AlgoUtils.heatMapAreaDensityLevel(currentLoc) == AlgoUtils.HeatMapDensity.Low)
             {
                 //patient is somewhat far from a known location
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
@@ -154,7 +157,7 @@ namespace Server.Utils
                 }
 
             }
-
+            
             //patient is very far from a known location, and in probably ZERO-Density area in heat map
             //patient is possibly lost!
             return AlgoUtils.Status.Risk;
@@ -166,14 +169,19 @@ namespace Server.Utils
             ///         2.4.1.2 else if caregiver marks patient as wandering then enter POSSIBLE_RISK_MODE
 
         }
-
-
         /// **notice: T1>T2>T3**
 
+
+        
+
+
+        ///////////////TO BE CALLED FROM SERVER//////////////
         public void wanderingDetectionAlgo(string currentPatientID)
         {
             preprocessAlgoData(currentPatientID); //update latest sample for our patient & his caregiversArr
-            AlgoUtils.Status patientStatus = monitorAndAlert(currentPatientID, latestSample); //main business logic
+            AlgoUtils.Status patientStatus = monitorAndAlert(currentPatientID); //main business logic
+
+            //Call2Action
             switch (patientStatus)
             {
                 case AlgoUtils.Status.Safety:
