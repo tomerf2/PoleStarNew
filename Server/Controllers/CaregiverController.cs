@@ -34,11 +34,12 @@ namespace Server.Controllers
 
 
         // GET a specific patient's caregivers
-        public IEnumerable<Caregiver> GetCaregiversforPatientID(string patientID)
+        public List<Caregiver> GetCaregiversforPatientID(string patientID)
         {
             MobileServiceContext db = new MobileServiceContext();
             Patient currentPatient = PatientController.GetPatientObject(patientID);
-            var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID).AsEnumerable();
+            //var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID).AsEnumerable();
+            var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID);
 
             Trace.TraceInformation(string.Format("current patient is: {0}"), currentPatient.Id);
             Trace.TraceInformation(string.Format("is current patient the correct one? {0}"), currentPatient.Id == patientID);
@@ -48,7 +49,7 @@ namespace Server.Controllers
             }
             // ArrayList result = new ArrayList(caregiversArr);
 
-            return caregiversArr;
+            return caregiversArr.ToList<Caregiver>();
         }
 
         // PATCH tables/Caregiver/48D68C86-6EA6-4C25-AA33-223FC9A27959
