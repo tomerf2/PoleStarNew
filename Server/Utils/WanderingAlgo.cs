@@ -128,10 +128,12 @@ namespace Server.Utils
                 //time doesn't matter, just make sure heartRate is okay
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
                 {
+                    Trace.TraceInformation(String.Format("less than half, heart is okay - Safety"));
                     return AlgoUtils.Status.Safety;
                 }
                 else
                 {
+                    Trace.TraceInformation(String.Format("less than half, heart is BAD - Distress"));
                     return AlgoUtils.Status.Distress; //potential distress or heart issues
                 }
             }
@@ -139,6 +141,7 @@ namespace Server.Utils
             else if (AlgoUtils.isTimeInSafeRange(sampleTime.Hour) == false)
             {
                 //patient is not close enough to a known location + it's currently the EMERGENCY TIME PERIOD
+                Trace.TraceInformation(String.Format("more than half, EMERGENCY TIME PERIOD - Risk"));
                 return AlgoUtils.Status.Risk;
             }
 
@@ -147,17 +150,20 @@ namespace Server.Utils
                 //patient is somewhat close to a known location, not in a dangerous time
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
                 {
-                    if (AlgoUtils.isTimeInNormalRange(sampleTime.Hour) == false)
+                    if (AlgoUtils.isTimeInNormalRange(sampleTime.Hour))
                     {
+                        Trace.TraceInformation(String.Format("less than 2, normal time, heart is okay - Safety"));
                         return AlgoUtils.Status.Safety;
                     }
                     else
                     {
+                        Trace.TraceInformation(String.Format("less than 2, BAD time, heart is okay - Wandering"));
                         return AlgoUtils.Status.Wandering;
                     }
                 }
                 else
                 {
+                    Trace.TraceInformation(String.Format("less than 2, heart is BAD - Distress"));
                     return AlgoUtils.Status.Distress; //potential distress or heart issues
                 }
 
@@ -171,11 +177,13 @@ namespace Server.Utils
                     if (AlgoUtils.isTimeInNormalRange(sampleTime.Hour) == false
                         || (sampleTime.Hour < avgNormalTimeRange*0.6 || (sampleTime.Hour > avgNormalTimeRange * 1.4)))
                     {
+                        Trace.TraceInformation(String.Format("less than 5, BAD time, heart is okay - Wandering"));
                         return AlgoUtils.Status.Wandering;
                     }
                 }
                 else
                 {
+                    Trace.TraceInformation(String.Format("less than 5, heart is BAD - Distress"));
                     return AlgoUtils.Status.Distress; //potential distress or heart issues
                 }
 
@@ -185,17 +193,20 @@ namespace Server.Utils
                 //patient is somewhat far from a known location
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
                 {
+                    Trace.TraceInformation(String.Format("less than 10, heart is okay - Wandering"));
                     return AlgoUtils.Status.Wandering;
                 }
                 else
                 {
+                    Trace.TraceInformation(String.Format("less than 10, heart is BAD - Distress"));
                     return AlgoUtils.Status.Distress; //potential distress or heart issues
                 }
 
             }
-            
+
             //patient is very far from a known location, and in probably ZERO-Density area in heat map
             //patient is possibly lost!
+            Trace.TraceInformation(String.Format("more than 10 - Risk"));
             return AlgoUtils.Status.Risk;
 
 
