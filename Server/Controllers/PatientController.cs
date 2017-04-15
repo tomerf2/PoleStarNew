@@ -8,6 +8,7 @@ using Server.DataObjects;
 using Server.Models;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Server.Controllers
 {
@@ -38,6 +39,13 @@ namespace Server.Controllers
             MobileServiceContext db = new MobileServiceContext();
             Patient currentPatient = db.Patients.Where(p => p.Id == patientID).FirstOrDefault();
             var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID);
+
+            Trace.TraceInformation(string.Format("current patient is: {0}"), currentPatient.Id);
+            Trace.TraceInformation(string.Format("is current patient the correct one? {0}"), currentPatient.Id == patientID);
+            foreach (var CG in caregiversArr)
+            {
+                Trace.TraceInformation(string.Format("caregiver mail is: {0}"), CG.Email);
+            }
             // ArrayList result = new ArrayList(caregiversArr);
 
             return caregiversArr;
