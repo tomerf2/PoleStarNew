@@ -55,7 +55,7 @@ namespace Server.Utils
             caregiversArr = patientController.GetCaregiversforPatientID(currentPatientID);
             patientName = patientController.GetPatientName(currentPatientID);
             Trace.TraceInformation(String.Format("Patient name is {0}", patientName));
-            Trace.TraceInformation(String.Format("Caregivers array first email is {0}", (caregiversArr.ToArray())[0].Email));
+            Trace.TraceInformation(String.Format("Caregivers array first email is {0}", (caregiversArr.First()).Email));
 
 
             //extract patient's known locations
