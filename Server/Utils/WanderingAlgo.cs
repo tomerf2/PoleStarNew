@@ -70,14 +70,16 @@ namespace Server.Utils
             Trace.TraceInformation(String.Format("Current location is {0}", currentLoc.ToString()));
             Trace.TraceInformation(String.Format("Closest known location is {0}", closestKnownLocation.Description));
 
+
+            Trace.TraceInformation(String.Format("Current world time is {0}", DateTime.Now));
             //get latest sample time
             sampleTime = latestSample.CreatedAt.Value;
             Trace.TraceInformation(String.Format("Latest sample time is {0}", sampleTime));
 
             //get avg patient's HR, and set our limits
             AVG_PATIENT_HR = AlgoUtils.avgHeartRate(currentPatientID);
-            HEART_RATE_BOTTOM_LIMIT = 1.7 * AVG_PATIENT_HR;
-            HEART_RATE_TOP_LIMIT = 0.5 * AVG_PATIENT_HR;
+            HEART_RATE_TOP_LIMIT = 1.7 * AVG_PATIENT_HR;
+            HEART_RATE_BOTTOM_LIMIT = 0.5 * AVG_PATIENT_HR;
             Trace.TraceInformation(String.Format("Avg patient heartrate is {0}", AVG_PATIENT_HR));
             Trace.TraceInformation(String.Format("BottomLimit patient heartrate is {0}", HEART_RATE_BOTTOM_LIMIT));
             Trace.TraceInformation(String.Format("TopLimit patient heartrate is {0}", HEART_RATE_TOP_LIMIT));
@@ -100,7 +102,7 @@ namespace Server.Utils
             Trace.TraceInformation(String.Format("Dist to closest known location is {0}", minDistToKnownLocation));
 
             //get normal time range parameters for closest known location
-            int[] timeRangeParameters = AlgoUtils.getSafeTimeRangeForLocation(closestKnownLocation, currentPatientID);
+            int[] timeRangeParameters = AlgoUtils.getSafeTimeRangeForLocation(latestSample, currentPatientID);
             bottomNormalTimeRange = timeRangeParameters[0];
             topNormalTimeRange = timeRangeParameters[1];
             avgNormalTimeRange = timeRangeParameters[2];

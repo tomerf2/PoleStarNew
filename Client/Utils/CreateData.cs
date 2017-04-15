@@ -64,10 +64,10 @@ namespace PoleStar.Utils
             //createGroup("group1", "the tigers", "123456789");
             //createPatient("patient1", "John Smith", "oldjohn@gmail.com", "123456789", "group1");
 
-            //createCaregiver("caregiver1", "tomerfried@gmail.com", "123456789", "group1");
-            //createCaregiver("caregiver2", "guygrin@gmail.com", "123456789", "group1");
-            //createCaregiver("caregiver3", "benliv@gmail.com", "123456789", "group1");
-            //createCaregiver("caregiver4", "yehudaaf@gmail.com", "123456789", "group1");
+            //createCaregiver("caregiver10", "tomerfried@gmail.com", "123456789", "5c8802bd-a002-4a54-90e3-a45b0aa61694");
+            //createCaregiver("caregiver20", "guygrin@gmail.com", "123456789", "5c8802bd-a002-4a54-90e3-a45b0aa61694");
+            //createCaregiver("caregiver30", "benliv@gmail.com", "123456789", "5c8802bd-a002-4a54-90e3-a45b0aa61694");
+            //createCaregiver("caregiver40", "yehudaaf@gmail.com", "123456789", "5c8802bd-a002-4a54-90e3-a45b0aa61694");
 
             //createLocation("location1", "46ab7b52-f38d-47c6-9c2c-696d590d3da1", (float)32.087675, (float)34.782371, "home, ibn gabirol 130, TA", 75);
             //createLocation("location2", "46ab7b52-f38d-47c6-9c2c-696d590d3da1", (float)32.089471, (float)34.782750, "doctor, ibn gabirol 150, TA", 89);
