@@ -43,7 +43,8 @@ namespace Server.Utils
             Safety,
             Wandering,
             Distress,
-            Risk
+            Risk,
+            ConnectionLost
         }
 
         public enum HeatMapDensity
@@ -63,6 +64,8 @@ namespace Server.Utils
         public static double avgHeartRate(string currentPatientID)
         {
             MobileServiceContext db = new MobileServiceContext();
+            
+            //TODO: take first 1000
             Sample[] samplesArr = db.Samples.Where(p => p.PatientID == currentPatientID).ToArray();
             double totalSum = 0;
             totalSum = samplesArr.Sum(p => p.HeartRate);
@@ -84,8 +87,8 @@ namespace Server.Utils
 
         public static bool isTimeInSafeRange(int currentHour)
         {
-            if (currentHour < WanderingAlgo.emergencyTimeRangeSTART.Hour
-                && currentHour > WanderingAlgo.emergencyTimeRangeEND.Hour)
+            if (currentHour < WanderingAlgo.emergencyTimeRangeSTART
+                && currentHour > WanderingAlgo.emergencyTimeRangeEND)
             {
                 return true;
             }
@@ -99,9 +102,9 @@ namespace Server.Utils
         {
             MobileServiceContext db = new MobileServiceContext();
             Sample[] samplesArr = db.Samples.Where(p => p.PatientID == currentPatientID).ToArray();
-            int bottomLimit = (int)samplesArr.Min(p => p.CreatedAt.Value.Hour);
-            int topLimit = (int)samplesArr.Max(p => p.CreatedAt.Value.Hour);
-            int averageHour = (int)samplesArr.Average(p => p.CreatedAt.Value.Hour);
+            int bottomLimit = samplesArr.Min(p => p.CreatedAt.Value.Hour);
+            int topLimit = samplesArr.Max(p => p.CreatedAt.Value.Hour);
+            int averageHour = (int) samplesArr.Average(p => p.CreatedAt.Value.Hour);
             int[] result = { bottomLimit, topLimit, averageHour };
             return (result);
         }
