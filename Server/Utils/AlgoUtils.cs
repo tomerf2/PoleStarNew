@@ -61,7 +61,7 @@ namespace Server.Utils
         public static AlgoUtils.HeatMapDensity heatMapAreaDensityLevel(GeoCoordinate currentLoc)
         {
             //TODO: check if currentLoc is in a desned area on heat map or not
-            return AlgoUtils.HeatMapDensity.High;
+            return AlgoUtils.HeatMapDensity.Zero;
         }
 
         public static double avgHeartRate(string currentPatientID)
