@@ -30,6 +30,16 @@ namespace Server.Controllers
             return Lookup(id);
         }
 
+        // GET a specific patient's caregivers
+        public Caregiver[] GetCaregiversforPatientID(string patientID)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            Patient currentPatient = db.Patients.Where(p => p.Id == patientID).FirstOrDefault();
+            Caregiver[] caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID).ToArray();
+
+            return caregiversArr;
+        }
+
         // PATCH tables/Patient/48D68C86-6EA6-4C25-AA33-223FC9A27959
         public Task<Patient> PatchPatient(string id, Delta<Patient> patch)
         {

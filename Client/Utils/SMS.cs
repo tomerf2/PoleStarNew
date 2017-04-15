@@ -7,8 +7,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 //using SDKTemplate;
-using System;
-using System.Collections.Generic;
 using Windows.Devices.Sms;
 
 namespace PoleStar.Utils
