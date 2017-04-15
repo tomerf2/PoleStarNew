@@ -9,6 +9,7 @@ using Server.Controllers;
 using Server.Utils;
 using System.Device.Location;
 using System.Diagnostics;
+using Server.Hubs;
 
 namespace Server.Utils
 {
@@ -16,51 +17,68 @@ namespace Server.Utils
     {
         /// 0.1 load all data on patient
         /// 0.2 load caregivers
-        public static Caregiver[] caregiversArr;
-        public static Location[] knownLocations;
-        public static Location closestKnownLocation;
-        public static GeoCoordinate currentLoc;
-        public static Sample latestSample;
-        public static DateTimeOffset sampleTime;
-        public static readonly DateTimeOffset emergencyTimeRangeSTART = new DateTimeOffset(new DateTime(0, 0, 0, 1, 0, 0));
-        public static readonly DateTimeOffset emergencyTimeRangeEND = new DateTimeOffset(new DateTime(0, 0, 0, 6, 0, 0));
+        Caregiver[] caregiversArr;
+        Location[] knownLocations;
+        Location closestKnownLocation;
+        GeoCoordinate currentLoc;
+        Sample latestSample;
+        DateTimeOffset sampleTime;
+        public static readonly int emergencyTimeRangeSTART = 1;
+        public static readonly int emergencyTimeRangeEND = 6;
+        public readonly int CONNECTION_LOST_TIME_DIF = 2;
         double AVG_PATIENT_HR;
         public static double HEART_RATE_BOTTOM_LIMIT;
         public static double HEART_RATE_TOP_LIMIT;
         public static int bottomNormalTimeRange;
         public static int topNormalTimeRange;
         public static double avgNormalTimeRange;
-
+        public static string patientName;
+        public static NotificationHub notificationHub = new NotificationHub();
 
 
 
         /// Step A - PREPROCESS
         public void preprocessAlgoData(string currentPatientID)
         {
+            Trace.TraceInformation(String.Format("Current PatientID is {0}", currentPatientID));
+
             /// 1. Get latest sample
             SampleController sampleController = new SampleController();
             latestSample = sampleController.GetLatestSampleForPatient(currentPatientID);
-
+            Trace.TraceInformation(String.Format("Latest simple is {0}", latestSample));
 
             //insert caregivers to caregiversArr
             PatientController patientController = new PatientController();
             caregiversArr = patientController.GetCaregiversforPatientID(currentPatientID);
+            patientName = patientController.GetPatientName(currentPatientID);
+            Trace.TraceInformation(String.Format("Patient name is {0}", patientName));
+            Trace.TraceInformation(String.Format("Caregivers array is {0}", caregiversArr));
+
 
             //extract patient's known locations
             LocationController locationController = new LocationController();
             knownLocations = locationController.GetKnownLocationsforPatientID(currentPatientID);
+            Trace.TraceInformation(String.Format("Known locations are {0}", knownLocations));
 
             //set currentLoc and closestKnowLocation
             currentLoc = new GeoCoordinate(latestSample.Latitude, latestSample.Longitude);
             closestKnownLocation = AlgoUtils.closestKnownLocation(currentLoc, knownLocations);
+            Trace.TraceInformation(String.Format("Current location is {0}", currentLoc));
+            Trace.TraceInformation(String.Format("Closest known location is {0}", closestKnownLocation));
 
             //get latest sample time
             sampleTime = latestSample.CreatedAt.Value;
+            Trace.TraceInformation(String.Format("Latest sample time is {0}", sampleTime));
 
             //get avg patient's HR, and set our limits
             AVG_PATIENT_HR = AlgoUtils.avgHeartRate(currentPatientID);
             HEART_RATE_BOTTOM_LIMIT = 1.7 * AVG_PATIENT_HR;
             HEART_RATE_TOP_LIMIT = 0.5 * AVG_PATIENT_HR;
+            Trace.TraceInformation(String.Format("Avg patient heartrate is {0}", AVG_PATIENT_HR));
+            Trace.TraceInformation(String.Format("BottomLimit patient heartrate is {0}", HEART_RATE_BOTTOM_LIMIT));
+            Trace.TraceInformation(String.Format("TopLimit patient heartrate is {0}", HEART_RATE_TOP_LIMIT));
+
+
 
         }
 
@@ -75,12 +93,16 @@ namespace Server.Utils
             bool lessThan10 = false;
 
             double minDistToKnownLocation = AlgoUtils.calcDist(currentLoc, new GeoCoordinate(closestKnownLocation.Latitude, closestKnownLocation.Longitude));
+            Trace.TraceInformation(String.Format("Dist to closest known location is {0}", minDistToKnownLocation));
 
             //get normal time range parameters for closest known location
             int[] timeRangeParameters = AlgoUtils.getSafeTimeRangeForLocation(closestKnownLocation, currentPatientID);
             bottomNormalTimeRange = timeRangeParameters[0];
             topNormalTimeRange = timeRangeParameters[1];
             avgNormalTimeRange = timeRangeParameters[2];
+            Trace.TraceInformation(String.Format("bottom normal time range is {0}", bottomNormalTimeRange));
+            Trace.TraceInformation(String.Format("top normal time range is {0}", topNormalTimeRange));
+            Trace.TraceInformation(String.Format("avg normal time range is {0}", avgNormalTimeRange));
 
             if (minDistToKnownLocation <= 10) lessThan10 = true;
             if (minDistToKnownLocation <= 5) lessThan5 = true;
@@ -88,6 +110,11 @@ namespace Server.Utils
             if (minDistToKnownLocation <= 0.5) lessThanHalf = true;
 
             //*****************************************//
+
+            if ((DateTime.Now.Hour - sampleTime.Hour) > CONNECTION_LOST_TIME_DIF)
+            {
+                return AlgoUtils.Status.ConnectionLost;
+            }
 
 
             if (lessThanHalf) //patient is very close to a known location
@@ -181,21 +208,29 @@ namespace Server.Utils
         ///////////////TO BE CALLED FROM SERVER//////////////
         public void wanderingDetectionAlgo(string currentPatientID)
         {
+            Trace.AutoFlush = true;
 
             preprocessAlgoData(currentPatientID); //update latest sample for our patient & his caregiversArr
+            Trace.TraceInformation(String.Format("Preprocess stage is finished"));
+
             AlgoUtils.Status patientStatus = monitorAndAlert(currentPatientID); //main business logic
+            Trace.TraceInformation(String.Format("Monitor and alert stage is done"));
+            Trace.TraceInformation(String.Format("Patient status is {0}", patientStatus));
+
 
             //Call2Action
             switch (patientStatus)
             {
                 case AlgoUtils.Status.Safety:
                     {
+                        Trace.TraceInformation(String.Format("Patient is Safe, doing safe stuff"));
                         //TODO:SAFETY stuff
                         break;
                     }
 
                 case AlgoUtils.Status.Wandering:
                     {
+                        Trace.TraceInformation(String.Format("Patient is Wandering, doing wandering stuff"));
                         
                         AlgoUtils.sendWanderingNotification();
                         //TODO:WANDERING stuff
@@ -212,6 +247,7 @@ namespace Server.Utils
                 case AlgoUtils.Status.Distress:
                     {
                         AlgoUtils.sendDistressNotification();
+                        Trace.TraceInformation(String.Format("Patient is in Distress, doing distress stuff"));
                         //TODO:DISTRESS stuff
                         /// Step D - POSSIBLE_DISTRESS_MODE
                         /// 1. send PUSH to caregiver - "Your beloved John is currently at (sample.location)?
@@ -225,6 +261,7 @@ namespace Server.Utils
                 case AlgoUtils.Status.Risk:
                     {
                         AlgoUtils.sendRiskNotification();
+                        Trace.TraceInformation(String.Format("Patient is at Risk, doing risk stuff"));
                         //TODO:RISK stuff
                         /// Step E - POSSIBLE_RISK_MODE
                         /// 1. Speed up sample rate (?) - every 1-3 minutes
@@ -233,6 +270,12 @@ namespace Server.Utils
                         /// 4. Open patient's microphone and transmit to caregivers
                         /// 5. Make alarm sounds - "I need help" - so passbyers can quickly assist (?)
                         /// 6. When caregiver hits "I'm safe" button - enter MONITORING_MODE (can also mark I'm safe remotely?)
+                        break;
+                    }
+                case AlgoUtils.Status.ConnectionLost:
+                    {
+                        Trace.TraceInformation(String.Format("Patient has lost connection, doing connection lost stuff"));
+                        //TODO: connectionLost stuff
                         break;
                     }
             }
