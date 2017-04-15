@@ -38,19 +38,8 @@ namespace Server.Controllers
         {
             MobileServiceContext db = new MobileServiceContext();
             Patient currentPatient = PatientController.GetPatientObject(patientID);
-            //var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID).AsEnumerable();
             var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID);
-
-            Trace.TraceInformation(string.Format("current patient is: {0}"), currentPatient.Id);
-            Trace.Flush();
-            Trace.TraceInformation(string.Format("is current patient the correct one? {0}"), currentPatient.Id == patientID);
-            Trace.Flush();
-            foreach (var CG in caregiversArr)
-            {
-                Trace.TraceInformation(string.Format("caregiver mail is: {0}"), CG.Email);
-                Trace.Flush();
-            }
-            // ArrayList result = new ArrayList(caregiversArr);
+            Trace.TraceInformation("Number of caregivers found: {0}", caregiversArr.Count()); 
 
             return caregiversArr.ToList<Caregiver>();
         }
