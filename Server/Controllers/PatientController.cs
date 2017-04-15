@@ -6,6 +6,7 @@ using System.Web.Http.OData;
 using Microsoft.Azure.Mobile.Server;
 using Server.DataObjects;
 using Server.Models;
+using System.Collections;
 
 namespace Server.Controllers
 {
@@ -31,13 +32,14 @@ namespace Server.Controllers
         }
 
         // GET a specific patient's caregivers
-        public Caregiver[] GetCaregiversforPatientID(string patientID)
+        public ArrayList GetCaregiversforPatientID(string patientID)
         {
             MobileServiceContext db = new MobileServiceContext();
             Patient currentPatient = db.Patients.Where(p => p.Id == patientID).FirstOrDefault();
             Caregiver[] caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID).ToArray();
+            ArrayList result = new ArrayList(caregiversArr);
 
-            return caregiversArr;
+            return result;
         }
 
         // GET a specific patient's name

@@ -10,6 +10,7 @@ using Server.Utils;
 using System.Device.Location;
 using System.Diagnostics;
 using Server.Hubs;
+using System.Collections;
 
 namespace Server.Utils
 {
@@ -17,7 +18,8 @@ namespace Server.Utils
     {
         /// 0.1 load all data on patient
         /// 0.2 load caregivers
-        public static Caregiver[] caregiversArr;
+        //public static Caregiver[] caregiversArr;
+        public static ArrayList caregiversArr;
         public static Location[] knownLocations;
         public static Location closestKnownLocation;
         public static GeoCoordinate currentLoc;
@@ -46,26 +48,26 @@ namespace Server.Utils
             /// 1. Get latest sample
             SampleController sampleController = new SampleController();
             latestSample = sampleController.GetLatestSampleForPatient(currentPatientID);
-            Trace.TraceInformation(String.Format("Latest simple is {0}", latestSample));
+            Trace.TraceInformation(String.Format("Latest sample timestamp is {0}", latestSample.CreatedAt));
 
             //insert caregivers to caregiversArr
             PatientController patientController = new PatientController();
             caregiversArr = patientController.GetCaregiversforPatientID(currentPatientID);
             patientName = patientController.GetPatientName(currentPatientID);
             Trace.TraceInformation(String.Format("Patient name is {0}", patientName));
-            Trace.TraceInformation(String.Format("Caregivers array is {0}", caregiversArr));
+            Trace.TraceInformation(String.Format("Caregivers array first email is {0}", ((Caregiver)caregiversArr[0]).Email));
 
 
             //extract patient's known locations
             LocationController locationController = new LocationController();
             knownLocations = locationController.GetKnownLocationsforPatientID(currentPatientID);
-            Trace.TraceInformation(String.Format("Known locations are {0}", knownLocations));
+            Trace.TraceInformation(String.Format("First known location is {0}", knownLocations[0].Description));
 
             //set currentLoc and closestKnowLocation
             currentLoc = new GeoCoordinate(latestSample.Latitude, latestSample.Longitude);
             closestKnownLocation = AlgoUtils.closestKnownLocation(currentLoc, knownLocations);
-            Trace.TraceInformation(String.Format("Current location is {0}", currentLoc));
-            Trace.TraceInformation(String.Format("Closest known location is {0}", closestKnownLocation));
+            Trace.TraceInformation(String.Format("Current location is {0}", currentLoc.ToString()));
+            Trace.TraceInformation(String.Format("Closest known location is {0}", closestKnownLocation.Description));
 
             //get latest sample time
             sampleTime = latestSample.CreatedAt.Value;

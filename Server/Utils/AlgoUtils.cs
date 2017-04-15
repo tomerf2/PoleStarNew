@@ -129,7 +129,7 @@ namespace Server.Utils
             string patientName = WanderingAlgo.patientName;
             foreach (var caregiver in WanderingAlgo.caregiversArr)
             {
-                WanderingAlgo.notificationHub.sendNotificationToCareGivers(caregiver.Id, patientName, Status.Wandering);
+                WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Wandering);
             }
             WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, patientName, Status.Wandering);
         }
@@ -139,7 +139,7 @@ namespace Server.Utils
             string patientName = WanderingAlgo.patientName;
             foreach (var caregiver in WanderingAlgo.caregiversArr)
             {
-                WanderingAlgo.notificationHub.sendNotificationToCareGivers(caregiver.Id, patientName, Status.Risk);
+                WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Risk);
             }
             WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, patientName, Status.Risk);
         }
@@ -148,7 +148,7 @@ namespace Server.Utils
             string patientName = WanderingAlgo.patientName;
             foreach (var caregiver in WanderingAlgo.caregiversArr)
             {
-                WanderingAlgo.notificationHub.sendNotificationToCareGivers(caregiver.Id, patientName, Status.Distress);
+                WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Distress);
             }
             WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, patientName, Status.Distress);
         }
@@ -158,7 +158,7 @@ namespace Server.Utils
             string patientName = WanderingAlgo.patientName;
             foreach (var caregiver in WanderingAlgo.caregiversArr)
             {
-                WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(caregiver.Id, patientName);
+                WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(((Caregiver)caregiver).Id, patientName);
             }
         }
     }
