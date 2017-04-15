@@ -54,7 +54,7 @@ namespace Server.Utils
             Zero
         }
 
-        public static AlgoUtils.HeatMapDensity isInDensedHeatMapArea(GeoCoordinate currentLoc)
+        public static AlgoUtils.HeatMapDensity heatMapAreaDensityLevel(GeoCoordinate currentLoc)
         {
             //TODO: check if currentLoc is in a desned area on heat map or not
             return AlgoUtils.HeatMapDensity.High;
