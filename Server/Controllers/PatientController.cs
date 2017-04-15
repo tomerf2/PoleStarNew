@@ -38,7 +38,7 @@ namespace Server.Controllers
         {
             MobileServiceContext db = new MobileServiceContext();
             Patient currentPatient = db.Patients.Where(p => p.Id == patientID).FirstOrDefault();
-            var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID);
+            var caregiversArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID).AsEnumerable();
 
             Trace.TraceInformation(string.Format("current patient is: {0}"), currentPatient.Id);
             Trace.TraceInformation(string.Format("is current patient the correct one? {0}"), currentPatient.Id == patientID);
