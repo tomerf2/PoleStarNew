@@ -23,7 +23,6 @@ using PoleStar.DataModel;
 using Windows.System.Threading;
 using Windows.UI.Core;
 using Windows.UI.Popups;
-using Microsoft.AspNet.SignalR.Client;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -40,10 +39,6 @@ namespace PoleStar.Views
 #endif
 
 
-     private MobileServiceUser user;
-     private HubConnection hubConnection;
-    private static Uri serverUri = new Uri("https://ebuddyapp.azurewebsites.net");
-
         static BandManager bandInstance;
         Measurements measurements;
         int SendRateMinutes = 2;
@@ -55,7 +50,6 @@ namespace PoleStar.Views
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            //samples = await sampleTable.ToCollectionAsync();
             bandInstance = new BandManager();
             await bandInstance.BandInit();
             measurements = new Measurements();
@@ -78,17 +72,10 @@ namespace PoleStar.Views
 
             //await PoleStar.Utils.Notifications.initHubConnection();
 
-            int i = 5; //do i get here?
-
-            //await ConnectToSignalR();
             await Notifications.initHubConnection();
 
-   
 
-
-
-
-        }
+    }
 
         private async Task InsertSample()
         {
@@ -130,30 +117,11 @@ namespace PoleStar.Views
         {
             
         }
+
+        private async void buttonMeasure_Click(object sender, RoutedEventArgs e)
+        {
+            await measurements.GetAllMeasurements(bandInstance);
+            await InsertSample();
+        }
     }
 }
-
-
-
-//private async Task ConnectToSignalR()
-//{
-
-//hubConnection = new HubConnection(App.MobileService.MobileAppUri.AbsoluteUri);//App.MobileService.MobileAppUri.AbsoluteUri);
-
-//IHubProxy proxy = hubConnection.CreateHubProxy("NotificationHub");
-//await hubConnection.Start();
-
-//string result = await proxy.Invoke<string>("Send", "Hello World!");
-//var invokeDialog = new MessageDialog(result);
-//await invokeDialog.ShowAsync();
-
-//proxy.On<string>("hello", async msg =>
-//{
-//    await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-//    {
-//        var callbackDialog = new MessageDialog(msg);
-//        callbackDialog.Commands.Add(new UICommand("OK"));
-//        await callbackDialog.ShowAsync();
-//    });
-//});
-//}
