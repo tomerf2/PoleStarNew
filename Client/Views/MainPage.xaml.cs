@@ -49,6 +49,8 @@ namespace PoleStar.Views
             //Example Patient Data
             //StoredData.storePatientData("Patient Guid", "Password");
 
+            //CreateData.createAndInsertData(); //FOR TESTING
+
             if (StoredData.checkForPreviousLogin()) //also loads user data, if found
             {
                 if (StoredData.isCaregiver())
