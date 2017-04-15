@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Windows.UI;
 using Microsoft.AspNet.SignalR.Client;
 using PoleStar;
+using Microsoft.WindowsAzure.MobileServices;
+using PoleStar.DataModel;
 
 
 namespace PoleStar.Utils
@@ -41,6 +43,10 @@ namespace PoleStar.Utils
             NotificationHubProxy.On<string>("receiveDistressAlert", OnDistressAlert);
             NotificationHubProxy.On<string>("receiveConnectionLostAlert", OnLostConnAlert);
 
+            NotificationHubProxy.On<string>("receiveWanderingSMS", OnWanderingSMSAlert);
+            NotificationHubProxy.On<string>("receiveDistressSMS", OnDistressSMSAlert);
+            NotificationHubProxy.On<string>("receiveRiskSMS", OnRiskSMSAlert);
+
 
             //register
             await NotificationHubProxy.Invoke("Register", Utils.StoredData.getUserGUID());
@@ -66,6 +72,28 @@ namespace PoleStar.Utils
         {
             DialogBox.ShowOk("Distress", "PoleStar detects that " + patientName + " is in distress. Please check the PoleStar app for more details");
         }
+
+        private static void OnWanderingSMSAlert(string patientName)
+        {
+            string message = string.Format(
+                "PoleStar detects that {0} is at risk of wandering. Please check the PoleStar app for more details",
+                patientName);
+        }
+
+        private static void OnDistressSMSAlert(string patientName)
+        {
+            string message = string.Format(
+                "PoleStar detects that {0} is at risk of wandering. Please check the PoleStar app for more details",
+                patientName);
+        }
+
+        private static void OnRiskSMSAlert(string patientName)
+        {
+            string message = string.Format(
+                "PoleStar detects that {0} is at risk of wandering. Please check the PoleStar app for more details",
+                patientName);
+        }
+
         private static void OnLostConnAlert(string patientName)
         {
             DialogBox.ShowOk("Lost Connection", "PoleStar lost connection with " + patientName + ". Please check the PoleStar app for " + patientName + "'s last known location");

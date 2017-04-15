@@ -17,12 +17,12 @@ namespace Server.Utils
     {
         /// 0.1 load all data on patient
         /// 0.2 load caregivers
-        Caregiver[] caregiversArr;
-        Location[] knownLocations;
-        Location closestKnownLocation;
-        GeoCoordinate currentLoc;
-        Sample latestSample;
-        DateTimeOffset sampleTime;
+        public static Caregiver[] caregiversArr;
+        public static Location[] knownLocations;
+        public static Location closestKnownLocation;
+        public static GeoCoordinate currentLoc;
+        public static Sample latestSample;
+        public static DateTimeOffset sampleTime;
         public static readonly int emergencyTimeRangeSTART = 1;
         public static readonly int emergencyTimeRangeEND = 6;
         public readonly int CONNECTION_LOST_TIME_DIF = 2;
@@ -33,6 +33,7 @@ namespace Server.Utils
         public static int topNormalTimeRange;
         public static double avgNormalTimeRange;
         public static string patientName;
+        public static string patientID;
         public static NotificationHub notificationHub = new NotificationHub();
 
 
@@ -209,7 +210,7 @@ namespace Server.Utils
         public void wanderingDetectionAlgo(string currentPatientID)
         {
             Trace.AutoFlush = true;
-
+            patientID = currentPatientID;
             preprocessAlgoData(currentPatientID); //update latest sample for our patient & his caregiversArr
             Trace.TraceInformation(String.Format("Preprocess stage is finished"));
 

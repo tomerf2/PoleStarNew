@@ -27,10 +27,12 @@ namespace Server.Hubs
                 mapUidToConnection.TryRemove(ID, out deadConnectionId);
                 mapUidToConnection[ID] = ConnID;
                 Trace.TraceInformation(String.Format("Added user: {0} connectionId {1}", ID, mapUidToConnection[ID]));
+                Trace.Flush();
             }
             catch (Exception e)
             {
                 Trace.TraceError("Registration of " + ID + " failed: " + e.Message);
+                Trace.Flush();
             }
 
         }

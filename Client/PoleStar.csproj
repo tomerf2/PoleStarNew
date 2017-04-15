@@ -107,9 +107,6 @@
     <Compile Include="DataModel\Patient.cs" />
     <Compile Include="DataModel\Sample.cs" />
     <Compile Include="DataModel\TodoItem.cs" />
-    <Compile Include="MainPage2.xaml.cs">
-      <DependentUpon>MainPage2.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\CreateData.cs" />
     <Compile Include="Utils\Crypto.cs" />
@@ -166,10 +163,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Common\QuickStartTask.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="MainPage2.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
