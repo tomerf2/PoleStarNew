@@ -40,6 +40,15 @@ namespace Server.Controllers
             return caregiversArr;
         }
 
+        // GET a specific patient's name
+        public string GetPatientName(string patientID)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            string result = db.Patients.Where(p => p.Id == patientID).FirstOrDefault().Name;
+
+            return result;
+        }
+
         // PATCH tables/Patient/48D68C86-6EA6-4C25-AA33-223FC9A27959
         public Task<Patient> PatchPatient(string id, Delta<Patient> patch)
         {
