@@ -21,6 +21,8 @@ using Microsoft.WindowsAzure.MobileServices;
 using PoleStar.DataModel;
 using Windows.System.Threading;
 using Windows.UI.Core;
+using Windows.UI.Popups;
+using Microsoft.AspNet.SignalR.Client;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -35,6 +37,11 @@ namespace PoleStar.Views
 #else
         private IMobileServiceTable<Sample> sampleTable = App.MobileService.GetTable<Sample>();
 #endif
+
+
+     private MobileServiceUser user;
+     private HubConnection hubConnection;
+    private static Uri serverUri = new Uri("https://ebuddyapp.azurewebsites.net");
 
         static BandManager bandInstance;
         Measurements measurements;
@@ -57,16 +64,28 @@ namespace PoleStar.Views
 
             TimeSpan period = TimeSpan.FromMinutes(SendRateMinutes);
 
-            ThreadPoolTimer PeriodicTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
-            {
-                await Dispatcher.RunAsync(CoreDispatcherPriority.High,
-                    async () =>
-                    {
-                        await measurements.GetAllMeasurements(bandInstance);
-                        await InsertSample();
-                    });
+            //ThreadPoolTimer PeriodicTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+            //{
+            //    await Dispatcher.RunAsync(CoreDispatcherPriority.High,
+            //        async () =>
+            //        {
+            //            await measurements.GetAllMeasurements(bandInstance);
+            //            await InsertSample();
+            //        });
 
-            }, period);
+            //}, period);
+
+            //await PoleStar.Utils.Notifications.initHubConnection();
+
+            int i = 5; //do i get here?
+
+            //await ConnectToSignalR();
+            await Notifications.initHubConnection();
+
+   
+
+
+
 
         }
 
@@ -89,6 +108,7 @@ namespace PoleStar.Views
             await sampleTable.InsertAsync(sample);
 
 
+
 #if OFFLINE_SYNC_ENABLED
             await App.MobileService.SyncContext.PushAsync(); // offline sync
 #endif
@@ -97,13 +117,42 @@ namespace PoleStar.Views
         private async void btnAssist_Click(object sender, RoutedEventArgs e)
         {
 
-            //await measurements.GetAllMeasurements(bandInstance);
+            await measurements.GetAllMeasurements(bandInstance);
             await InsertSample();
         }
 
         private void Grid_Loaded(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            
+        }
+
+
+        private async Task ConnectToSignalR()
+        {
+            
+            hubConnection = new HubConnection(App.MobileService.MobileAppUri.AbsoluteUri);//App.MobileService.MobileAppUri.AbsoluteUri);
+
+            IHubProxy proxy = hubConnection.CreateHubProxy("NotificationHub");
+            await hubConnection.Start();
+
+            string result = await proxy.Invoke<string>("Send", "Hello World!");
+            var invokeDialog = new MessageDialog(result);
+            await invokeDialog.ShowAsync();
+
+            proxy.On<string>("hello", async msg =>
+            {
+                await this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                {
+                    var callbackDialog = new MessageDialog(msg);
+                    callbackDialog.Commands.Add(new UICommand("OK"));
+                    await callbackDialog.ShowAsync();
+                });
+            });
         }
     }
 }
