@@ -219,6 +219,9 @@ namespace Server.Utils
             {
                 WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(((Caregiver)caregiver).Id, patientName);
             }
+            //FOR TESING ---------------- TODO: DELETE ----------------
+            WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(WanderingAlgo.patientID, patientName);
+            // ------------------------------------------------------------------------------------
         }
 
         public static List<Sample> getGeoNearSamples(Sample latestSample)
@@ -241,9 +244,7 @@ namespace Server.Utils
 
             return relevantSamples;
         }
-            //FOR TESING ---------------- TODO: DELETE ----------------
-            WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(WanderingAlgo.patientID, patientName);
-            // ------------------------------------------------------------------------------------
+
     }
-    }
+    
 }
