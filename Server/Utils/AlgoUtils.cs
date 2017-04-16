@@ -47,7 +47,8 @@ namespace Server.Utils
             Wandering,
             Distress,
             Risk,
-            ConnectionLost
+            ConnectionLost,
+            NeedsAssistance //help button pressed
         }
 
         public enum HeatMapDensity
@@ -174,8 +175,13 @@ namespace Server.Utils
             foreach (var caregiver in WanderingAlgo.caregiversArr)
             {
                 WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Wandering);
+                //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Wandering);
             }
-            WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, patientName, Status.Wandering);
+            
+
+            //FOR TESING ---------------- TODO: DELETE ----------------
+            WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Wandering);
+            // ------------------------------------------------------------------------------------
         }
 
         public static void sendRiskNotification()
@@ -184,8 +190,12 @@ namespace Server.Utils
             foreach (var caregiver in WanderingAlgo.caregiversArr)
             {
                 WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Risk);
+                //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Risk);
             }
-            WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, patientName, Status.Risk);
+
+            //FOR TESING ---------------- TODO: DELETE ----------------
+            WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Risk);
+            // ------------------------------------------------------------------------------------
         }
         public static void sendDistressNotification()
         {
@@ -193,8 +203,13 @@ namespace Server.Utils
             foreach (var caregiver in WanderingAlgo.caregiversArr)
             {
                 WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Distress);
+                //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Distress);
             }
-            WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, patientName, Status.Distress);
+
+
+            //FOR TESING ---------------- TODO: DELETE ----------------
+            WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Distress);
+            // ------------------------------------------------------------------------------------
         }
 
         public static void sendLostConnNotification()
@@ -226,5 +241,9 @@ namespace Server.Utils
 
             return relevantSamples;
         }
+            //FOR TESING ---------------- TODO: DELETE ----------------
+            WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(WanderingAlgo.patientID, patientName);
+            // ------------------------------------------------------------------------------------
+    }
     }
 }
