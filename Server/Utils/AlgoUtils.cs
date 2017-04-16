@@ -60,20 +60,61 @@ namespace Server.Utils
 
         public static AlgoUtils.HeatMapDensity heatMapAreaDensityLevel(GeoCoordinate currentLoc)
         {
-            //TODO: check if currentLoc is in a desned area on heat map or not
-            return AlgoUtils.HeatMapDensity.Zero;
+            MobileServiceContext db = new MobileServiceContext();
+
+            //take samples from closeDistance (parameter)
+            List<Sample> closeDistanceSamples = getGeoNearSamples(WanderingAlgo.latestSample);
+            //take last 300 samples of current patient regardless of location
+            Sample[] samplesArr = db.Samples.Where(p => p.PatientID == WanderingAlgo.latestSample.PatientID).OrderByDescending(p => p.CreatedAt).Take(300).ToArray();
+
+            double densityRatio = (closeDistanceSamples.Count / samplesArr.Length);
+
+            if (densityRatio < 0.1)
+            {
+                return AlgoUtils.HeatMapDensity.Zero;
+            }
+            else if (densityRatio < 0.25)
+            {
+                return AlgoUtils.HeatMapDensity.Low;
+            }
+            else if (densityRatio < 0.45)
+            {
+                return AlgoUtils.HeatMapDensity.Medium;
+            }
+            else //densityRatio is over 45%, very high!
+            {
+                return AlgoUtils.HeatMapDensity.High;
+            }
         }
 
         public static double avgHeartRate(string currentPatientID)
         {
             MobileServiceContext db = new MobileServiceContext();
-            
-            //TODO: take first 1000
-            Sample[] samplesArr = db.Samples.Where(p => p.PatientID == currentPatientID).ToArray();
+            bool enoughNearSamples = false;
             double totalSum = 0;
-            totalSum = samplesArr.Sum(p => p.HeartRate);
+            int count = 0;
 
-            return (totalSum / samplesArr.Length); //avgHR of patient
+            List<Sample> closeDistanceSamples = getGeoNearSamples(WanderingAlgo.latestSample);
+            if (closeDistanceSamples.Count > 10)
+            {
+                enoughNearSamples = true;
+            }
+
+            if (enoughNearSamples)
+            {
+                totalSum = closeDistanceSamples.Sum(p => p.HeartRate);
+                count = closeDistanceSamples.Count;
+            }
+            else //use last 300 samples, regardless their GeoLocation
+            {
+                //take last 300 samples of current patient
+                Sample[] samplesArr = db.Samples.Where(p => p.PatientID == currentPatientID).OrderByDescending(p => p.CreatedAt).Take(300).ToArray();
+                totalSum = samplesArr.Sum(p => p.HeartRate);
+                count = samplesArr.Length;
+            }
+
+
+            return (totalSum / count); //avgHR of patient
         }
 
         public static bool isHeartRateInSafeRange(double currentHR)
@@ -103,22 +144,9 @@ namespace Server.Utils
 
         public static int[] getSafeTimeRangeForLocation(Sample latestSample, string currentPatientID)
         {
-            //calcs the safe time range for current sample, according to past samples from 0.3 KM away!!//
-            MobileServiceContext db = new MobileServiceContext();
-            Sample[] samplesArr = db.Samples.Where(p => p.PatientID == currentPatientID).ToArray();
-            List<Sample> relevantSamples = new List<Sample>();
-            GeoCoordinate latestSampleLoc = new GeoCoordinate(latestSample.Latitude, latestSample.Longitude);
-            GeoCoordinate someSample = new GeoCoordinate();
-
-            foreach (var sample in samplesArr)
-            {
-                someSample.Latitude = sample.Latitude;
-                someSample.Longitude = sample.Longitude;
-                if (calcDist(latestSampleLoc,someSample) < 0.3)
-                {
-                    relevantSamples.Add(sample);
-                }
-            }
+            //calcs the safe time range for current sample,
+            //according to past samples from WanderingAlgo.closeDistance (parameter) away!!//
+            List<Sample> relevantSamples = getGeoNearSamples(latestSample);
 
             int bottomLimit = relevantSamples.Min(p => p.CreatedAt.Value.Hour);
             int topLimit = relevantSamples.Max(p => p.CreatedAt.Value.Hour);
@@ -176,6 +204,27 @@ namespace Server.Utils
             {
                 WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(((Caregiver)caregiver).Id, patientName);
             }
+        }
+
+        public static List<Sample> getGeoNearSamples(Sample latestSample)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            Sample[] samplesArr = db.Samples.Where(p => p.PatientID == latestSample.PatientID).ToArray();
+            List<Sample> relevantSamples = new List<Sample>();
+            GeoCoordinate latestSampleLoc = new GeoCoordinate(latestSample.Latitude, latestSample.Longitude);
+            GeoCoordinate someSample = new GeoCoordinate();
+
+            foreach (var sample in samplesArr)
+            {
+                someSample.Latitude = sample.Latitude;
+                someSample.Longitude = sample.Longitude;
+                if (calcDist(latestSampleLoc, someSample) < WanderingAlgo.closeDistance)
+                {
+                    relevantSamples.Add(sample);
+                }
+            }
+
+            return relevantSamples;
         }
     }
 }

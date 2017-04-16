@@ -37,7 +37,7 @@ namespace Server.Utils
         public static string patientName;
         public static string patientID;
         public static NotificationHub notificationHub = new NotificationHub();
-
+        public static readonly double closeDistance = 0.3;
 
 
         /// Step A - PREPROCESS
