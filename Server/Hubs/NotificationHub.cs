@@ -6,7 +6,9 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using System.Runtime.Remoting.Contexts;
+using Server.DataObjects;
 using Server.Utils;
+using Server.Controllers;
 
 
 namespace Server.Hubs
@@ -19,6 +21,7 @@ namespace Server.Hubs
 
         public void Register(string ID)
         {
+            Trace.TraceInformation(String.Format("Attempting to register user {0}", ID));
             try
             {
                 Trace.AutoFlush = true;
@@ -36,6 +39,58 @@ namespace Server.Hubs
             }
 
         }
+
+        public void setPatientStatus(string patientID, AlgoUtils.Status status)
+        {
+            CaregiverController caregiverController = new CaregiverController();
+            IEnumerable<Caregiver> caregiversArr = caregiverController.GetCaregiversforPatientID(patientID);
+            Trace.TraceInformation(String.Format("Sending Patient {0} status: {1} to all caregivers", patientID,
+                status.ToString()));
+
+            foreach (var caregiver in caregiversArr)
+            {
+                try
+                {
+                    Clients.Client(mapUidToConnection[caregiver.Id]).receivePatientStatus(status);
+                }
+                catch (Exception e)
+                {
+                    string deadConnectionId;
+                    mapUidToConnection.TryRemove(caregiver.Id, out deadConnectionId);
+                }
+            }
+        }
+
+        public void sendHelpButtonNotificationToCareGivers(string patientID)
+        {
+
+            PatientController patientController = new PatientController();
+            string patientName = patientController.GetPatientName(patientID);
+
+            Trace.TraceInformation(String.Format("Patient {0} pressed Help Button sending alerts to all caregivers",patientName));
+
+            CaregiverController caregiverController = new CaregiverController();
+            IEnumerable<Caregiver> caregiversArr = caregiverController.GetCaregiversforPatientID(patientID);
+            foreach (var caregiver in caregiversArr)
+            {
+                try
+                {
+                    Clients.Client(mapUidToConnection[caregiver.Id]).receiveHelpButtonAlert(patientName);
+                    Clients.Client(mapUidToConnection[patientID]).receiveHelpButtonSMS(caregiver.Phone);
+                    Trace.TraceInformation(String.Format("Sending Help Button Alert to user: {0}, for patient {1}. ConnectionId {2}", caregiver.Id, patientName, mapUidToConnection[caregiver.Id]));
+
+                }
+                catch (Exception e)
+                {
+                    string deadConnectionId;
+                    mapUidToConnection.TryRemove(caregiver.Id, out deadConnectionId);
+                }
+            }
+
+            //FOR TESTING TODO: REMOVE !!!!
+            Clients.Client(mapUidToConnection[patientID]).receiveHelpButtonAlert(patientName);
+        }
+
 
         public void sendNotificationToCareGivers(string ID, string patientName, AlgoUtils.Status type)
         {
@@ -89,16 +144,17 @@ namespace Server.Hubs
         }
 
 
-        public void sendSMSToCareGivers(string ID, string patientName, AlgoUtils.Status type)
+
+        public void sendSMSToCareGivers(string ID, string phoneNumber, AlgoUtils.Status type)
         {
             if (mapUidToConnection.ContainsKey(ID))
             {
                 if (type.Equals(AlgoUtils.Status.Wandering))
                 {
-                    Trace.TraceInformation(String.Format("Sending SMS-Status-Message to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                    Trace.TraceInformation(String.Format("Sending SMS-Wandering-Message to user: {0}, to number {1}. ConnectionId {2}", ID, phoneNumber, mapUidToConnection[ID]));
                     try
                     {
-                        Clients.Client(mapUidToConnection[ID]).receiveWanderingSMS(patientName);
+                        Clients.Client(mapUidToConnection[ID]).receiveWanderingSMS(phoneNumber);
                     }
                     catch (Exception e)
                     {
@@ -108,10 +164,10 @@ namespace Server.Hubs
                 }
                 else if (type.Equals(AlgoUtils.Status.Distress))
                 {
-                    Trace.TraceInformation(String.Format("Sending SMS-Distress-Message to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                    Trace.TraceInformation(String.Format("Sending SMS-Distress-Message to user: {0}, to number {1}. ConnectionId {2}", ID, phoneNumber, mapUidToConnection[ID]));
                     try
                     {
-                        Clients.Client(mapUidToConnection[ID]).receiveDistressSMS(patientName);
+                        Clients.Client(mapUidToConnection[ID]).receiveDistressSMS(phoneNumber);
                     }
                     catch (Exception e)
                     {
@@ -121,10 +177,10 @@ namespace Server.Hubs
                 }
                 else if (type.Equals(AlgoUtils.Status.Risk))
                 {
-                    Trace.TraceInformation(String.Format("Sending SMS-Risk-Message to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
+                    Trace.TraceInformation(String.Format("Sending SMS-Risk-Message to user: {0}, to number {1}. ConnectionId {2}", ID, phoneNumber, mapUidToConnection[ID]));
                     try
                     {
-                        Clients.Client(mapUidToConnection[ID]).receiveRiskSMS(patientName);
+                        Clients.Client(mapUidToConnection[ID]).receiveRiskSMS(phoneNumber);
                     }
                     catch (Exception e)
                     {

@@ -241,14 +241,15 @@ namespace Server.Utils
                 case AlgoUtils.Status.Safety:
                     {
                         Trace.TraceInformation(String.Format("Patient is Safe, doing safe stuff"));
+                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Safety);
                         //TODO:SAFETY stuff
                         break;
                     }
 
                 case AlgoUtils.Status.Wandering:
                     {
-                        Trace.TraceInformation(String.Format("Patient is Wandering, doing wandering stuff"));
-                        
+                        Trace.TraceInformation(String.Format("Sending Wandering notification to caregivers"));
+                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Wandering);
                         AlgoUtils.sendWanderingNotification();
                         //TODO:WANDERING stuff
                         /// Step C - POSSIBLE_WANDERING_MODE
@@ -263,8 +264,9 @@ namespace Server.Utils
 
                 case AlgoUtils.Status.Distress:
                     {
+                        Trace.TraceInformation(String.Format("Sending Distress notification to caregivers"));
                         AlgoUtils.sendDistressNotification();
-                        Trace.TraceInformation(String.Format("Patient is in Distress, doing distress stuff"));
+                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Distress);
                         //TODO:DISTRESS stuff
                         /// Step D - POSSIBLE_DISTRESS_MODE
                         /// 1. send PUSH to caregiver - "Your beloved John is currently at (sample.location)?
@@ -277,8 +279,9 @@ namespace Server.Utils
 
                 case AlgoUtils.Status.Risk:
                     {
+                        Trace.TraceInformation(String.Format("Sending Risk notification to caregivers"));
                         AlgoUtils.sendRiskNotification();
-                        Trace.TraceInformation(String.Format("Patient is at Risk, doing risk stuff"));
+                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Risk);
                         //TODO:RISK stuff
                         /// Step E - POSSIBLE_RISK_MODE
                         /// 1. Speed up sample rate (?) - every 1-3 minutes
@@ -291,7 +294,9 @@ namespace Server.Utils
                     }
                 case AlgoUtils.Status.ConnectionLost:
                     {
-                        Trace.TraceInformation(String.Format("Patient has lost connection, doing connection lost stuff"));
+                        Trace.TraceInformation(String.Format("Sending Lost Connection notification to caregivers"));
+                        AlgoUtils.sendLostConnNotification();
+                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.ConnectionLost);
                         //TODO: connectionLost stuff
                         break;
                     }

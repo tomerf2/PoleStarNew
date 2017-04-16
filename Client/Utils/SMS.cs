@@ -14,14 +14,10 @@ namespace PoleStar.Utils
     class SMS
     {
 
-        private SmsDevice2 device;
+        private static SmsDevice2 device;
         
-        public async void sendDistressAlert(String to)
-        {
-            sendWanderingAlert(to, "Help, I require assistance! Please open PoleStar to see my current location.");
-        }
 
-        public async void sendWanderingAlert(String to, String text)
+        public static async void sendSMS(String to, String text)
         {
             if (device == null)
             {
@@ -91,7 +87,7 @@ namespace PoleStar.Utils
                 DialogBox.ShowOk("Error", "Failed to find SMS device");
             }
         }
-        //this is a useless comment
+        
     }
 }
 
