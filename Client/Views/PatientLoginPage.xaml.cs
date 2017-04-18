@@ -121,7 +121,7 @@ namespace PoleStar.Views
 
                     if (patient.Password == Crypto.CreateMD5Hash(txtPassword.Password))
                     {
-                        StoredData.storePatientData(patient.Id, patient.Password); //store in local app data
+                        StoredData.storePatientData(patient.Id); //store in local app data
                         this.Frame.Navigate(typeof(PatientMainPage), null);
                     }
                     else

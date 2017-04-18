@@ -35,8 +35,10 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Button x:Name="btnAssist" Grid.Row="0" Content="Please Assist" HorizontalAlignment="Stretch" Background="Red" FontFamily="Roboto Condensed" Height="162" Foreground="White" FontWeight="SemiBold" FontSize="34" BorderThickness="5" BorderBrush="Black" Click="btnAssist_Click"/>
+                <Button x:Name="btnAssist" Grid.Row="0" Content="Please Assist&#xD;&#xA;  (get data)" HorizontalAlignment="Stretch" Background="Red" FontFamily="Roboto Condensed" Height="162" Foreground="White" FontWeight="SemiBold" FontSize="34" BorderThickness="5" BorderBrush="Black" Margin="0,0,0,-82" Click="btnAssist_Click"/>
             </Grid>
+            <Button x:Name="buttonMeasure" Content="Get Measurements" HorizontalAlignment="Left" Margin="75,163,0,0" Grid.Row="1" VerticalAlignment="Top" Height="82" Width="159" Click="buttonMeasure_Click"/>
+            <Button x:Name="buttonAlgo" Content="Start Wandering Algo" HorizontalAlignment="Left" Height="93" Margin="75,25,0,0" Grid.RowSpan="2" VerticalAlignment="Top" Width="159" Click="buttonAlgo_Click"/>
         </Grid>
     </Grid>
 </Page>

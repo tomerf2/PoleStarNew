@@ -30,8 +30,18 @@ namespace Server.Controllers
             return Lookup(id);
         }
 
-        // PATCH tables/Sample/48D68C86-6EA6-4C25-AA33-223FC9A27959
-        public Task<Sample> PatchSample(string id, Delta<Sample> patch)
+        // GET latest sample for a specific patientID
+        public Sample GetLatestSampleForPatient(string patientID)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            Sample latestSamplForPatient = db.Samples.OrderByDescending(p => p.CreatedAt)
+                .Where(p => p.PatientID == patientID).FirstOrDefault();
+            return latestSamplForPatient;
+        }
+
+
+    // PATCH tables/Sample/48D68C86-6EA6-4C25-AA33-223FC9A27959
+    public Task<Sample> PatchSample(string id, Delta<Sample> patch)
         {
              return UpdateAsync(id, patch);
         }

@@ -179,9 +179,11 @@ namespace PoleStar.Views
                     await groupTable.InsertAsync(newGroup);
                     await patientTable.InsertAsync(newPatient);
 
+                    StoredData.storePatientData(newPatient.Id); //store in local app data
+
                     IUICommand cmd = await DialogBox.ShowYesNo("Known Locations", "Would you like to add known locations where " + txtName.Text + " can be found?", "Yes", "Later");
-                    
-                    if((int)cmd.Id == 0)
+
+                    if ((int)cmd.Id == 0)
                         this.Frame.Navigate(typeof(LocationsPage), null);
                     else
                         this.Frame.Navigate(typeof(PatientMainPage), null);

@@ -6,6 +6,9 @@ using System.Web.Http.OData;
 using Microsoft.Azure.Mobile.Server;
 using Server.DataObjects;
 using Server.Models;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Server.Controllers
 {
@@ -28,6 +31,24 @@ namespace Server.Controllers
         public SingleResult<Patient> GetPatient(string id)
         {
             return Lookup(id);
+        }
+
+        // GET a specific patient's caregivers
+        public static Patient GetPatientObject(string patientID)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            Patient result = db.Patients.Where(p => p.Id == patientID).FirstOrDefault();
+
+            return result;
+        }
+
+        // GET a specific patient's name
+        public string GetPatientName(string patientID)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            string result = db.Patients.Where(p => p.Id == patientID).FirstOrDefault().Name;
+
+            return result;
         }
 
         // PATCH tables/Patient/48D68C86-6EA6-4C25-AA33-223FC9A27959

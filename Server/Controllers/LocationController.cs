@@ -30,6 +30,16 @@ namespace Server.Controllers
             return Lookup(id);
         }
 
+
+        // GET tables/Location/48D68C86-6EA6-4C25-AA33-223FC9A27959
+        public Location[] GetKnownLocationsforPatientID(string currentPatientID)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            Location[] knownLocations = db.Locations.Where(p => p.PatientID == currentPatientID).ToArray();
+
+            return knownLocations;
+        }
+
         // PATCH tables/Location/48D68C86-6EA6-4C25-AA33-223FC9A27959
         public Task<Location> PatchLocation(string id, Delta<Location> patch)
         {
