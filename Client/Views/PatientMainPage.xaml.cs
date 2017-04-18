@@ -105,5 +105,10 @@ namespace PoleStar.Views
         {
 
         }
+
+        private void btnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(LocationsPage), null);
+        }
     }
 }

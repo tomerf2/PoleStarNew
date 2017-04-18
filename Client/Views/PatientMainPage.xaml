@@ -8,6 +8,10 @@
     mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="White">
+        <Button x:Name="btnSettings" Background="White" VerticalAlignment="Top" HorizontalAlignment="Right" Click="btnSettings_Click">
+            <Image Source="../Assets/settings.png" Height="50" />
+        </Button>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="189*"/>
             <RowDefinition Height="131*"/>
@@ -31,7 +35,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Button x:Name="btnAssist" Grid.Row="0" Content="Please Assist&#xD;&#xA;  (get data)" HorizontalAlignment="Stretch" Background="Red" FontFamily="Roboto Condensed" Height="162" Foreground="White" FontWeight="SemiBold" FontSize="34" BorderThickness="5" BorderBrush="Black" Margin="0,0,0,-82" Click="btnAssist_Click"/>
+                <Button x:Name="btnAssist" Grid.Row="0" Content="Please Assist" HorizontalAlignment="Stretch" Background="Red" FontFamily="Roboto Condensed" Height="162" Foreground="White" FontWeight="SemiBold" FontSize="34" BorderThickness="5" BorderBrush="Black" Click="btnAssist_Click"/>
             </Grid>
         </Grid>
     </Grid>
