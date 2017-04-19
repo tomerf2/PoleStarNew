@@ -12,12 +12,7 @@
             <Image Source="../Assets/settings.png" Height="50" />
         </Button>
         
-        <Grid.RowDefinitions>
-            <RowDefinition Height="189*"/>
-            <RowDefinition Height="131*"/>
-        </Grid.RowDefinitions>
-
-        <Grid Margin="30" Grid.RowSpan="2" Loaded="Grid_Loaded">
+        <Grid Margin="30">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />

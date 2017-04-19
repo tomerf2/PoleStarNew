@@ -104,6 +104,7 @@
     <Compile Include="DataModel\Caregiver.cs" />
     <Compile Include="DataModel\Group.cs" />
     <Compile Include="DataModel\Location.cs" />
+    <Compile Include="DataModel\Notifications.cs" />
     <Compile Include="DataModel\Patient.cs" />
     <Compile Include="DataModel\Sample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

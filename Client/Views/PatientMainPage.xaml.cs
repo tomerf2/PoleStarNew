@@ -53,8 +53,8 @@ namespace PoleStar.Views
             measurements = new Measurements();
 
             //initiate connection with server:
-            await Notifications.initHubConnection();
-            Notifications.NotificationHubProxy.On<string>("receiveHelpButtonAlert", OnHelpButtonAlert);
+            //await Notifications.initHubConnection();
+            //Notifications.NotificationHubProxy.On<string>("receiveHelpButtonAlert", OnHelpButtonAlert);
 
 
         //start timer
@@ -82,7 +82,6 @@ namespace PoleStar.Views
             {
                 DialogBox.ShowOk("Error", "Could not connect to band or Azure server");
             }
-
         }
 
 
@@ -103,17 +102,12 @@ namespace PoleStar.Views
         }
 
 
-        private async void btnAssist_Click(object sender, RoutedEventArgs e)
+        private void btnAssist_Click(object sender, RoutedEventArgs e)
         {
-            Notifications.sendHelpButtonAlert();
+            //Notifications.sendHelpButtonAlert();
         }
 
-        private void Grid_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             
         }
@@ -126,7 +120,7 @@ namespace PoleStar.Views
 
         private void buttonAlgo_Click(object sender, RoutedEventArgs e)
         {
-            Notifications.startWanderingAlgo();
+            //Notifications.startWanderingAlgo();
         }
 
         private void btnSettings_Click(object sender, RoutedEventArgs e)
