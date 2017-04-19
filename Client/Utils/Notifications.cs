@@ -103,7 +103,7 @@ namespace PoleStar.Utils
 
         private static void OnHelpButtonAlert(string patientName)
         {
-            DialogBox.ShowOk("Needs Assistance", patientName + "'s has pressed the distress button and requires your assistance. Please check the PoleStar app for " + patientName + "'s current location");
+            DialogBox.ShowOk("Needs Assistance", patientName + " has pressed the distress button and requires your assistance. Please check the PoleStar app for " + patientName + "'s current location");
         }
 
         //PATIENT LISTENERS
