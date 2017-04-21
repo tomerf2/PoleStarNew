@@ -108,11 +108,13 @@
     <Compile Include="DataModel\Patient.cs" />
     <Compile Include="DataModel\Sample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\CreateData.cs" />
     <Compile Include="Utils\Crypto.cs" />
     <Compile Include="Utils\DialogBox.cs" />
     <Compile Include="Utils\Coordinates.cs" />
     <Compile Include="Utils\Display.cs" />
     <Compile Include="Utils\HeatMap.cs" />
+    <Compile Include="Utils\Notifications.cs" />
     <Compile Include="Utils\SMS.cs" />
     <Compile Include="Utils\StoredData.cs" />
     <Compile Include="Views\CaregiverLoginPage.xaml.cs">
