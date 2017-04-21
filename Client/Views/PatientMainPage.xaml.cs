@@ -48,13 +48,26 @@ namespace PoleStar.Views
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            /*Random rand = new Random();
+            for (int i = 0; i < 200; i++)
+            {
+                Sample sample = new Sample();
+                sample.Id = Guid.NewGuid().ToString();
+                sample.PatientID = StoredData.getUserGUID();
+                sample.Latitude = (float)(32.3026 + 0.000001 * rand.Next(-999, 999));
+                sample.Longitude = (float)(34.8748 + 0.000001 * rand.Next(-999, 999));
+                sample.HeartRate = rand.Next(60, 110);
+                //save on server
+                await sampleTable.InsertAsync(sample);
+            }*/
+
             bandInstance = new BandManager();
             await bandInstance.BandInit();
             measurements = new Measurements();
 
             //initiate connection with server:
-            //await Notifications.initHubConnection();
-            //Notifications.NotificationHubProxy.On<string>("receiveHelpButtonAlert", OnHelpButtonAlert);
+            await Notifications.initHubConnection();
+            Notifications.NotificationHubProxy.On<string>("receiveHelpButtonAlert", OnHelpButtonAlert);
 
 
         //start timer
@@ -104,7 +117,7 @@ namespace PoleStar.Views
 
         private void btnAssist_Click(object sender, RoutedEventArgs e)
         {
-            //Notifications.sendHelpButtonAlert();
+            Notifications.sendHelpButtonAlert();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -120,7 +133,7 @@ namespace PoleStar.Views
 
         private void buttonAlgo_Click(object sender, RoutedEventArgs e)
         {
-            //Notifications.startWanderingAlgo();
+            Notifications.startWanderingAlgo();
         }
 
         private void btnSettings_Click(object sender, RoutedEventArgs e)
