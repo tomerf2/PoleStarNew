@@ -17,6 +17,7 @@ namespace Server.Hubs
     {
 
         public static ConcurrentDictionary<string, string> mapUidToConnection = new ConcurrentDictionary<string, string>();
+        public static ConcurrentDictionary<string, AlgoUtils.Status> mapUidToStatus = new ConcurrentDictionary<string, AlgoUtils.Status>();
 
 
         public void Register(string ID)
@@ -30,7 +31,6 @@ namespace Server.Hubs
                 mapUidToConnection.TryRemove(ID, out deadConnectionId);
                 mapUidToConnection[ID] = ConnID;
                 Trace.TraceInformation(String.Format("Added user: {0} connectionId {1}", ID, mapUidToConnection[ID]));
-                Trace.Flush();
             }
             catch (Exception e)
             {
@@ -42,15 +42,17 @@ namespace Server.Hubs
 
         public void setPatientStatus(string patientID, AlgoUtils.Status status)
         {
+            mapUidToStatus[patientID] = status;
+
             CaregiverController caregiverController = new CaregiverController();
             IEnumerable<Caregiver> caregiversArr = caregiverController.GetCaregiversforPatientID(patientID);
             Trace.TraceInformation(String.Format("Sending Patient {0} status: {1} to all caregivers", patientID,
                 status.ToString()));
-
             foreach (var caregiver in caregiversArr)
             {
                 try
                 {
+                    mapUidToStatus[caregiver.Id] = status;
                     Clients.Client(mapUidToConnection[caregiver.Id]).receivePatientStatus(status);
                 }
                 catch (Exception e)
@@ -59,6 +61,11 @@ namespace Server.Hubs
                     mapUidToConnection.TryRemove(caregiver.Id, out deadConnectionId);
                 }
             }
+        }
+
+        public void getPatientStatus(string caregiverID)
+        {
+            Clients.Client(mapUidToConnection[caregiverID]).receivePatientStatus(mapUidToStatus[caregiverID]);
         }
 
         public void sendHelpButtonNotificationToCareGivers(string patientID)
@@ -89,7 +96,9 @@ namespace Server.Hubs
 
             //FOR TESTING TODO: REMOVE !!!!
             Clients.Client(mapUidToConnection[patientID]).receiveHelpButtonAlert(patientName);
+            Trace.TraceInformation(String.Format("Sending Help Button Alert to to patient [FOR TESTING] for patient {0}. ConnectionId {1}", patientName, mapUidToConnection[patientID]));
         }
+
 
 
         public void sendNotificationToCareGivers(string ID, string patientName, AlgoUtils.Status type)
@@ -220,7 +229,6 @@ namespace Server.Hubs
         }
 
 
-
         //Testing
         public void startWanderingDetection(string ID)
         {
@@ -229,47 +237,6 @@ namespace Server.Hubs
             algo.wanderingDetectionAlgo(ID);
         }
 
-
-
-
-
-        //Other
-        public string Send(string ID)
-        {
-            string test;
-            try
-            {
-                string deadConnectionId;
-                string ConnID = Context.ConnectionId;
-                mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                mapUidToConnection[ID] = ConnID;
-                test = "woked";
-                Trace.TraceInformation(String.Format("Added user: {0} connectionId {1}", ID, mapUidToConnection[ID]));
-                Trace.Flush();
-            }
-            catch (Exception e)
-            {
-                test = e.Message;
-            }
-
-            return test;
-        }
-
-        public void Send2(String message)
-        {
-            Clients.All.broadcastMessage(message);
-        }
-
     }
 
-
-
-
-
-
-    //public void Send(string name, string message)
-    //{
-    //    // Call the broadcastMessage method to update clients.
-    //    Clients.All.broadcastMessage(name, message);
-    //}
 }
