@@ -211,6 +211,8 @@
     <Compile Include="DataObjects\Location.cs" />
     <Compile Include="DataObjects\Patient.cs" />
     <Compile Include="DataObjects\Sample.cs" />
+    <Compile Include="Hubs\ConnectionDictionary.cs" />
+    <Compile Include="Hubs\Message.cs" />
     <Compile Include="Hubs\NotificationHub.cs" />
     <Compile Include="Migrations\201702181326539_Initial.cs" />
     <Compile Include="Migrations\201702181326539_Initial.Designer.cs">

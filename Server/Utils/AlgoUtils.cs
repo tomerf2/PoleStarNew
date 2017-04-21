@@ -169,60 +169,63 @@ namespace Server.Utils
             }
         }
 
-        public static void sendWanderingNotification()
-        {
-            string patientName = WanderingAlgo.patientName;
-            foreach (var caregiver in WanderingAlgo.caregiversArr)
-            {
-                WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Wandering);
-                //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Wandering);
-            }
+
+
+
+        //public static void sendWanderingNotification()
+        //{
+        //    string patientName = WanderingAlgo.patientName;
+        //    foreach (var caregiver in WanderingAlgo.caregiversArr)
+        //    {
+        //        WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Wandering);
+        //        //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Wandering);
+        //    }
             
 
-            //FOR TESING ---------------- TODO: DELETE ----------------
-            WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Wandering);
-            // ------------------------------------------------------------------------------------
-        }
+        //    //FOR TESING ---------------- TODO: DELETE ----------------
+        //    WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Wandering);
+        //    // ------------------------------------------------------------------------------------
+        //}
 
-        public static void sendRiskNotification()
-        {
-            string patientName = WanderingAlgo.patientName;
-            foreach (var caregiver in WanderingAlgo.caregiversArr)
-            {
-                WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Risk);
-                //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Risk);
-            }
+        //public static void sendRiskNotification()
+        //{
+        //    string patientName = WanderingAlgo.patientName;
+        //    foreach (var caregiver in WanderingAlgo.caregiversArr)
+        //    {
+        //        WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Risk);
+        //        //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Risk);
+        //    }
 
-            //FOR TESING ---------------- TODO: DELETE ----------------
-            WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Risk);
-            // ------------------------------------------------------------------------------------
-        }
-        public static void sendDistressNotification()
-        {
-            string patientName = WanderingAlgo.patientName;
-            foreach (var caregiver in WanderingAlgo.caregiversArr)
-            {
-                WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Distress);
-                //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Distress);
-            }
+        //    //FOR TESING ---------------- TODO: DELETE ----------------
+        //    WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Risk);
+        //    // ------------------------------------------------------------------------------------
+        //}
+        //public static void sendDistressNotification()
+        //{
+        //    string patientName = WanderingAlgo.patientName;
+        //    foreach (var caregiver in WanderingAlgo.caregiversArr)
+        //    {
+        //        WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Distress);
+        //        //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Distress);
+        //    }
 
 
-            //FOR TESING ---------------- TODO: DELETE ----------------
-            WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Distress);
-            // ------------------------------------------------------------------------------------
-        }
+        //    //FOR TESING ---------------- TODO: DELETE ----------------
+        //    WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Distress);
+        //    // ------------------------------------------------------------------------------------
+        //}
 
-        public static void sendLostConnNotification()
-        {
-            string patientName = WanderingAlgo.patientName;
-            foreach (var caregiver in WanderingAlgo.caregiversArr)
-            {
-                WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(((Caregiver)caregiver).Id, patientName);
-            }
-            //FOR TESING ---------------- TODO: DELETE ----------------
-            WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(WanderingAlgo.patientID, patientName);
-            // ------------------------------------------------------------------------------------
-        }
+        //public static void sendLostConnNotification()
+        //{
+        //    string patientName = WanderingAlgo.patientName;
+        //    foreach (var caregiver in WanderingAlgo.caregiversArr)
+        //    {
+        //        WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(((Caregiver)caregiver).Id, patientName);
+        //    }
+        //    //FOR TESING ---------------- TODO: DELETE ----------------
+        //    WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(WanderingAlgo.patientID, patientName);
+        //    // ------------------------------------------------------------------------------------
+        //}
 
         public static List<Sample> getGeoNearSamples(Sample latestSample)
         {
