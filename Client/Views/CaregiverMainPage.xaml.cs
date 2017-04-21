@@ -58,6 +58,8 @@ namespace PoleStar.Views
 
             }, period);*/
 
+            await Notifications.initHubConnection();
+
             samples = await sampleTable.ToCollectionAsync();
 
             //Create a list contains all groups of samples with distance up to 150m
@@ -186,6 +188,48 @@ namespace PoleStar.Views
                 Latitude = lat,
                 Longitude = lon
             });
+        }
+
+
+        //TOMER's ADDITION:
+        //private void OnReceivePatientStatus(Notifications.Status status)
+        //{
+        //    switch (status)
+        //    {
+        //        case Notifications.Status.Safety:
+        //            patientStatusInd.Text = "    OK";
+        //            patientStatusInd.Foreground = Brushes.Green;
+        //            break;
+
+        //        case Notifications.Status.Distress:
+        //            patientStatusInd.Text = "    DISTRESS";
+        //            patientStatusInd.Foreground = Brushes.Yellow;
+        //            break;
+
+        //        case Notifications.Status.ConnectionLost:
+        //            patientStatusInd.Text = "    CONNECTION LOST";
+        //            patientStatusInd.Foreground = Brushes.Red;
+        //            break;
+
+        //        case Notifications.Status.NeedsAssistance:
+        //            patientStatusInd.Text = "    NEEDS ASSISTANCE";
+        //            patientStatusInd.Foreground = Brushes.Red;
+        //            break;
+
+        //        case Notifications.Status.Wandering:
+        //            patientStatusInd.Text = "    DISTRESS";
+        //            patientStatusInd.Foreground = Brushes.Red;
+        //            break;
+
+        //        case Notifications.Status.Risk:
+        //            patientStatusInd.Text = "    AT RISK";
+        //            patientStatusInd.Foreground = Brushes.Orange;
+        //            break;
+        //    }
+        //}
+        private void btnLocations_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(LocationsPage), null);
         }
     }
 }

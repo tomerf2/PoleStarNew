@@ -157,6 +157,7 @@ namespace PoleStar.Views
                         await caregiverTable.InsertAsync(newCaregiver);
 
                         StoredData.storeCaregiverData(newCaregiver.Id); //store in local app data
+                        StoredData.loadUserData();
                         this.Frame.Navigate(typeof(CaregiverMainPage), null);
                     }
                     else

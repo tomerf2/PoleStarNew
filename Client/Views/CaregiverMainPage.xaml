@@ -9,8 +9,28 @@
     mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <Maps:MapControl HorizontalAlignment="Left" Margin="10,61,0,0" VerticalAlignment="Top" Height="569" Width="340" x:Name="mcMap" MapServiceToken="idv0A7Nzs8EJDaTz8MCq~61YNKIzybFvVrB9RciWR3Q~As1isqoI6gH-WaY3g3xOY0Khz_P5vS-QxcrApAIaPhKFa5yQoVG9JPm5XM7Dp7e7"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,-6,0,0">
+            <Image x:Name="image" Margin="0,6,0,0" Stretch="Fill" HorizontalAlignment="Center" Height="55" VerticalAlignment="Top" Width="276" Source="ms-appx:///Assets/polestarbanner.png"/>
+            <Button x:Name="btnSettings"  Background="White" Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Click="btnLocations_Click">
+                <Image x:Name="locationsImage" Source="../Assets/google-location-icon2.png" Height="55" Stretch="Fill" VerticalAlignment="Top" Width="55" />
+            </Button>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="20,10,0,0">
+            <TextBlock Text="Patient Status:" FontSize="20" FontWeight="Light" Foreground="Black" HorizontalAlignment="Left"></TextBlock>
+            <TextBlock x:Name="patientStatusInd" Text="      OK" FontSize="20" FontWeight="Bold" Foreground="Green" HorizontalAlignment="Center"></TextBlock>
+        </StackPanel>
+
+        <Maps:MapControl Grid.Row="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="569" Width="340" x:Name="mcMap" MapServiceToken="idv0A7Nzs8EJDaTz8MCq~61YNKIzybFvVrB9RciWR3Q~As1isqoI6gH-WaY3g3xOY0Khz_P5vS-QxcrApAIaPhKFa5yQoVG9JPm5XM7Dp7e7"/>
 
     </Grid>
 </Page>

@@ -44,7 +44,7 @@ namespace PoleStar.Views
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             //uncomment to remove all stored data and start app from main screen
-            //StoredData.removeAllSavedData();
+            StoredData.removeAllSavedData();
 
             //Example Patient Data
             //StoredData.storePatientData("Patient Guid", "Password");

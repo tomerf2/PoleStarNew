@@ -180,6 +180,7 @@ namespace PoleStar.Views
                     await patientTable.InsertAsync(newPatient);
 
                     StoredData.storePatientData(newPatient.Id); //store in local app data
+                    StoredData.loadUserData();
 
                     IUICommand cmd = await DialogBox.ShowYesNo("Known Locations", "Would you like to add known locations where " + txtName.Text + " can be found?", "Yes", "Later");
 
