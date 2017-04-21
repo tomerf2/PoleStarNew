@@ -36,7 +36,6 @@ namespace Server.Utils
         public static double avgNormalTimeRange;
         public static string patientName;
         public static string patientID;
-        public static NotificationHub notificationHub = new NotificationHub();
         public static readonly double closeDistance = 0.3;
 
 
@@ -234,27 +233,24 @@ namespace Server.Utils
             Trace.TraceInformation(String.Format("Monitor and alert stage is done"));
             Trace.TraceInformation(String.Format("Patient status is {0}", patientStatus));
 
-            notificationHub.printConnections(); //TODO REMOVE
 
             //Call2Action
             switch (patientStatus)
             {
                 case AlgoUtils.Status.Safety:
                     {
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
+                        //AlgoUtils.sendSMS(caregiversArr, patientStatus);
 
-                        notificationHub.sendNewNotifications(patientID, patientName, caregiversArr, patientStatus);
-                        //notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Safety);
                         //TODO:SAFETY stuff
                         break;
                     }
 
                 case AlgoUtils.Status.Wandering:
                     {
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
+                        //AlgoUtils.sendSMS(caregiversArr, patientStatus);
 
-                        notificationHub.sendNewNotifications(patientID, patientName, caregiversArr, patientStatus);
-
-                        //notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Wandering);
-                        //AlgoUtils.sendWanderingNotification();
                         //TODO:WANDERING stuff
                         /// Step C - POSSIBLE_WANDERING_MODE
                         /// 1. send PUSH to caregiver - "Do you know your beloved John is currently at (sample.location)?
@@ -268,10 +264,10 @@ namespace Server.Utils
 
                 case AlgoUtils.Status.Distress:
                     {
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
+                        //AlgoUtils.sendSMS(caregiversArr, patientStatus);
 
-                        notificationHub.sendNewNotifications(patientID, patientName, caregiversArr, patientStatus);
-                        //AlgoUtils.sendDistressNotification();
-                        //notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Distress);
+
                         //TODO:DISTRESS stuff
                         /// Step D - POSSIBLE_DISTRESS_MODE
                         /// 1. send PUSH to caregiver - "Your beloved John is currently at (sample.location)?
@@ -284,11 +280,9 @@ namespace Server.Utils
 
                 case AlgoUtils.Status.Risk:
                     {
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
+                        //AlgoUtils.sendSMS(caregiversArr, patientStatus);
 
-                        notificationHub.sendNewNotifications(patientID, patientName, caregiversArr, patientStatus);
-
-                        //AlgoUtils.sendRiskNotification();
-                        //notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Risk);
                         //TODO:RISK stuff
                         /// Step E - POSSIBLE_RISK_MODE
                         /// 1. Speed up sample rate (?) - every 1-3 minutes
@@ -301,11 +295,8 @@ namespace Server.Utils
                     }
                 case AlgoUtils.Status.ConnectionLost:
                     {
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
 
-                        notificationHub.sendNewNotifications(patientID, patientName, caregiversArr, patientStatus);
-
-                        //AlgoUtils.sendLostConnNotification();
-                        //notificationHub.setPatientStatus(patientID, AlgoUtils.Status.ConnectionLost);
                         //TODO: connectionLost stuff
                         break;
                     }

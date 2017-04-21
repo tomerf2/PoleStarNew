@@ -28,8 +28,6 @@ namespace PoleStar.Utils
             NeedsAssistance //help button pressed
         }
 
-
-
         public static async Task initHubConnection()
         {
             await ConnectHub();
@@ -41,33 +39,20 @@ namespace PoleStar.Utils
                 new HubConnection(App.MobileService.MobileAppUri.AbsoluteUri);
             NotificationHubProxy = NotificationHubConnection.CreateHubProxy("NotificationHub");
             await NotificationHubConnection.Start();
-            //if (NotificationHubConnection.State != ConnectionState.Connected)
-            //{
-            //    DialogBox.ShowOk("Error", "Could connect to server. Ensure You have internet access and try again.");
-            //    return;
-            //}
 
             //register
             await NotificationHubProxy.Invoke("Register", Utils.StoredData.getUserGUID());
 
-            //await NotificationHubProxy.Invoke("sendHelpButtonNotificationToCareGivers", Utils.StoredData.getUserGUID());
-
-            //Notifications.NotificationHubProxy.On<string>("receiveWanderingAlert", OnWanderingAlert);
-            //Notifications.NotificationHubProxy.On<string>("receiveRiskAlert", OnRiskAlert);
-            //Notifications.NotificationHubProxy.On<string>("receiveDistressAlert", OnDistressAlert);
-            //Notifications.NotificationHubProxy.On<string>("receiveConnectionLostAlert", OnLostConnAlert);
-            //Notifications.NotificationHubProxy.On<string>("receiveHelpButtonAlert", OnHelpButtonAlert);
-
-            NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse);
-            NotificationHubProxy.On<SMSMessage>("receiveSMS", SMSResponse); 
+            if (StoredData.isCaregiver())
+            {
+                NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse);
+            }
+            else
+            {
+                NotificationHubProxy.On<SMSMessage>("receiveSMS", SMSResponse);
+                NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse); //TODO - Remove
+            }
         }
-
-        //INVOKATIONS
-        public static void startWanderingAlgo()
-        {
-            NotificationHubProxy.Invoke("startWanderingDetection", Utils.StoredData.getUserGUID());
-        }
-
 
 
         //CAREGIVER LISTENERS
@@ -98,7 +83,6 @@ namespace PoleStar.Utils
         {
             switch (message.status)
             {
-
                 case Status.Distress:
                     OnDistressSMSAlert(message.number);
                     break;
@@ -113,7 +97,6 @@ namespace PoleStar.Utils
                     break;
             }
         }
-
 
 
         private static void OnReceivePatientStatus(Status status)
@@ -140,7 +123,6 @@ namespace PoleStar.Utils
             DialogBox.ShowOk("Needs Assistance", patientName + " has pressed the distress button and requires your assistance. Please check the PoleStar app for " + patientName + "'s current location");
         }
 
-        //PATIENT LISTENERS
         private static void OnWanderingSMSAlert(string phoneNumber)
         {
             string message = "PoleStar Wandering Alert!\n Please check the PoleStar app for more details";
@@ -169,6 +151,10 @@ namespace PoleStar.Utils
         {
             DialogBox.ShowOk("Lost Connection", "PoleStar lost connection with " + patientName + ". Please check the PoleStar app for " + patientName + "'s last known location");
         }
+        public static void startWanderingAlgo()
+        {
+            NotificationHubProxy.Invoke("startWanderingDetection", Utils.StoredData.getUserGUID());
+        }
     }
 
     class Message
@@ -184,41 +170,4 @@ namespace PoleStar.Utils
     }
 }
 
-
-//TO ADD TO CAREGIVER MAIN
-
-//await Notifications.initHubConnection();
-//set listeners:
-//Notifications.NotificationHubProxy.On<string>("receiveWanderingAlert", OnWanderingAlert);
-//Notifications.NotificationHubProxy.On<string>("receiveRiskAlert", OnRiskAlert);
-//Notifications.NotificationHubProxy.On<string>("receiveDistressAlert", OnDistressAlert);
-//Notifications.NotificationHubProxy.On<string>("receiveConnectionLostAlert", OnLostConnAlert);
-//Notifications.NotificationHubProxy.On<string>("receiveHelpButtonAlert", OnHelpButtonAlert);
-//Notifications.NotificationHubProxy.On<Status>("receivePatientStatus", OnReceivePatientStatus);
-
-//CAREGIVER LISTENERS
-
-//private static void OnWanderingAlert(string patientName)
-//{
-//DialogBox.ShowOk("Wandering Alert", "PoleStar detects that " + patientName + " is at risk of wandering. Please check the PoleStar app for more details");
-//}
-
-//private static void OnRiskAlert(string patientName)
-//{
-//DialogBox.ShowOk("Serious Risk", "PoleStar detects that " + patientName + " is at risk. Please immediately check the PoleStar app for more details");
-//}
-
-//private static void OnDistressAlert(string patientName)
-//{
-//DialogBox.ShowOk("Distress", "PoleStar detects that " + patientName + " is in distress. Please check the PoleStar app for more details");
-//}
-
-//private static void OnHelpButtonAlert(string patientName)
-//{
-//DialogBox.ShowOk("Needs Assistance", patientName + " has pressed the distress button and requires your assistance. Please check the PoleStar app for " + patientName + "'s current location");
-//}
-//private static void OnLostConnAlert(string patientName)
-//{
-//DialogBox.ShowOk("Lost Connection", "PoleStar lost connection with " + patientName + ". Please check the PoleStar app for " + patientName + "'s last known location");
-//}
 

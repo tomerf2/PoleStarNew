@@ -48,17 +48,6 @@ namespace PoleStar.Views
             //initiate connection with server set listeners:
             await Notifications.initHubConnection();
 
-            //await Notifications.NotificationHubProxy.Invoke("Register", Utils.StoredData.getUserGUID());
-
-            //set listeners
-            //Notifications.NotificationHubProxy.On<string>("receiveWanderingSMS", OnWanderingSMSAlert);
-            //Notifications.NotificationHubProxy.On<string>("receiveDistressSMS", OnDistressSMSAlert);
-            //Notifications.NotificationHubProxy.On<string>("receiveRiskSMS", OnRiskSMSAlert);
-            //Notifications.NotificationHubProxy.On<string>("receiveHelpButtonSMS", OnHelpButtonSMSAlert);
-
-            //TODO: DELETE CAREGIVER LISTENERS - FOR TESTING ONLY
-            //resetListeners();
-            //Notifications.NotificationHubProxy.On<Notifications.Status>("receivePatientStatus", OnReceivePatientStatus);
 
             //start periodic timer
             //StartTimer();
@@ -145,76 +134,6 @@ namespace PoleStar.Views
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(LocationsPage), null);
-        }
-
-
-        //PATIENT NOTIFICATION LISTENERS
-        private void OnWanderingSMSAlert(string phoneNumber)
-        {
-            string message = "PoleStar Wandering Alert!\n Please check the PoleStar app for more details";
-            SMS.sendSMS(phoneNumber, message);
-        }
-
-        private void OnDistressSMSAlert(string phoneNumber)
-        {
-            string message = "PoleStar Distress Alert!\n Please check the PoleStar app for more details";
-            SMS.sendSMS(phoneNumber, message);
-        }
-
-        private void OnRiskSMSAlert(string phoneNumber)
-        {
-            string message = "PoleStar Risk Alert!\n Please check the PoleStar app for more details";
-            SMS.sendSMS(phoneNumber, message);
-        }
-
-        private void OnHelpButtonSMSAlert(string phoneNumber)
-        {
-            string message = "PoleStar Requires Assistance Alert!\n Please check the PoleStar app for more details";
-            SMS.sendSMS(phoneNumber, message);
-        }
-
-
-        private void resetListeners()
-        {
-            Notifications.NotificationHubProxy.On<string>("receiveWanderingAlert", OnWanderingAlert);
-            Notifications.NotificationHubProxy.On<string>("receiveRiskAlert", OnRiskAlert);
-            Notifications.NotificationHubProxy.On<string>("receiveDistressAlert", OnDistressAlert);
-            Notifications.NotificationHubProxy.On<string>("receiveConnectionLostAlert", OnLostConnAlert);
-            Notifications.NotificationHubProxy.On<string>("receiveHelpButtonAlert", OnHelpButtonAlert);
-        }
-        //TODO CAREGIVER LISTENERS - DELETE
-        private void OnReceivePatientStatus(Notifications.Status status)
-        {
-            //TODO: set status on screen
-        }
-        private void OnWanderingAlert(string patientName)
-        {
-            DialogBox.ShowOk("Wandering Alert", "PoleStar detects that " + patientName + " is at risk of wandering. Please check the PoleStar app for more details");
-            resetListeners();
-        }
-
-        private void OnRiskAlert(string patientName)
-        {
-            DialogBox.ShowOk("Serious Risk", "PoleStar detects that " + patientName + " is at risk. Please immediately check the PoleStar app for more details");
-            resetListeners();
-        }
-
-        private void OnDistressAlert(string patientName)
-        {
-            DialogBox.ShowOk("Distress", "PoleStar detects that " + patientName + " is in distress. Please check the PoleStar app for more details");
-            resetListeners();
-        }
-
-        private void OnHelpButtonAlert(string patientName)
-        {
-            DialogBox.ShowOk("Needs Assistance", patientName + " has pressed the distress button and requires your assistance. Please check the PoleStar app for " + patientName + "'s current location");
-            resetListeners();
-        }
-
-        private void OnLostConnAlert(string patientName)
-        {
-            DialogBox.ShowOk("Lost Connection", "PoleStar lost connection with " + patientName + ". Please check the PoleStar app for " + patientName + "'s last known location");
-            resetListeners();
         }
     }
 }

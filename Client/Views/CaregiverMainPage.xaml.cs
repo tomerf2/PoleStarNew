@@ -59,6 +59,8 @@ namespace PoleStar.Views
 
             }, period);*/
 
+            await Notifications.initHubConnection();
+
             var caregiver = await App.MobileService.GetTable<Caregiver>().LookupAsync(StoredData.getUserGUID());
             //var patients = await App.MobileService.GetTable<Patient>().ToCollectionAsync();
             var parameters = new Dictionary<string, string>();

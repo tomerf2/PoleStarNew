@@ -51,7 +51,8 @@ namespace PoleStar.Views
             //CreateData.createAndInsertData(); //FOR TESTING
 
             //set display to on
-
+            //StoredData.storePatientData("892b7482-64df-4aae-aa5d-6f2555d10dc0");
+            //StoredData.storeCaregiverData("caregiver10");
 
             if (StoredData.checkForPreviousLogin()) //also loads user data, if found
             {
@@ -62,5 +63,4 @@ namespace PoleStar.Views
             }
         }
     }
-
 }
