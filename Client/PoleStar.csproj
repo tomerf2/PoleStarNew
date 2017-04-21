@@ -112,6 +112,7 @@
     <Compile Include="Utils\Crypto.cs" />
     <Compile Include="Utils\DialogBox.cs" />
     <Compile Include="Utils\Coordinates.cs" />
+    <Compile Include="Utils\Display.cs" />
     <Compile Include="Utils\HeatMap.cs" />
     <Compile Include="Utils\Notifications.cs" />
     <Compile Include="Utils\SMS.cs" />

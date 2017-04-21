@@ -37,7 +37,7 @@ namespace PoleStar.Views
         static BandManager bandInstance;
         Measurements measurements;
 
-        int SendRateMinutes = 4;
+        int SendRateMinutes = 8;
         ThreadPoolTimer timer;
 
 
@@ -56,14 +56,16 @@ namespace PoleStar.Views
             await Notifications.initHubConnection();
             Notifications.NotificationHubProxy.On<string>("receiveHelpButtonAlert", OnHelpButtonAlert);
 
+            Display display = new Display();
+            display.ActivateDisplay();
 
-        //start timer
-        //StartTimer();
+            //start timer
+            //StartTimer();
 
-    }
+        }
         private static void OnHelpButtonAlert(string patientName)
         {
-            DialogBox.ShowOk("Needs Assistance", patientName + "'s has pressed the distress button and requires your assistance. Please check the PoleStar app for " + patientName + "'s current location");
+            DialogBox.ShowOk("Needs Assistance", patientName + " has pressed the distress button and requires your assistance. Please check the PoleStar app for " + patientName + "'s current location");
         }
 
         public void StartTimer()
@@ -120,8 +122,17 @@ namespace PoleStar.Views
 
         private async void buttonMeasure_Click(object sender, RoutedEventArgs e)
         {
-            await measurements.GetAllMeasurements(bandInstance);
-            await InsertSample();
+            try
+            {
+                await measurements.GetAllMeasurements(bandInstance);
+                await InsertSample();
+                DialogBox.ShowOk("Success", "sent measurements to server");
+
+            }
+            catch (Exception ex)
+            {
+                DialogBox.ShowOk("Error", ex.Message);
+            }
         }
 
         private void buttonAlgo_Click(object sender, RoutedEventArgs e)
