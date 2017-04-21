@@ -18,20 +18,17 @@ namespace PoleStar.Utils
             var result = await dialog.ShowAsync();
         }
 
-        /*public async static void ShowYesNo(string caption, string text)
+        public async static Task<Windows.UI.Popups.IUICommand> ShowYesNo(string caption, string text, string yesBtnText, string noBtnText)
         {
             var dialog = new Windows.UI.Popups.MessageDialog(text, caption);
 
-            dialog.Commands.Add(new Windows.UI.Popups.UICommand("Yes") { Id = 0 });
-            dialog.Commands.Add(new Windows.UI.Popups.UICommand("No") { Id = 1 });
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand(yesBtnText) { Id = 0 });
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand(noBtnText) { Id = 1 });
 
             dialog.DefaultCommandIndex = 0;
             dialog.CancelCommandIndex = 1;
 
-            var result = await dialog.ShowAsync();
-
-            //var btn = sender as Button;
-            //btn.Content = $"Result: {result.Label} ({result.Id})";
-        }*/
+            return await dialog.ShowAsync();
+        }
     }
 }

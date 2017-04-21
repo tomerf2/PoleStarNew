@@ -1,0 +1,60 @@
+﻿<Page
+    x:Class="PoleStar.Views.LocationsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PoleStar.Views"
+    xmlns:Maps="using:Windows.UI.Xaml.Controls.Maps"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Loaded="Page_Loaded">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Button x:Name="btnClose" Content="Close [x]" FontSize="14" HorizontalAlignment="Center" Style="{ThemeResource TextBlockButtonStyle}" FontFamily="Lucida Grande" VerticalAlignment="Top" Click="btnClose_Click"/>
+        <ProgressRing Name="symLoading" Width="50" Height="50" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        
+        <Grid Margin="30">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Patient's known locations:"></TextBlock>
+            <ListBox x:Name="lbLocations" Grid.Row="1" Grid.Column="0" Background="White" BorderThickness="2" BorderBrush="Gray">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+            
+            <Grid Grid.Row="2" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="txtDescription" Text="Description" Foreground="Gray" Grid.Row="0" Grid.ColumnSpan="3" Margin="0,5,0,5"  GotFocus="txtDescription_GotFocus" LostFocus="txtDescription_LostFocus" />
+                <TextBox x:Name="txtAddress" Text="Address" Foreground="Gray" Grid.Row="1" Margin="0,0,0,5"  GotFocus="txtAddress_GotFocus" LostFocus="txtAddress_LostFocus" />
+                <Button x:Name="btnBrowse" Grid.Row="1" Grid.Column="1" Background="White" VerticalAlignment="Top" Click="btnBrowse_Click">
+                    <Image Source="../Assets/search.png" Stretch="Fill" Height="25" />
+                </Button>
+                <Button x:Name="btnAdd" Grid.Row="1" Grid.Column="2" Background="White" VerticalAlignment="Top">
+                    <Image Source="../Assets/add.png" Stretch="Fill" Height="25" />
+                </Button>
+            </Grid>
+
+            <Maps:MapControl Grid.Row="3" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="mcMap" MapServiceToken="idv0A7Nzs8EJDaTz8MCq~61YNKIzybFvVrB9RciWR3Q~As1isqoI6gH-WaY3g3xOY0Khz_P5vS-QxcrApAIaPhKFa5yQoVG9JPm5XM7Dp7e7" />
+        </Grid>
+    </Grid>
+</Page>

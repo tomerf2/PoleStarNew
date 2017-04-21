@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -179,7 +180,13 @@ namespace PoleStar.Views
                     await patientTable.InsertAsync(newPatient);
 
                     StoredData.storePatientData(newPatient.Id); //store in local app data
-                    this.Frame.Navigate(typeof(PatientMainPage), null);
+
+                    IUICommand cmd = await DialogBox.ShowYesNo("Known Locations", "Would you like to add known locations where " + txtName.Text + " can be found?", "Yes", "Later");
+
+                    if ((int)cmd.Id == 0)
+                        this.Frame.Navigate(typeof(LocationsPage), null);
+                    else
+                        this.Frame.Navigate(typeof(PatientMainPage), null);
                 }
                 else
                     DialogBox.ShowOk("Error", "Group's name already exists. Please choose a different name.");
