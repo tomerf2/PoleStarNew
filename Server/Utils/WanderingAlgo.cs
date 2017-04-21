@@ -240,7 +240,7 @@ namespace Server.Utils
             {
                 case AlgoUtils.Status.Safety:
                     {
-                        Trace.TraceInformation(String.Format("Patient is Safe, doing safe stuff"));
+                        Trace.TraceInformation(String.Format("Patient is Safe, updating caregivers"));
                         notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Safety);
                         //TODO:SAFETY stuff
                         break;

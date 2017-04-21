@@ -50,6 +50,9 @@ namespace PoleStar.Views
 
             //CreateData.createAndInsertData(); //FOR TESTING
 
+            //set display to on
+
+
             if (StoredData.checkForPreviousLogin()) //also loads user data, if found
             {
                 if (StoredData.isCaregiver())
