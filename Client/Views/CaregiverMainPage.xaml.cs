@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
@@ -58,12 +59,15 @@ namespace PoleStar.Views
 
             }, period);*/
 
-            await Notifications.initHubConnection();
-
-            samples = await sampleTable.ToCollectionAsync();
+            var caregiver = await App.MobileService.GetTable<Caregiver>().LookupAsync(StoredData.getUserGUID());
+            //var patients = await App.MobileService.GetTable<Patient>().ToCollectionAsync();
+            var parameters = new Dictionary<string, string>();
+            parameters.Add("patientID", "0ef25de3-50a5-4592-a365-155a45a357a1");
+            //samples = await sampleTable.WithParameters(parameters).ToCollectionAsync();
+            var samples1 = await App.MobileService.InvokeApiAsync<IQueryable<Sample>>("Values/GetAllSamplesByPatientID", HttpMethod.Get, parameters);
 
             //Create a list contains all groups of samples with distance up to 150m
-            List<List<Sample>> sampleGroups = new List<List<Sample>>();
+            List <List<Sample>> sampleGroups = new List<List<Sample>>();
             List<int> sampleIndexesAdded = new List<int>();
             int maxGroupCount = 0;
 
@@ -141,12 +145,6 @@ namespace PoleStar.Views
                     mcMap.MapElements.Add(polygon);
                 }
             }
-            
-            /*MapIcon mi = new MapIcon();
-            mi.Visible = true;
-            mi.Title = "Last patient location (4 min ago)";
-            mi.Location = new Geopoint(new BasicGeoposition() { Latitude = 32.3029140, Longitude = 34.8761971 });
-            mcMap.MapElements.Add(mi);*/
 
             mcMap.ZoomLevel = 16;
             CenterMap(32.3026161, 34.8748978);
@@ -176,8 +174,6 @@ namespace PoleStar.Views
             {
                 CenterMap(32.109333, 34.855499);
                 mcMap.ZoomLevel = 10;
-                //ListItems.ItemsSource = items;
-                //this.ButtonSave.IsEnabled = true;
             }
         }
 
@@ -188,48 +184,6 @@ namespace PoleStar.Views
                 Latitude = lat,
                 Longitude = lon
             });
-        }
-
-
-        //TOMER's ADDITION:
-        //private void OnReceivePatientStatus(Notifications.Status status)
-        //{
-        //    switch (status)
-        //    {
-        //        case Notifications.Status.Safety:
-        //            patientStatusInd.Text = "    OK";
-        //            patientStatusInd.Foreground = Brushes.Green;
-        //            break;
-
-        //        case Notifications.Status.Distress:
-        //            patientStatusInd.Text = "    DISTRESS";
-        //            patientStatusInd.Foreground = Brushes.Yellow;
-        //            break;
-
-        //        case Notifications.Status.ConnectionLost:
-        //            patientStatusInd.Text = "    CONNECTION LOST";
-        //            patientStatusInd.Foreground = Brushes.Red;
-        //            break;
-
-        //        case Notifications.Status.NeedsAssistance:
-        //            patientStatusInd.Text = "    NEEDS ASSISTANCE";
-        //            patientStatusInd.Foreground = Brushes.Red;
-        //            break;
-
-        //        case Notifications.Status.Wandering:
-        //            patientStatusInd.Text = "    DISTRESS";
-        //            patientStatusInd.Foreground = Brushes.Red;
-        //            break;
-
-        //        case Notifications.Status.Risk:
-        //            patientStatusInd.Text = "    AT RISK";
-        //            patientStatusInd.Foreground = Brushes.Orange;
-        //            break;
-        //    }
-        //}
-        private void btnLocations_Click(object sender, RoutedEventArgs e)
-        {
-            this.Frame.Navigate(typeof(LocationsPage), null);
         }
     }
 }
