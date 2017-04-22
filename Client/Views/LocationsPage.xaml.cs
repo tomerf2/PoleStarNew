@@ -50,110 +50,143 @@ namespace PoleStar.Views
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            symLoading.IsActive = true;
-            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            BeginLoadingIcon();
 
             locations = await locationTable.ToCollectionAsync();
 
             patientKnowLocations = locations.Where(p => p.PatientID == patientID).ToList(); //filtered by patient
 
             for (int i = 0; i < patientKnowLocations.Count; i++)
-            {
-                Grid grid = new Grid();
+                AddLocation(patientKnowLocations[i]);
 
-                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+            EndLoadingIcon();
+        }
+    
+        private void BeginLoadingIcon()
+        {
+            symLoading.IsActive = true;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+        }
 
-                grid.RowDefinitions.Add(new RowDefinition());
-                grid.RowDefinitions.Add(new RowDefinition());
-
-                TextBlock tbDescription = new TextBlock();
-                tbDescription.Text = patientKnowLocations[i].Description;
-                tbDescription.FontWeight = FontWeights.Bold;
-                tbDescription.VerticalAlignment = VerticalAlignment.Bottom;
-                Grid.SetRow(tbDescription, 0);
-                Grid.SetColumn(tbDescription, 0);
-
-                MapAddress mapAddr = await Coordinates.CoordsToAddress(patientKnowLocations[i].Latitude, patientKnowLocations[i].Longitude);
-                TextBlock tbAddress = new TextBlock();
-                tbAddress.Text = "(" + patientKnowLocations[i].Latitude + ", " + patientKnowLocations[i].Longitude + ")";
-
-                if (mapAddr.Street != "")
-                {
-                    if (mapAddr.StreetNumber != "")
-                        tbAddress.Text = mapAddr.StreetNumber + " " + mapAddr.Street;
-                    else
-                        tbAddress.Text = mapAddr.Street;
-                }
-
-
-                if (mapAddr.Town != "")
-                {
-                    if (mapAddr.Street != "")
-                        tbAddress.Text += ", " + mapAddr.Town;
-                    else
-                        tbAddress.Text = mapAddr.Town;
-                }
-
-                if (mapAddr.Country != "")
-                {
-                    if (mapAddr.Town != "")
-                        tbAddress.Text += ", " + mapAddr.Country;
-                    else
-                        tbAddress.Text = mapAddr.Country;
-                }
-
-                tbAddress.FontSize = 12;
-                tbAddress.Foreground = new SolidColorBrush(Colors.Red);
-                tbAddress.VerticalAlignment = VerticalAlignment.Top;
-                Grid.SetRow(tbAddress, 1);
-                Grid.SetColumn(tbAddress, 0);
-
-                Image img = new Image();
-                img.Source = new BitmapImage(new Uri("ms-appx:///Assets/delete.png"));
-                img.Stretch = Stretch.Fill;
-                img.Height = 25;
-                img.Width = 25;
-
-                Button btnDelete = new Button();
-                btnDelete.Content = img;
-                btnDelete.Background = new SolidColorBrush(Colors.Transparent);
-                btnDelete.HorizontalAlignment = HorizontalAlignment.Right;
-
-                Grid.SetRow(btnDelete, 0);
-                Grid.SetColumn(btnDelete, 1);
-                Grid.SetRowSpan(btnDelete, 2);
-
-                grid.Children.Add(tbDescription);
-                grid.Children.Add(tbAddress);
-                grid.Children.Add(btnDelete);
-
-                ListBoxItem lbi = new ListBoxItem();
-                lbi.Tag = new BasicGeoposition() { Latitude = patientKnowLocations[i].Latitude, Longitude = patientKnowLocations[i].Longitude };
-                lbi.Content = grid;
-                lbi.GotFocus += Lbi_GotFocus;
-
-                lbLocations.Items.Add(lbi);
-
-                MapIcon mi = new MapIcon();
-                mi.Visible = true;
-                mi.Title = locations[i].Description;
-                mi.Location = new Geopoint((BasicGeoposition)lbi.Tag);
-                mcMap.MapElements.Add(mi);
-            }
-
+        private void EndLoadingIcon()
+        {
             symLoading.IsActive = false;
             symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
-    
+
+        private async void AddLocation(Location loc)
+        {
+            Grid grid = new Grid();
+
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+
+            grid.RowDefinitions.Add(new RowDefinition());
+            grid.RowDefinitions.Add(new RowDefinition());
+
+            TextBlock tbDescription = new TextBlock();
+            tbDescription.Text = loc.Description;
+            tbDescription.FontWeight = FontWeights.Bold;
+            tbDescription.VerticalAlignment = VerticalAlignment.Bottom;
+            Grid.SetRow(tbDescription, 0);
+            Grid.SetColumn(tbDescription, 0);
+
+            MapAddress mapAddr = await Coordinates.CoordsToAddress(loc.Latitude, loc.Longitude);
+            TextBlock tbAddress = new TextBlock();
+            tbAddress.Text = "(" + loc.Latitude + ", " + loc.Longitude + ")";
+
+            if (mapAddr.Street != "")
+            {
+                if (mapAddr.StreetNumber != "")
+                    tbAddress.Text = mapAddr.StreetNumber + " " + mapAddr.Street;
+                else
+                    tbAddress.Text = mapAddr.Street;
+            }
+
+
+            if (mapAddr.Town != "")
+            {
+                if (mapAddr.Street != "")
+                    tbAddress.Text += ", " + mapAddr.Town;
+                else
+                    tbAddress.Text = mapAddr.Town;
+            }
+
+            if (mapAddr.Country != "")
+            {
+                if (mapAddr.Town != "")
+                    tbAddress.Text += ", " + mapAddr.Country;
+                else
+                    tbAddress.Text = mapAddr.Country;
+            }
+
+            tbAddress.FontSize = 12;
+            tbAddress.Foreground = new SolidColorBrush(Colors.Red);
+            tbAddress.VerticalAlignment = VerticalAlignment.Top;
+            Grid.SetRow(tbAddress, 1);
+            Grid.SetColumn(tbAddress, 0);
+
+            Image img = new Image();
+            img.Source = new BitmapImage(new Uri("ms-appx:///Assets/delete.png"));
+            img.Stretch = Stretch.Fill;
+            img.Height = 25;
+            img.Width = 25;
+
+            Button btnDelete = new Button();
+            btnDelete.Content = img;
+            btnDelete.Background = new SolidColorBrush(Colors.Transparent);
+            btnDelete.HorizontalAlignment = HorizontalAlignment.Right;
+            btnDelete.Tag = loc;
+            btnDelete.Click += BtnDelete_Click;
+
+            Grid.SetRow(btnDelete, 0);
+            Grid.SetColumn(btnDelete, 1);
+            Grid.SetRowSpan(btnDelete, 2);
+
+            grid.Children.Add(tbDescription);
+            grid.Children.Add(tbAddress);
+            grid.Children.Add(btnDelete);
+
+            ListBoxItem lbi = new ListBoxItem();
+            lbi.Tag = loc;
+            lbi.Content = grid;
+            lbi.GotFocus += Lbi_GotFocus;
+
+            lbLocations.Items.Add(lbi);
+
+            MapIcon mi = new MapIcon();
+            mi.Visible = true;
+            mi.Title = loc.Description;
+            mi.Location = new Geopoint(new BasicGeoposition() { Latitude = loc.Latitude, Longitude = loc.Longitude });
+            mcMap.MapElements.Add(mi);
+        }
 
         private void Lbi_GotFocus(object sender, RoutedEventArgs e)
         {
+            BeginLoadingIcon();
+
             ListBoxItem lbi = (ListBoxItem)sender;
-            BasicGeoposition geoPos = (BasicGeoposition)lbi.Tag;
-            CenterMap(geoPos.Latitude, geoPos.Longitude, 17);
+            Location loc = (Location)lbi.Tag;
+            CenterMap(loc.Latitude, loc.Longitude, 17);
+
             mLastLat = 0;
             mLastLong = 0;
+
+            EndLoadingIcon();
+        }
+
+        private async void BtnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            BeginLoadingIcon();
+
+            Button btn = (Button)sender;
+            Location loc = (Location)btn.Tag;
+
+            await locationTable.DeleteAsync(loc);
+            patientKnowLocations.Remove(loc);
+            lbLocations.Items.Remove(((FrameworkElement)btn.Parent).Parent);
+
+            EndLoadingIcon();
         }
 
         private void txtAddress_GotFocus(object sender, RoutedEventArgs e)
@@ -202,7 +235,8 @@ namespace PoleStar.Views
 
         private async void btnBrowse_Click(object sender, RoutedEventArgs e)
         {
-            // The address or business to geocode.
+            BeginLoadingIcon();
+
             string addressToGeocode = txtAddress.Text;
 
             // The nearby location to use as a query hint.
@@ -211,22 +245,20 @@ namespace PoleStar.Views
             queryHint.Longitude = -122.131;
             Geopoint hintPoint = new Geopoint(queryHint);
 
-            // Geocode the specified address, using the specified reference point
-            // as a query hint. Return no more than 3 results.
             MapLocationFinderResult result =
                   await MapLocationFinder.FindLocationsAsync(
                                     addressToGeocode,
                                     hintPoint,
                                     3);
 
-            // If the query returns results, display the coordinates
-            // of the first result.
             if (result.Status == MapLocationFinderStatus.Success)
             {
                 mLastLat = result.Locations[0].Point.Position.Latitude;
                 mLastLong = result.Locations[0].Point.Position.Longitude;
                 CenterMap(mLastLat, mLastLong, 17);
             }
+
+            EndLoadingIcon();
         }
 
         private void CenterMap(double lat, double lon, int zoom)
@@ -252,6 +284,8 @@ namespace PoleStar.Views
 
         private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
+            BeginLoadingIcon();
+
             if ((mLastLat == 0) || (mLastLong == 0))
                 DialogBox.ShowOk("Error", "Please write an address and press the browse button.");
             else if(txtDescription.Text == "Description")
@@ -271,8 +305,13 @@ namespace PoleStar.Views
                 patientKnowLocations.Add(location);//add to local list
                 await locationTable.InsertAsync(location);//save to server
 
-                //TODO -BEN - DISPLAY NEW ELEMENT (last element in patientKnowLocations)
+                AddLocation(location);
+
+                mLastLat = 0;
+                mLastLong = 0;
             }
+
+            EndLoadingIcon();
         }
     }
 }
