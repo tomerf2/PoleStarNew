@@ -165,38 +165,49 @@ namespace PoleStar.Views
 
         private async void btnForward_Click(object sender, RoutedEventArgs e)
         {
-            symLoading.IsActive = true;
-            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
-
-            if ((txtEmail.Text != "Email") && (txtName.Text != "Full name") && (txtPassword.Password != "Private password") &&
-                (txtGroupname.Text != "Groupname") && (txtCode.Password != "Code"))
+            try
             {
-                if (groups.Where(group => group.Name == txtGroupname.Text).Count() == 0)
+                symLoading.IsActive = true;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                if ((txtEmail.Text != "Email") && (txtName.Text != "Full name") && (txtPassword.Password != "Private password") &&
+                    (txtGroupname.Text != "Groupname") && (txtCode.Password != "Code"))
                 {
-                    Group newGroup = new Group() { Id = Guid.NewGuid().ToString(), Name = txtGroupname.Text, Code = txtCode.Password };
-                    Patient newPatient = new Patient() { Id = Guid.NewGuid().ToString(), GroupID = newGroup.Id, Name = txtName.Text, Email = txtEmail.Text, Password = Crypto.CreateMD5Hash(txtPassword.Password) };
+                    if (groups.Where(group => group.Name == txtGroupname.Text).Count() == 0)
+                    {
+                        Group newGroup = new Group() { Id = Guid.NewGuid().ToString(), Name = txtGroupname.Text, Code = txtCode.Password };
+                        Patient newPatient = new Patient() { Id = Guid.NewGuid().ToString(), GroupID = newGroup.Id, Name = txtName.Text, Email = txtEmail.Text, Password = Crypto.CreateMD5Hash(txtPassword.Password) };
 
-                    await groupTable.InsertAsync(newGroup);
-                    await patientTable.InsertAsync(newPatient);
+                        await groupTable.InsertAsync(newGroup);
+                        await patientTable.InsertAsync(newPatient);
 
-                    StoredData.storePatientData(newPatient.Id); //store in local app data
-                    StoredData.loadUserData();
+                        StoredData.storePatientData(newPatient.Id); //store in local app data
+                        StoredData.loadUserData();
 
-                    IUICommand cmd = await DialogBox.ShowYesNo("Known Locations", "Would you like to add known locations where " + txtName.Text + " can be found?", "Yes", "Later");
+                        IUICommand cmd = await DialogBox.ShowYesNo("Known Locations", "Would you like to add known locations where " + txtName.Text + " can be found?", "Yes", "Later");
 
-                    if ((int)cmd.Id == 0)
-                        this.Frame.Navigate(typeof(LocationsPage), null);
+                        if ((int)cmd.Id == 0)
+                            this.Frame.Navigate(typeof(LocationsPage), null);
+                        else
+                            this.Frame.Navigate(typeof(PatientMainPage), null);
+                    }
                     else
-                        this.Frame.Navigate(typeof(PatientMainPage), null);
+                        DialogBox.ShowOk("Error", "Group's name already exists. Please choose a different name.");
                 }
                 else
-                    DialogBox.ShowOk("Error", "Group's name already exists. Please choose a different name.");
-            }
-            else
-                DialogBox.ShowOk("Error", "Please fill all the fields.");
+                    DialogBox.ShowOk("Error", "Please fill all the fields.");
 
-            symLoading.IsActive = false;
-            symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                symLoading.IsActive = false;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+
+            catch (Exception ConnFail)
+            {
+                symLoading.IsActive = false;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
+            }
+           
         }
     }
 }

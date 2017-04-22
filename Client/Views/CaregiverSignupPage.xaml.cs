@@ -140,37 +140,47 @@ namespace PoleStar.Views
 
         private async void btnForward_Click(object sender, RoutedEventArgs e)
         {
-            symLoading.IsActive = true;
-            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
-
-            if ((txtEmail.Text != "Email") && (txtPhone.Text != "Phone") &&
-                (txtGroupname.Text != "Groupname") && (txtCode.Password != "Code"))
+            try
             {
-                var resultGroups = groups.Where(g => g.Name == txtGroupname.Text);
-                if (resultGroups.Count() == 1)
+                symLoading.IsActive = true;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                if ((txtEmail.Text != "Email") && (txtPhone.Text != "Phone") &&
+                    (txtGroupname.Text != "Groupname") && (txtCode.Password != "Code"))
                 {
-                    Group group = resultGroups.ToList()[0];
-                    if (group.Code == txtCode.Password)
+                    var resultGroups = groups.Where(g => g.Name == txtGroupname.Text);
+                    if (resultGroups.Count() == 1)
                     {
-                        Caregiver newCaregiver = new Caregiver() { Id = Guid.NewGuid().ToString(), GroupID = group.Id, Phone = txtPhone.Text, Email = txtEmail.Text, IsApproved = false };
+                        Group group = resultGroups.ToList()[0];
+                        if (group.Code == txtCode.Password)
+                        {
+                            Caregiver newCaregiver = new Caregiver() { Id = Guid.NewGuid().ToString(), GroupID = group.Id, Phone = txtPhone.Text, Email = txtEmail.Text, IsApproved = false };
 
-                        await caregiverTable.InsertAsync(newCaregiver);
+                            await caregiverTable.InsertAsync(newCaregiver);
 
-                        StoredData.storeCaregiverData(newCaregiver.Id); //store in local app data
-                        StoredData.loadUserData();
-                        this.Frame.Navigate(typeof(CaregiverMainPage), null);
+                            StoredData.storeCaregiverData(newCaregiver.Id); //store in local app data
+                            StoredData.loadUserData();
+                            this.Frame.Navigate(typeof(CaregiverMainPage), null);
+                        }
+                        else
+                            DialogBox.ShowOk("Error", "Group's name does not exist or wrong code.");
                     }
                     else
                         DialogBox.ShowOk("Error", "Group's name does not exist or wrong code.");
                 }
                 else
-                    DialogBox.ShowOk("Error", "Group's name does not exist or wrong code.");
-            }
-            else
-                DialogBox.ShowOk("Error", "Please fill all the fields.");
+                    DialogBox.ShowOk("Error", "Please fill all the fields.");
 
-            symLoading.IsActive = false;
-            symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                symLoading.IsActive = false;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+            catch (Exception ConnFail)
+            {
+                symLoading.IsActive = false;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
+            }
+
         }
     }
 }

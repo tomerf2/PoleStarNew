@@ -50,16 +50,26 @@ namespace PoleStar.Views
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            BeginLoadingIcon();
+            try
+            {
+                BeginLoadingIcon();
 
-            locations = await locationTable.ToCollectionAsync();
+                locations = await locationTable.ToCollectionAsync();
 
-            patientKnowLocations = locations.Where(p => p.PatientID == patientID).ToList(); //filtered by patient
+                patientKnowLocations = locations.Where(p => p.PatientID == patientID).ToList(); //filtered by patient
 
-            for (int i = 0; i < patientKnowLocations.Count; i++)
-                AddLocation(patientKnowLocations[i]);
+                for (int i = 0; i < patientKnowLocations.Count; i++)
+                    AddLocation(patientKnowLocations[i]);
 
-            EndLoadingIcon();
+                EndLoadingIcon();
+            }
+            catch (Exception ConnFail)
+            {
+                EndLoadingIcon();
+                DialogBox.ShowOk("Error", "Communication error with Azure server, attempting to reconnect.");
+                this.Frame.Navigate(typeof(LocationsPage), null);
+            }
+
         }
     
         private void BeginLoadingIcon()
@@ -177,16 +187,26 @@ namespace PoleStar.Views
 
         private async void BtnDelete_Click(object sender, RoutedEventArgs e)
         {
-            BeginLoadingIcon();
+            try
+            {
+                BeginLoadingIcon();
 
-            Button btn = (Button)sender;
-            Location loc = (Location)btn.Tag;
+                Button btn = (Button) sender;
+                Location loc = (Location) btn.Tag;
 
-            await locationTable.DeleteAsync(loc);
-            patientKnowLocations.Remove(loc);
-            lbLocations.Items.Remove(((FrameworkElement)btn.Parent).Parent);
+                await locationTable.DeleteAsync(loc);
+                patientKnowLocations.Remove(loc);
+                lbLocations.Items.Remove(((FrameworkElement) btn.Parent).Parent);
 
-            EndLoadingIcon();
+                EndLoadingIcon();
+            }
+            catch (Exception connErr)
+            {
+                EndLoadingIcon();
+                DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
+                
+            }
+
         }
 
         private void txtAddress_GotFocus(object sender, RoutedEventArgs e)
@@ -284,34 +304,46 @@ namespace PoleStar.Views
 
         private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            BeginLoadingIcon();
-
-            if ((mLastLat == 0) || (mLastLong == 0))
-                DialogBox.ShowOk("Error", "Please write an address and press the browse button.");
-            else if(txtDescription.Text == "Description")
-                DialogBox.ShowOk("Error", "Please write a description.");
-            else
+            try
             {
-                Location location = new Location()
+                BeginLoadingIcon();
+
+                if ((mLastLat == 0) || (mLastLong == 0))
+                    DialogBox.ShowOk("Error", "Please write an address and press the browse button.");
+                else if (txtDescription.Text == "Description")
+                    DialogBox.ShowOk("Error", "Please write a description.");
+                else
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    PatientID = patientID,
-                    Description = txtDescription.Text,
-                    HeartRate = 0,
-                    Latitude = (float)mLastLat,
-                    Longitude = (float)mLastLong
-                };
+                    Location location = new Location()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        PatientID = patientID,
+                        Description = txtDescription.Text,
+                        HeartRate = 0,
+                        Latitude = (float) mLastLat,
+                        Longitude = (float) mLastLong
+                    };
 
-                patientKnowLocations.Add(location);//add to local list
-                await locationTable.InsertAsync(location);//save to server
+                    patientKnowLocations.Add(location); //add to local list
+                    await locationTable.InsertAsync(location); //save to server
 
-                AddLocation(location);
+                    AddLocation(location);
 
+                    mLastLat = 0;
+                    mLastLong = 0;
+                }
+
+                EndLoadingIcon();
+            }
+
+            catch (Exception connFail)
+            {
+                EndLoadingIcon();
+                DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
                 mLastLat = 0;
                 mLastLong = 0;
             }
 
-            EndLoadingIcon();
         }
     }
 }

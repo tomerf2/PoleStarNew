@@ -42,11 +42,17 @@ namespace PoleStar.Views
             measurements = new Measurements();
 
             //initiate connection with server set listeners:
-            await Notifications.initHubConnection();
-
-
+            try
+            {
+                await Notifications.initHubConnection();
+            }
+            catch (Exception)
+            {
+                DialogBox.ShowOk("Error", "Communication error with Azure server, attempting to reconnect.");
+                this.Frame.Navigate(typeof(PatientMainPage), null);
+            }
             //start periodic timer
-            StartTimer();
+            //StartTimer();
 
         }
 
@@ -61,10 +67,10 @@ namespace PoleStar.Views
             {
                 await measurements.GetAllMeasurements(bandInstance);
                 await InsertSample();
+                
             }
             catch (Exception e)
             {
-                DialogBox.ShowOk("Error", "Could not connect to band or Azure server");
             }
         }
 
@@ -82,6 +88,7 @@ namespace PoleStar.Views
                 sample.HeartRate = measurements.Heartrate;
                 //save on server
                 await sampleTable.InsertAsync(sample);
+                Notifications.startWanderingAlgo();
             }
         }
 
@@ -92,18 +99,16 @@ namespace PoleStar.Views
             {
                 Notifications.NotificationHubProxy.Invoke("sendHelpButtonNotificationToCareGivers",
                     Utils.StoredData.getUserGUID());
-                Notifications.NotificationHubProxy.Invoke("printConnections");
             }
             catch (Exception ex)
             {
-                DialogBox.ShowOk("Error", ex.Message);
+                DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
             }
-
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            
+
         }
 
         private async void buttonMeasure_Click(object sender, RoutedEventArgs e)
@@ -117,7 +122,7 @@ namespace PoleStar.Views
             }
             catch (Exception ex)
             {
-                DialogBox.ShowOk("Error", ex.Message);
+                DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
             }
         }
 
