@@ -35,12 +35,13 @@ namespace PoleStar.Views
     {
         private double mLastLat = 0;
         private double mLastLong = 0;
+        private string patientID = StoredData.getPatientID();
 
         private MobileServiceCollection<Location, Location> locations;
 
         private IMobileServiceTable<Location> locationTable = App.MobileService.GetTable<Location>();
 
-        private string patientID;
+        private List <Location> patientKnowLocations;
 
         public LocationsPage()
         {
@@ -52,30 +53,30 @@ namespace PoleStar.Views
             symLoading.IsActive = true;
             symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-            await getPatientID();//get patient ID from DB
+            locations = await locationTable.ToCollectionAsync();
 
-            locations = await locationTable.ToCollectionAsync(); //TODO FILTER BY PATIENT ID
+            patientKnowLocations = locations.Where(p => p.PatientID == patientID).ToList(); //filtered by patient
 
-            for (int i = 0; i < locations.Count; i++)
+            for (int i = 0; i < patientKnowLocations.Count; i++)
             {
                 Grid grid = new Grid();
 
                 grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
-                
+
                 grid.RowDefinitions.Add(new RowDefinition());
                 grid.RowDefinitions.Add(new RowDefinition());
 
                 TextBlock tbDescription = new TextBlock();
-                tbDescription.Text = locations[i].Description;
+                tbDescription.Text = patientKnowLocations[i].Description;
                 tbDescription.FontWeight = FontWeights.Bold;
                 tbDescription.VerticalAlignment = VerticalAlignment.Bottom;
                 Grid.SetRow(tbDescription, 0);
                 Grid.SetColumn(tbDescription, 0);
 
-                MapAddress mapAddr = await Coordinates.CoordsToAddress(locations[i].Latitude, locations[i].Longitude);
+                MapAddress mapAddr = await Coordinates.CoordsToAddress(patientKnowLocations[i].Latitude, patientKnowLocations[i].Longitude);
                 TextBlock tbAddress = new TextBlock();
-                tbAddress.Text = "(" + locations[i].Latitude + ", " + locations[i].Longitude + ")";
+                tbAddress.Text = "(" + patientKnowLocations[i].Latitude + ", " + patientKnowLocations[i].Longitude + ")";
 
                 if (mapAddr.Street != "")
                 {
@@ -86,7 +87,7 @@ namespace PoleStar.Views
                 }
 
 
-                if(mapAddr.Town != "")
+                if (mapAddr.Town != "")
                 {
                     if (mapAddr.Street != "")
                         tbAddress.Text += ", " + mapAddr.Town;
@@ -94,9 +95,9 @@ namespace PoleStar.Views
                         tbAddress.Text = mapAddr.Town;
                 }
 
-                if(mapAddr.Country != "")
+                if (mapAddr.Country != "")
                 {
-                    if(mapAddr.Town != "")
+                    if (mapAddr.Town != "")
                         tbAddress.Text += ", " + mapAddr.Country;
                     else
                         tbAddress.Text = mapAddr.Country;
@@ -118,7 +119,7 @@ namespace PoleStar.Views
                 btnDelete.Content = img;
                 btnDelete.Background = new SolidColorBrush(Colors.Transparent);
                 btnDelete.HorizontalAlignment = HorizontalAlignment.Right;
-                
+
                 Grid.SetRow(btnDelete, 0);
                 Grid.SetColumn(btnDelete, 1);
                 Grid.SetRowSpan(btnDelete, 2);
@@ -128,7 +129,7 @@ namespace PoleStar.Views
                 grid.Children.Add(btnDelete);
 
                 ListBoxItem lbi = new ListBoxItem();
-                lbi.Tag = new BasicGeoposition() { Latitude = locations[i].Latitude, Longitude = locations[i].Longitude };
+                lbi.Tag = new BasicGeoposition() { Latitude = patientKnowLocations[i].Latitude, Longitude = patientKnowLocations[i].Longitude };
                 lbi.Content = grid;
                 lbi.GotFocus += Lbi_GotFocus;
 
@@ -144,6 +145,7 @@ namespace PoleStar.Views
             symLoading.IsActive = false;
             symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
+    
 
         private void Lbi_GotFocus(object sender, RoutedEventArgs e)
         {
@@ -256,7 +258,6 @@ namespace PoleStar.Views
                 DialogBox.ShowOk("Error", "Please write a description.");
             else
             {
-                //TODO: get correct patient id
                 Location location = new Location()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -267,24 +268,11 @@ namespace PoleStar.Views
                     Longitude = (float)mLastLong
                 };
 
-                await locationTable.InsertAsync(location);
-            }
-        }
+                patientKnowLocations.Add(location);//add to local list
+                await locationTable.InsertAsync(location);//save to server
 
-        private async Task getPatientID()
-        {
-            if (StoredData.isPatient())
-            {
-                this.patientID = StoredData.getUserGUID();
-                return;
+                //TODO -BEN - DISPLAY NEW ELEMENT (last element in patientKnowLocations)
             }
-            //if caregiver
-            if (patientID == null)
-            {
-                //dont have ID yet
-                await Notifications.requestPatientID();
-            }
-            this.patientID = StoredData.getPatientID();
         }
     }
 }

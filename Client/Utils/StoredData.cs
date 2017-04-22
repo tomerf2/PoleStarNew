@@ -96,6 +96,10 @@ namespace PoleStar.Utils
 
         public static string getPatientID()
         {
+            if (isPatient())
+            {
+                return userGUID;
+            }
             return patientID;
         }
     }

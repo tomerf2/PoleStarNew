@@ -48,9 +48,6 @@ namespace PoleStar.Utils
             {
                 NotificationHubProxy.Invoke("RegisterCaregiver", Utils.StoredData.getUserGUID());
                 NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse);             
-                NotificationHubProxy.On<string>("patientID", ReceivePatientID);
-
-
             }
             else //patient
             {
@@ -60,14 +57,16 @@ namespace PoleStar.Utils
             }
         }
 
-        public async static Task requestPatientID()
-        {
-            await NotificationHubProxy.Invoke("getPatientID", StoredData.getUserGUID());
-        }
 
         //CAREGIVER LISTENERS
         private static void NotificationResponse(Message message)
         {
+            //store patient id
+            if (StoredData.getPatientID() == null)
+            {
+                StoredData.setPatientID(message.ID);
+            }
+
             OnReceivePatientStatus(message.status);
 
             //switch (message.status)
@@ -114,34 +113,31 @@ namespace PoleStar.Utils
         {
             DialogBox.ShowOk("Status", "PoleStar detects that " + status.ToString());
 
-            //switch (status)
-            //{
-            //    case Status.ConnectionLost:
-            //        CaregiverMainPage.SetPatientStatus("   CONNECION LOST", new SolidColorBrush(Colors.Red));
-            //        return;
-            //    case Status.Distress:
-            //        CaregiverMainPage.SetPatientStatus("   DISTRESS", new SolidColorBrush(Colors.Yellow));
-            //        return;
-            //    case Status.NeedsAssistance:
-            //        CaregiverMainPage.SetPatientStatus("   NEEDS ASSISTANCE", new SolidColorBrush(Colors.Red));
-            //        return;
-            //    case Status.Risk:
-            //        CaregiverMainPage.SetPatientStatus("   RISK", new SolidColorBrush(Colors.Red));
-            //        return;
-            //    case Status.Wandering:
-            //        CaregiverMainPage.SetPatientStatus("   WANDERING", new SolidColorBrush(Colors.LightCoral));
-            //        return;
-            //    case Status.Learning:
-            //        CaregiverMainPage.SetPatientStatus("   LEARNING", new SolidColorBrush(Colors.Orange));
-            //        return;
-            //    case Status.Safety:
-            //        CaregiverMainPage.SetPatientStatus("   OK", new SolidColorBrush(Colors.Green));
-            //        return;
-            //}
-        }
-        private static void ReceivePatientID(string patientID)
-        {
-            StoredData.setPatientID(patientID);
+            switch (status)
+            {
+                //TODO - BEN - CHANGE TEXT IN PATIENT MAIN
+                //case Status.ConnectionLost:
+                //    CaregiverMainPage.SetPatientStatus("   CONNECION LOST", new SolidColorBrush(Colors.Red));
+                //    return;
+                //case Status.Distress:
+                //    CaregiverMainPage.SetPatientStatus("   DISTRESS", new SolidColorBrush(Colors.Yellow));
+                //    return;
+                //case Status.NeedsAssistance:
+                //    CaregiverMainPage.SetPatientStatus("   NEEDS ASSISTANCE", new SolidColorBrush(Colors.Red));
+                //    return;
+                //case Status.Risk:
+                //    CaregiverMainPage.SetPatientStatus("   RISK", new SolidColorBrush(Colors.Red));
+                //    return;
+                //case Status.Wandering:
+                //    CaregiverMainPage.SetPatientStatus("   WANDERING", new SolidColorBrush(Colors.LightCoral));
+                //    return;
+                //case Status.Learning:
+                //    CaregiverMainPage.SetPatientStatus("   LEARNING", new SolidColorBrush(Colors.Orange));
+                //    return;
+                //case Status.Safety:
+                //    CaregiverMainPage.SetPatientStatus("   OK", new SolidColorBrush(Colors.Green));
+                //    return;
+            }
         }
 
         private static void OnWanderingAlert(string patientName)
