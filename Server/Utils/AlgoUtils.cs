@@ -8,6 +8,7 @@ using Server.DataObjects;
 using Server.Models;
 using Server.Hubs;
 using System.Collections;
+using System.Diagnostics;
 
 namespace Server.Utils
 {
@@ -169,60 +170,23 @@ namespace Server.Utils
             }
         }
 
-        public static void sendWanderingNotification()
-        {
-            string patientName = WanderingAlgo.patientName;
-            foreach (var caregiver in WanderingAlgo.caregiversArr)
-            {
-                WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Wandering);
-                //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Wandering);
-            }
-            
 
-            //FOR TESING ---------------- TODO: DELETE ----------------
-            WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Wandering);
-            // ------------------------------------------------------------------------------------
-        }
-
-        public static void sendRiskNotification()
+        public static void sendSMS(IEnumerable<Caregiver> caregiversArr, Status status)
         {
-            string patientName = WanderingAlgo.patientName;
-            foreach (var caregiver in WanderingAlgo.caregiversArr)
+            foreach (var caregiver in caregiversArr)
             {
-                WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Risk);
-                //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Risk);
+                try
+                {
+                    NotificationHub.static_sendSMS(caregiver.Id, caregiver.Phone, status);
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.Message);
+                }
             }
 
-            //FOR TESING ---------------- TODO: DELETE ----------------
-            WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Risk);
-            // ------------------------------------------------------------------------------------
-        }
-        public static void sendDistressNotification()
-        {
-            string patientName = WanderingAlgo.patientName;
-            foreach (var caregiver in WanderingAlgo.caregiversArr)
-            {
-                WanderingAlgo.notificationHub.sendNotificationToCareGivers(((Caregiver)caregiver).Id, patientName, Status.Distress);
-                //WanderingAlgo.notificationHub.sendSMSToCareGivers(WanderingAlgo.patientID, caregiver.Phone, Status.Distress);
-            }
-
-
-            //FOR TESING ---------------- TODO: DELETE ----------------
-            WanderingAlgo.notificationHub.sendNotificationToCareGivers(WanderingAlgo.patientID, patientName, Status.Distress);
-            // ------------------------------------------------------------------------------------
         }
 
-        public static void sendLostConnNotification()
-        {
-            string patientName = WanderingAlgo.patientName;
-            foreach (var caregiver in WanderingAlgo.caregiversArr)
-            {
-                WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(((Caregiver)caregiver).Id, patientName);
-            }
-            //FOR TESING ---------------- TODO: DELETE ----------------
-            WanderingAlgo.notificationHub.sendLostConnNotificationToCareGivers(WanderingAlgo.patientID, patientName);
-            // ------------------------------------------------------------------------------------
-        }
 
         public static List<Sample> getGeoNearSamples(Sample latestSample)
         {

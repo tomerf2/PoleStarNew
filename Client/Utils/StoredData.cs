@@ -53,7 +53,7 @@ namespace PoleStar.Utils
             localSettings.Values["userGUID"] = userGUID;
         }
 
-        private static void loadUserData()
+        public static void loadUserData()
         {
             loggedIn = true;
             Object caregiverCheck = localSettings.Values["caregiver"];

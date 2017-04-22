@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -15,9 +16,18 @@ namespace Server.Hubs
 {
     public class NotificationHub : Hub
     {
+        private static IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
 
-        public static ConcurrentDictionary<string, string> mapUidToConnection = new ConcurrentDictionary<string, string>();
-        public static ConcurrentDictionary<string, AlgoUtils.Status> mapUidToStatus = new ConcurrentDictionary<string, AlgoUtils.Status>();
+        public static void printConnections()
+        {
+            Trace.TraceInformation(String.Format("{0} entries in dictionary",
+                ConnectionDictionary.mapUidToConnection.Count()));
+
+            foreach (var w in ConnectionDictionary.mapUidToConnection)
+            {
+                Trace.TraceInformation(String.Format("Key: {0}, Val: {1}", w.Key, w.Value));
+            }
+        }
 
 
         public void Register(string ID)
@@ -28,45 +38,25 @@ namespace Server.Hubs
                 Trace.AutoFlush = true;
                 string deadConnectionId;
                 string ConnID = Context.ConnectionId;
-                mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                mapUidToConnection[ID] = ConnID;
-                Trace.TraceInformation(String.Format("Added user: {0} connectionId {1}", ID, mapUidToConnection[ID]));
+                ConnectionDictionary.mapUidToConnection.TryRemove(ID, out deadConnectionId);
+                ConnectionDictionary.mapUidToConnection[ID] = ConnID;
+                Trace.TraceInformation(String.Format("Added user: {0} connectionId {1}", ID,
+                    ConnectionDictionary.mapUidToConnection[ID]));
             }
             catch (Exception e)
             {
                 Trace.TraceError("Registration of " + ID + " failed: " + e.Message);
-                Trace.Flush();
             }
 
         }
 
-        public void setPatientStatus(string patientID, AlgoUtils.Status status)
-        {
-            mapUidToStatus[patientID] = status;
-
-            CaregiverController caregiverController = new CaregiverController();
-            IEnumerable<Caregiver> caregiversArr = caregiverController.GetCaregiversforPatientID(patientID);
-            Trace.TraceInformation(String.Format("Sending Patient {0} status: {1} to all caregivers", patientID,
-                status.ToString()));
-            foreach (var caregiver in caregiversArr)
-            {
-                try
-                {
-                    mapUidToStatus[caregiver.Id] = status;
-                    Clients.Client(mapUidToConnection[caregiver.Id]).receivePatientStatus(status);
-                }
-                catch (Exception e)
-                {
-                    string deadConnectionId;
-                    mapUidToConnection.TryRemove(caregiver.Id, out deadConnectionId);
-                }
-            }
-        }
 
         public void getPatientStatus(string caregiverID)
         {
-            Clients.Client(mapUidToConnection[caregiverID]).receivePatientStatus(mapUidToStatus[caregiverID]);
+            Clients.Client(ConnectionDictionary.mapUidToConnection[caregiverID])
+                .receivePatientStatus(ConnectionDictionary.mapUidToStatus[caregiverID]);
         }
+
 
         public void sendHelpButtonNotificationToCareGivers(string patientID)
         {
@@ -74,169 +64,91 @@ namespace Server.Hubs
             PatientController patientController = new PatientController();
             string patientName = patientController.GetPatientName(patientID);
 
-            Trace.TraceInformation(String.Format("Patient {0} pressed Help Button sending alerts to all caregivers",patientName));
+            Trace.TraceInformation(String.Format("Patient {0} pressed Help Button sending alerts to all caregivers",
+                patientName));
 
             CaregiverController caregiverController = new CaregiverController();
             IEnumerable<Caregiver> caregiversArr = caregiverController.GetCaregiversforPatientID(patientID);
+
+            static_send(patientID, patientName, caregiversArr, AlgoUtils.Status.NeedsAssistance);
+        }
+
+
+        public static void static_sendSMS(string ID, string phoneNumber, AlgoUtils.Status type)
+        {
+            SMSMessage message = new SMSMessage();
+            message.number = phoneNumber;
+            message.status = type;
+
+
+            if (ConnectionDictionary.mapUidToConnection.ContainsKey(ID))
+            {
+                Trace.TraceInformation(String.Format("Sending SMS {0} message to user: {1}. ConnectionId {2}",
+                    type.ToString(), phoneNumber, ConnectionDictionary.mapUidToConnection[ID]));
+                try
+                {
+                    hubContext.Clients.Client(ConnectionDictionary.mapUidToConnection[ID]).receiveSMS(message);
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.Message);
+                }
+            }
+            else
+            {
+                Trace.TraceError(String.Format("User {0} doesn't exist", ID));
+            }
+        }
+
+
+
+        public static void static_send(string patientID, string patientName, IEnumerable<Caregiver> caregiversArr,
+            AlgoUtils.Status status)
+        {
+            Trace.TraceInformation(String.Format("Sending Patient {0} status: {1} to all caregivers", patientID,
+                status.ToString()));
+            ConnectionDictionary.mapUidToStatus[patientID] = status; //update patient status
+
+            Hubs.Message message = new Message();
+            message.status = status;
+            message.ID = patientID;
+            message.name = patientName;
+
             foreach (var caregiver in caregiversArr)
             {
+
                 try
                 {
-                    Clients.Client(mapUidToConnection[caregiver.Id]).receiveHelpButtonAlert(patientName);
-                    Clients.Client(mapUidToConnection[patientID]).receiveHelpButtonSMS(caregiver.Phone);
-                    Trace.TraceInformation(String.Format("Sending Help Button Alert to user: {0}, for patient {1}. ConnectionId {2}", caregiver.Id, patientName, mapUidToConnection[caregiver.Id]));
-
+                    ConnectionDictionary.mapUidToStatus[caregiver.Id] = status;
+                    hubContext.Clients.Client(ConnectionDictionary.mapUidToConnection[caregiver.Id]).receiveNotification(message);
+                    Trace.TraceInformation(String.Format("Sent message to caregiver {0}", caregiver.Id));
                 }
                 catch (Exception e)
                 {
-                    string deadConnectionId;
-                    mapUidToConnection.TryRemove(caregiver.Id, out deadConnectionId);
+                    Trace.TraceError(e.Message);
                 }
             }
+            Trace.TraceInformation(String.Format("Sending message to patient for testing"));
+            try
+            {
+                hubContext.Clients.Client(ConnectionDictionary.mapUidToConnection[patientID]).receiveNotification(message);
+                Trace.TraceInformation(String.Format("Sent message back to patient {0}", patientName));
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError(e.Message);
+            }
 
-            //FOR TESTING TODO: REMOVE !!!!
-            Clients.Client(mapUidToConnection[patientID]).receiveHelpButtonAlert(patientName);
-            Trace.TraceInformation(String.Format("Sending Help Button Alert to to patient [FOR TESTING] for patient {0}. ConnectionId {1}", patientName, mapUidToConnection[patientID]));
         }
 
-
-
-        public void sendNotificationToCareGivers(string ID, string patientName, AlgoUtils.Status type)
-        {
-            if (mapUidToConnection.ContainsKey(ID))
-            {
-                if (type.Equals(AlgoUtils.Status.Wandering))
-                {
-                    Trace.TraceInformation(String.Format("Sending Wandering Alert to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
-                    try
-                    {
-                        Clients.Client(mapUidToConnection[ID]).receiveWanderingAlert(patientName);
-                    }
-                    catch (Exception e)
-                    {
-                        string deadConnectionId;
-                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                    }
-                }
-                else if (type.Equals(AlgoUtils.Status.Distress))
-                {
-                    Trace.TraceInformation(String.Format("Sending Distress Alert to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
-                    try
-                    {
-                        Clients.Client(mapUidToConnection[ID]).receiveDistressAlert(patientName);
-                    }
-                    catch (Exception e)
-                    {
-                        string deadConnectionId;
-                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                    }
-                }
-                else if (type.Equals(AlgoUtils.Status.Risk))
-                {
-                    Trace.TraceInformation(String.Format("Sending Risk Alert to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
-                    try
-                    {
-                        Clients.Client(mapUidToConnection[ID]).receiveRiskAlert(patientName);
-                    }
-                    catch (Exception e)
-                    {
-                        string deadConnectionId;
-                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                    }
-                }
-
-            }
-            else
-            {
-                Trace.TraceError(String.Format("User {0} doesn't exist", ID));
-            }
-        }
-
-
-
-        public void sendSMSToCareGivers(string ID, string phoneNumber, AlgoUtils.Status type)
-        {
-            if (mapUidToConnection.ContainsKey(ID))
-            {
-                if (type.Equals(AlgoUtils.Status.Wandering))
-                {
-                    Trace.TraceInformation(String.Format("Sending SMS-Wandering-Message to user: {0}, to number {1}. ConnectionId {2}", ID, phoneNumber, mapUidToConnection[ID]));
-                    try
-                    {
-                        Clients.Client(mapUidToConnection[ID]).receiveWanderingSMS(phoneNumber);
-                    }
-                    catch (Exception e)
-                    {
-                        string deadConnectionId;
-                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                    }
-                }
-                else if (type.Equals(AlgoUtils.Status.Distress))
-                {
-                    Trace.TraceInformation(String.Format("Sending SMS-Distress-Message to user: {0}, to number {1}. ConnectionId {2}", ID, phoneNumber, mapUidToConnection[ID]));
-                    try
-                    {
-                        Clients.Client(mapUidToConnection[ID]).receiveDistressSMS(phoneNumber);
-                    }
-                    catch (Exception e)
-                    {
-                        string deadConnectionId;
-                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                    }
-                }
-                else if (type.Equals(AlgoUtils.Status.Risk))
-                {
-                    Trace.TraceInformation(String.Format("Sending SMS-Risk-Message to user: {0}, to number {1}. ConnectionId {2}", ID, phoneNumber, mapUidToConnection[ID]));
-                    try
-                    {
-                        Clients.Client(mapUidToConnection[ID]).receiveRiskSMS(phoneNumber);
-                    }
-                    catch (Exception e)
-                    {
-                        string deadConnectionId;
-                        mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                    }
-                }
-
-            }
-            else
-            {
-                Trace.TraceError(String.Format("User {0} doesn't exist", ID));
-            }
-        }
-
-
-
-        public void sendLostConnNotificationToCareGivers(string ID, string patientName)
-        {
-            if (mapUidToConnection.ContainsKey(ID))
-            {
-                Trace.TraceInformation(String.Format("Sending Lost Connection Alert to user: {0}, for patient {1}. ConnectionId {2}", ID, patientName, mapUidToConnection[ID]));
-                try
-                {
-                    Clients.Client(mapUidToConnection[ID]).receiveConnectionLostAlert(patientName);
-                }
-                catch (Exception e)
-                {
-                    string deadConnectionId;
-                    mapUidToConnection.TryRemove(ID, out deadConnectionId);
-                }
-            }
-            else
-            {
-                Trace.TraceError(String.Format("User {0} doesn't exist", ID));
-            }
-        }
-
-
-        //Testing
+        ////Testing
         public void startWanderingDetection(string ID)
         {
             Trace.TraceInformation("Starting Detection Algo for Patient {0}", ID);
             WanderingAlgo algo = new WanderingAlgo();
             algo.wanderingDetectionAlgo(ID);
         }
-
     }
-
 }
+
+

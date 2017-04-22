@@ -1,18 +1,7 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.Band;
 using System.Threading.Tasks;
@@ -48,37 +37,21 @@ namespace PoleStar.Views
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            /*Random rand = new Random();
-            for (int i = 0; i < 200; i++)
-            {
-                Sample sample = new Sample();
-                sample.Id = Guid.NewGuid().ToString();
-                sample.PatientID = StoredData.getUserGUID();
-                sample.Latitude = (float)(32.3026 + 0.000001 * rand.Next(-999, 999));
-                sample.Longitude = (float)(34.8748 + 0.000001 * rand.Next(-999, 999));
-                sample.HeartRate = rand.Next(60, 110);
-                //save on server
-                await sampleTable.InsertAsync(sample);
-            }*/
-
             bandInstance = new BandManager();
             await bandInstance.BandInit();
             measurements = new Measurements();
 
-            //initiate connection with server:
+            //set screen on
+            //Display display = new Display();
+            //display.ActivateDisplay();
+
+            //initiate connection with server set listeners:
             await Notifications.initHubConnection();
-            Notifications.NotificationHubProxy.On<string>("receiveHelpButtonAlert", OnHelpButtonAlert);
 
-            Display display = new Display();
-            display.ActivateDisplay();
 
-            //start timer
+            //start periodic timer
             //StartTimer();
 
-        }
-        private static void OnHelpButtonAlert(string patientName)
-        {
-            DialogBox.ShowOk("Needs Assistance", patientName + " has pressed the distress button and requires your assistance. Please check the PoleStar app for " + patientName + "'s current location");
         }
 
         public void StartTimer()
@@ -105,7 +78,7 @@ namespace PoleStar.Views
             //initiate new sample object with current measurement parameters
             Sample sample = new Sample();
             sample.Id = Guid.NewGuid().ToString();
-            sample.PatientID = StoredData.getUserGUID(); // previously "6a758ca8-dc2a-4e35-ba12-82a92b7919cf";
+            sample.PatientID = StoredData.getUserGUID();
             if (measurements.has_loc && measurements.has_heart)
             {
                 sample.Latitude = (float) measurements.Location.Coordinate.Latitude;
@@ -119,7 +92,17 @@ namespace PoleStar.Views
 
         private void btnAssist_Click(object sender, RoutedEventArgs e)
         {
-            Notifications.sendHelpButtonAlert();
+            try
+            {
+                Notifications.NotificationHubProxy.Invoke("sendHelpButtonNotificationToCareGivers",
+                    Utils.StoredData.getUserGUID());
+                Notifications.NotificationHubProxy.Invoke("printConnections");
+            }
+            catch (Exception ex)
+            {
+                DialogBox.ShowOk("Error", ex.Message);
+            }
+
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -145,6 +128,7 @@ namespace PoleStar.Views
         private void buttonAlgo_Click(object sender, RoutedEventArgs e)
         {
             Notifications.startWanderingAlgo();
+            Notifications.NotificationHubProxy.Invoke("printConnections");
         }
 
         private void btnSettings_Click(object sender, RoutedEventArgs e)

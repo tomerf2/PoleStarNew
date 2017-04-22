@@ -9,6 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="2" />
             <RowDefinition Height="*" />
@@ -17,16 +18,18 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Button Grid.Row="0" x:Name="btnPatient" HorizontalAlignment="Center" Margin="10 0 10 10" VerticalAlignment="Center" Height="299" Width="340" FontSize="55" FontFamily="MV Boli" BorderThickness="0" Background="{x:Null}" Foreground="#FF34822C" Click="btnPatient_Click">
+        <Image x:Name="image" Stretch="Fill" HorizontalAlignment="Center" Height="55" Grid.Row="0" VerticalAlignment="Top" Width="350" Source="ms-appx:///Assets/polestarbanner.png"/>
+        
+        <Button Grid.Row="1" x:Name="btnPatient" HorizontalAlignment="Center" Margin="10 0 10 10" VerticalAlignment="Center" Height="299" Width="340" FontSize="55" FontFamily="MV Boli" BorderThickness="0" Background="{x:Null}" Foreground="#FF34822C" Click="btnPatient_Click">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Patient" FontSize="30" FontWeight="Light" Foreground="Black" HorizontalAlignment="Center"></TextBlock>
-                <Image Source="../Assets/patient.png" Stretch="None" Height="250" />
+                <Image Source="../Assets/patient.png" Stretch="Fill" Height="200" Width="200" />
             </StackPanel>
         </Button>
-        <Line Grid.Row="1" Stretch="Fill" Stroke="Black" X2="1" Margin="10 0 10 0" />
-        <Button Grid.Row="2" x:Name="btnCaregiver" HorizontalAlignment="Center" Margin="10 0 10 10" VerticalAlignment="Center" Height="299" Width="340" FontSize="55" FontFamily="MV Boli" BorderThickness="0" Background="{x:Null}" Foreground="#FF34822C" Click="btnCaregiver_Click">
+        <Line Grid.Row="2" Stretch="Fill" Stroke="Black" X2="1" Margin="10 0 10 0" />
+        <Button Grid.Row="3" x:Name="btnCaregiver" HorizontalAlignment="Center" Margin="10 0 10 10" VerticalAlignment="Center" Height="299" Width="340" FontSize="55" FontFamily="MV Boli" BorderThickness="0" Background="{x:Null}" Foreground="#FF34822C" Click="btnCaregiver_Click">
             <StackPanel Orientation="Vertical">
-                <Image Source="../Assets/caregiver.png" Stretch="None" Height="250" />
+                <Image Source="../Assets/caregiver.png" Stretch="Fill" Height="200" Width="200"/>
                 <TextBlock Text="Caregiver" FontSize="30" FontWeight="Light" Foreground="Black" HorizontalAlignment="Center"></TextBlock>
             </StackPanel>
         </Button>

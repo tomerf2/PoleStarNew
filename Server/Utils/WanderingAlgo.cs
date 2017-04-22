@@ -36,7 +36,6 @@ namespace Server.Utils
         public static double avgNormalTimeRange;
         public static string patientName;
         public static string patientID;
-        public static NotificationHub notificationHub = new NotificationHub();
         public static readonly double closeDistance = 0.3;
 
 
@@ -240,17 +239,18 @@ namespace Server.Utils
             {
                 case AlgoUtils.Status.Safety:
                     {
-                        Trace.TraceInformation(String.Format("Patient is Safe, updating caregivers"));
-                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Safety);
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
+                        //AlgoUtils.sendSMS(caregiversArr, patientStatus);
+
                         //TODO:SAFETY stuff
                         break;
                     }
 
                 case AlgoUtils.Status.Wandering:
                     {
-                        Trace.TraceInformation(String.Format("Sending Wandering notification to caregivers"));
-                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Wandering);
-                        AlgoUtils.sendWanderingNotification();
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
+                        //AlgoUtils.sendSMS(caregiversArr, patientStatus);
+
                         //TODO:WANDERING stuff
                         /// Step C - POSSIBLE_WANDERING_MODE
                         /// 1. send PUSH to caregiver - "Do you know your beloved John is currently at (sample.location)?
@@ -264,9 +264,10 @@ namespace Server.Utils
 
                 case AlgoUtils.Status.Distress:
                     {
-                        Trace.TraceInformation(String.Format("Sending Distress notification to caregivers"));
-                        AlgoUtils.sendDistressNotification();
-                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Distress);
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
+                        //AlgoUtils.sendSMS(caregiversArr, patientStatus);
+
+
                         //TODO:DISTRESS stuff
                         /// Step D - POSSIBLE_DISTRESS_MODE
                         /// 1. send PUSH to caregiver - "Your beloved John is currently at (sample.location)?
@@ -279,9 +280,9 @@ namespace Server.Utils
 
                 case AlgoUtils.Status.Risk:
                     {
-                        Trace.TraceInformation(String.Format("Sending Risk notification to caregivers"));
-                        AlgoUtils.sendRiskNotification();
-                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.Risk);
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
+                        //AlgoUtils.sendSMS(caregiversArr, patientStatus);
+
                         //TODO:RISK stuff
                         /// Step E - POSSIBLE_RISK_MODE
                         /// 1. Speed up sample rate (?) - every 1-3 minutes
@@ -294,9 +295,8 @@ namespace Server.Utils
                     }
                 case AlgoUtils.Status.ConnectionLost:
                     {
-                        Trace.TraceInformation(String.Format("Sending Lost Connection notification to caregivers"));
-                        AlgoUtils.sendLostConnNotification();
-                        notificationHub.setPatientStatus(patientID, AlgoUtils.Status.ConnectionLost);
+                        NotificationHub.static_send(patientID, patientName, caregiversArr, patientStatus);
+
                         //TODO: connectionLost stuff
                         break;
                     }

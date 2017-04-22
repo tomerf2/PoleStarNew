@@ -141,6 +141,7 @@ namespace PoleStar.Views
                         if((group.Name == txtGroupname.Text) && (group.Code == txtCode.Password))
                         {
                             StoredData.storeCaregiverData(caregiver.Id); //store in local app data
+                            StoredData.loadUserData();
                             this.Frame.Navigate(typeof(CaregiverMainPage), null);
                         }
                         else
