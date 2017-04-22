@@ -235,6 +235,12 @@ namespace PoleStar.Views
         {
             this.Frame.Navigate(typeof(PatientMainPage), null);
         }
+        
+        private void btnLogOut_Click(object sender, RoutedEventArgs e)
+        {
+            StoredData.removeAllSavedData();
+            this.Frame.Navigate(typeof(MainPage), null);
+        }
 
         private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {

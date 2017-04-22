@@ -44,6 +44,14 @@ namespace Server.Controllers
             return caregiversArr.ToList<Caregiver>();
         }
 
+        public static Caregiver GetCaregiverObject(string caregiverID)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            Caregiver result = db.Caregivers.Where(p => p.Id == caregiverID).FirstOrDefault();
+
+            return result;
+        }
+
         // PATCH tables/Caregiver/48D68C86-6EA6-4C25-AA33-223FC9A27959
         public Task<Caregiver> PatchCaregiver(string id, Delta<Caregiver> patch)
         {

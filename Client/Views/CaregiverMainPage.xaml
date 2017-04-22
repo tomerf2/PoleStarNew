@@ -18,11 +18,11 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,1,0,0">
-            <Image x:Name="image" Margin="0,0,0,0" Stretch="Fill" HorizontalAlignment="Center" Height="55" VerticalAlignment="Top" Width="276" Source="ms-appx:///Assets/polestarbanner.png"/>
-            <Button x:Name="btnSettings"  Background="White" Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" />
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,-6,0,0">
+            <Image x:Name="image" Margin="0,6,0,0" Stretch="Fill" HorizontalAlignment="Center" Height="55" VerticalAlignment="Top" Width="276" Source="ms-appx:///Assets/polestarbanner.png"/>
+            <Button x:Name="btnSettings"  Background="White" Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Click="btnSettings_Click">
                 <Image x:Name="locationsImage" Source="../Assets/google-location-icon2.png" Height="55" Stretch="Fill" VerticalAlignment="Top" Width="55" />
-            
+            </Button>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="20,10,0,0">

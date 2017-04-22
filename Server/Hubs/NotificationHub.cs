@@ -30,9 +30,9 @@ namespace Server.Hubs
         }
 
 
-        public void Register(string ID)
+        public void RegisterPatient(string ID)
         {
-            Trace.TraceInformation(String.Format("Attempting to register user {0}", ID));
+            Trace.TraceInformation(String.Format("Attempting to register patient: {0}", ID));
             try
             {
                 Trace.AutoFlush = true;
@@ -40,14 +40,39 @@ namespace Server.Hubs
                 string ConnID = Context.ConnectionId;
                 ConnectionDictionary.mapUidToConnection.TryRemove(ID, out deadConnectionId);
                 ConnectionDictionary.mapUidToConnection[ID] = ConnID;
-                Trace.TraceInformation(String.Format("Added user: {0} connectionId {1}", ID,
+                Trace.TraceInformation(String.Format("Added patient: {0} connectionId {1}", ID,
                     ConnectionDictionary.mapUidToConnection[ID]));
             }
             catch (Exception e)
             {
                 Trace.TraceError("Registration of " + ID + " failed: " + e.Message);
             }
+        }
 
+        public void RegisterCaregiver(string ID)
+        {
+            Trace.TraceInformation(String.Format("Attempting to register cargiver: {0}", ID));
+            try
+            {
+                Trace.AutoFlush = true;
+                string deadConnectionId;
+                string ConnID = Context.ConnectionId;
+                ConnectionDictionary.mapUidToConnection.TryRemove(ID, out deadConnectionId);
+                ConnectionDictionary.mapUidToConnection[ID] = ConnID;
+                Trace.TraceInformation(String.Format("Added caregiver: {0} connectionId {1}", ID,
+                    ConnectionDictionary.mapUidToConnection[ID]));
+
+
+                Caregiver currCaregiver = CaregiverController.GetCaregiverObject(ID);
+                Patient currPatient = PatientController.GetPatientObjectbyGroupID(currCaregiver.GroupID);
+                WanderingAlgo algo = new WanderingAlgo();
+                Trace.TraceInformation("Starting Detection Algo for Patient {0} due to caregiver registration", currPatient.Id);
+                algo.wanderingDetectionAlgo(currPatient.Id);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError("Registration of " + ID + " failed: " + e.Message);
+            }
         }
 
 

@@ -68,6 +68,8 @@ namespace PoleStar.Views
             //var samples1 = await App.MobileService.InvokeApiAsync<IQueryable<Sample>>("values/GetAllSamplesByPatientID", HttpMethod.Get,
             //    new Dictionary<string, string>() { { "patientID", "0ef25de3-50a5-4592-a365-155a45a357a1" } });
 
+            await Notifications.initHubConnection();
+
             samples = await sampleTable.ToCollectionAsync();
 
             //Create a list contains all groups of samples with distance up to 150m
@@ -188,6 +190,17 @@ namespace PoleStar.Views
                 Latitude = lat,
                 Longitude = lon
             });
+        }
+
+        public void SetPatientStatus(string status, Brush color)
+        {
+            patientStatusInd.Text = status;
+            patientStatusInd.Foreground = color;
+        }
+
+        private void btnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(LocationsPage), null);
         }
     }
 }

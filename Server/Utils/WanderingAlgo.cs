@@ -39,6 +39,7 @@ namespace Server.Utils
         public static readonly double closeDistance = 0.3;
 
 
+
         /// Step A - PREPROCESS
         public void preprocessAlgoData(string currentPatientID)
         {
@@ -215,10 +216,9 @@ namespace Server.Utils
             ///         2.4.1.2 else if caregiver marks patient as wandering then enter POSSIBLE_RISK_MODE
 
         }
+
         /// **notice: T1>T2>T3**
 
-
-        
 
 
         ///////////////TO BE CALLED FROM SERVER//////////////
@@ -226,6 +226,20 @@ namespace Server.Utils
         {
             Trace.AutoFlush = true;
             patientID = currentPatientID;
+            if (AlgoUtils.learningStage(currentPatientID)) //if less than 200 samples
+            {
+                //case Learning
+                Trace.TraceInformation(String.Format("Patient status is {0}", AlgoUtils.Status.Learning.ToString()));
+
+                PatientController patientController = new PatientController();
+                CaregiverController caregiverController = new CaregiverController();
+                caregiversArr = caregiverController.GetCaregiversforPatientID(currentPatientID);
+                patientName = patientController.GetPatientName(currentPatientID);
+
+                NotificationHub.static_send(patientID, patientName, caregiversArr, AlgoUtils.Status.Learning);
+                return;
+            }
+
             preprocessAlgoData(currentPatientID); //update latest sample for our patient & his caregiversArr
             Trace.TraceInformation(String.Format("Preprocess stage is finished"));
 

@@ -42,6 +42,14 @@ namespace Server.Controllers
             return result;
         }
 
+        public static Patient GetPatientObjectbyGroupID(string groupID)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            Patient result = db.Patients.Where(p => p.GroupID == groupID).FirstOrDefault();
+
+            return result;
+        }
+
         // GET a specific patient's name
         public string GetPatientName(string patientID)
         {
