@@ -258,13 +258,13 @@ namespace PoleStar.Views
                     patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " CONNECION LOST"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
                     return;
                 case Notifications.Status.Distress:
-                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " DISTRESS"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Yellow); });
+                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " DISTRESS"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Purple); });
                     return;
                 case Notifications.Status.NeedsAssistance:
                     patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " NEEDS ASSISTANCE"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
                     return;
                 case Notifications.Status.Risk:
-                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " RISK"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
+                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " AT RISK!"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
                     return;
                 case Notifications.Status.Wandering:
                     patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " WANDERING"; patientStatusInd.Foreground = new SolidColorBrush(Colors.LightCoral); });

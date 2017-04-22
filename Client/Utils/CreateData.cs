@@ -19,40 +19,25 @@ namespace PoleStar.Utils
         //DemoDay Info:
         /*
          * Group:
-         * name: DemoGroup
+         * name: Group
          * password: 123
          * 
          * Patient:
-         * name: DemoPatient
-         * email: Demopatient@gmail.com
+         * name: Haim Oldsman
+         * email: Patient@email.com
          * password: 123
          * 
          * Caregiver1:
-         * email: c1@gmail.com
-         * phone: 1111111111
+         * email: c1@email.com
+         * phone: 111
          * 
          * Caregiver1:
          * email: c2@gmail.com
-         * phone: 2222222222
+         * phone: 222
          */
 
 
-        ////University (80 samples)
-        //public static double UniLat = 32.112783;
-        //public static double UniLong = 34.806206;
 
-        ////Parents - Netanya (40+ samples)
-        //public static double ParentsLat = 32.302502;
-        //public static double ParentsLong = 34.876437;
-
-
-        ////Grandparents - Haifa (20+ samples)
-        //public static double GrandParLat = 32.799565;
-        //public static double GrandParLong = 35.000884;
-
-        ////Work (70+samples)
-        //public static double WorkLat = 32.101180;
-        //public static double WorkLong = 34.850500;
 
         //Sample Locations
         //KNOWN - House - Shoftim 24 (130+ samples) > 30% of all samples <=> high density
@@ -63,7 +48,7 @@ namespace PoleStar.Utils
         public static double ClubLat = 32.069109;
         public static double ClubLong = 34.806445;
 
-        //Daugther - Herzeliya (115+ samples) > 30% of all samples <=> high density
+        //Daughter - Herzeliya (115+ samples) > 30% of all samples <=> high density
         public static double DaugtherLat = 32.155735;
         public static double DaugtherLong = 34.844036;
 
@@ -84,13 +69,13 @@ namespace PoleStar.Utils
         public static double FeldenLong = 34.793992;
 
         //Sample locations to trigger wanderingAlgo - during DEMO (?)//
-        //Drove to Hashoftim 24 Holon by mistake
+        //Drove to Hashoftim 24 Kfar Saba by mistake
         //Location - Over 10 KM (9-10 KM from Home, over 11 from Seniors Club) LowDensed area (1 sample)
         //Time - normal time (not emergency period)
         //HR - normal
         //Result - RISK (for good reason)
-        public static double sample1Lat = 32.016822;
-        public static double sample1Long = 34.798152;
+        public static double sample1Lat = 32.186299;
+        public static double sample1Long = 34.940823;
 
         //Sample locations to trigger wanderingAlgo - during DEMO (?)//
         //Yafo - Jerusalem Blvd. - went to buy his favorite sourcroute
@@ -130,13 +115,13 @@ namespace PoleStar.Utils
 
 
 
-        public static async Task insertSamples(int cnt, double latitude, double longitude)
+        public static async Task insertSamples(int cnt, double latitude, double longitude, int averageheartrate)
         {
             for (int i = 0; i < cnt; i++)
             {
-                double lat = latitude + (random.Next(0, 2) * 2 - 1)*GetRandomNumber(0.000000001, 0.00012);
-                double lon = longitude + (random.Next(0, 2) * 2 - 1) * GetRandomNumber(0.000000001, 0.00012);
-                int heartrate = 75 + (random.Next(0, 2) * 2 - 1) * random.Next(0, 15);
+                double lat = latitude + (random.Next(0, 2) * 2 - 1)*GetRandomNumber(0.000000001, 0.00045);
+                double lon = longitude + (random.Next(0, 2) * 2 - 1) * GetRandomNumber(0.000000001, 0.00045);
+                int heartrate = averageheartrate + (random.Next(0, 2) * 2 - 1) * random.Next(0, 15);
                 Sample toInsert = new Sample()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -156,11 +141,12 @@ namespace PoleStar.Utils
         }
 
         //For Use
-        //await CreateData.insertSamples(30, CreateData.HouseLat, CreateData.HouseLong);
-        //await CreateData.insertSamples(22, CreateData.GrandParLat, CreateData.GrandParLong);
-        //await CreateData.insertSamples(46, CreateData.ParentsLat, CreateData.ParentsLong);
-        //await CreateData.insertSamples(25, CreateData.StoreLat, CreateData.StoreLong);
-        //await CreateData.insertSamples(80, CreateData.UniLat, CreateData.UniLong);
-        //await CreateData.insertSamples(77, CreateData.WorkLat, CreateData.WorkLong);
+        //await CreateData.insertSamples(250, CreateData.HouseLat, CreateData.HouseLong, 75);
+        //await CreateData.insertSamples(62, CreateData.ClubLat, CreateData.ClubLong, 80);
+        //await CreateData.insertSamples(240, CreateData.DaugtherLat, CreateData.DaugtherLong, 78);
+        //await CreateData.insertSamples(22, CreateData.StoreLat, CreateData.StoreLong, 75);
+        //await CreateData.insertSamples(12, CreateData.GrandsonLat, CreateData.GrandsonLong, 75);
+        //await CreateData.insertSamples(86, CreateData.FeldenLat, CreateData.FeldenLong, 103);
+        //await CreateData.insertSamples(22, CreateData.DocLat, CreateData.DocLong, 83);
     }
 }

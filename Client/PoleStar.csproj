@@ -139,6 +139,9 @@
     <Compile Include="Views\PatientSignupPage.xaml.cs">
       <DependentUpon>PatientSignupPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Testing.xaml.cs">
+      <DependentUpon>Testing.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -205,6 +208,10 @@
     <Page Include="Views\PatientSignupPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Testing.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

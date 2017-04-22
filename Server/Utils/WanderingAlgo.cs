@@ -36,7 +36,7 @@ namespace Server.Utils
         public static double avgNormalTimeRange;
         public static string patientName;
         public static string patientID;
-        public static readonly double closeDistance = 0.3;
+        public static readonly double closeDistance = 0.6;
 
 
 
@@ -79,7 +79,7 @@ namespace Server.Utils
 
             //get avg patient's HR, and set our limits
             AVG_PATIENT_HR = AlgoUtils.avgHeartRate(currentPatientID);
-            HEART_RATE_TOP_LIMIT = 1.6 * AVG_PATIENT_HR;
+            HEART_RATE_TOP_LIMIT = 1.4 * AVG_PATIENT_HR;
             HEART_RATE_BOTTOM_LIMIT = 0.5 * AVG_PATIENT_HR;
             Trace.TraceInformation(String.Format("Avg patient heartrate is {0}", AVG_PATIENT_HR));
             Trace.TraceInformation(String.Format("BottomLimit patient heartrate is {0}", HEART_RATE_BOTTOM_LIMIT));
@@ -151,16 +151,19 @@ namespace Server.Utils
                 //patient is somewhat close to a known location, not in a dangerous time
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
                 {
-                    if (AlgoUtils.isTimeInNormalRange(sampleTime.Hour))
-                    {
-                        Trace.TraceInformation(String.Format("less than 2, normal time, heart is okay - Safety"));
-                        return AlgoUtils.Status.Safety;
-                    }
-                    else
-                    {
-                        Trace.TraceInformation(String.Format("less than 2, BAD time, heart is okay - Wandering"));
-                        return AlgoUtils.Status.Wandering;
-                    }
+                    Trace.TraceInformation(String.Format("less than 2, normal time, heart is okay - Safety"));
+                    return AlgoUtils.Status.Safety;
+
+                    //if (AlgoUtils.isTimeInNormalRange(sampleTime.Hour))
+                    //{
+                    //    Trace.TraceInformation(String.Format("less than 2, normal time, heart is okay - Safety"));
+                    //    return AlgoUtils.Status.Safety;
+                    //}
+                    //else
+                    //{
+                    //    Trace.TraceInformation(String.Format("less than 2, BAD time, heart is okay - Wandering"));
+                    //    return AlgoUtils.Status.Wandering;
+                    //}
                 }
                 else
                 {

@@ -54,6 +54,16 @@ namespace PoleStar.Views
             //start periodic timer
             //StartTimer();
 
+
+            //await CreateData.insertSamples(250, CreateData.HouseLat, CreateData.HouseLong, 75);
+            //await CreateData.insertSamples(62, CreateData.ClubLat, CreateData.ClubLong, 80);
+            //await CreateData.insertSamples(240, CreateData.DaugtherLat, CreateData.DaugtherLong, 78);
+            //await CreateData.insertSamples(22, CreateData.StoreLat, CreateData.StoreLong, 75);
+            //await CreateData.insertSamples(12, CreateData.GrandsonLat, CreateData.GrandsonLong, 75);
+            //await CreateData.insertSamples(86, CreateData.FeldenLat, CreateData.FeldenLong, 103);
+            //await CreateData.insertSamples(22, CreateData.DocLat, CreateData.DocLong, 83);
+
+
         }
 
         public void StartTimer()
@@ -73,7 +83,6 @@ namespace PoleStar.Views
             {
             }
         }
-
 
         private async Task InsertSample()
         {
@@ -111,7 +120,18 @@ namespace PoleStar.Views
 
         }
 
-        private async void buttonMeasure_Click(object sender, RoutedEventArgs e)
+        private async void buttonTest_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(Testing), null);
+
+        }
+
+        private void btnSettings_Click(object sender, RoutedEventArgs e)
+        {
+            this.Frame.Navigate(typeof(LocationsPage), null);
+        }
+
+        private async void MeaurementsButton_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -124,17 +144,6 @@ namespace PoleStar.Views
             {
                 DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
             }
-        }
-
-        private void buttonAlgo_Click(object sender, RoutedEventArgs e)
-        {
-            Notifications.startWanderingAlgo();
-            Notifications.NotificationHubProxy.Invoke("printConnections");
-        }
-
-        private void btnSettings_Click(object sender, RoutedEventArgs e)
-        {
-            this.Frame.Navigate(typeof(LocationsPage), null);
         }
     }
 }
