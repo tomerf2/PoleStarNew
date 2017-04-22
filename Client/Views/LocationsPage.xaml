@@ -10,7 +10,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Button x:Name="btnClose" Content="Close [x]" FontSize="14" HorizontalAlignment="Left" Style="{ThemeResource TextBlockButtonStyle}" FontFamily="Lucida Grande" VerticalAlignment="Top" Click="btnClose_Click" Margin="50,0,0,0"/>
-        <Button x:Name="btnLogOut" Content="LogOut [x]" FontSize="14" HorizontalAlignment="Right" Style="{ThemeResource TextBlockButtonStyle}" FontFamily="Lucida Grande" VerticalAlignment="Top" Click="btnLogOut_Click" Margin="0,0,50,0"/>
+        <Button x:Name="btnLogOut" Content="Logout [x]" FontSize="14" HorizontalAlignment="Right" Style="{ThemeResource TextBlockButtonStyle}" FontFamily="Lucida Grande" VerticalAlignment="Top" Click="btnLogOut_Click" Margin="0,0,50,0"/>
         <ProgressRing Name="symLoading" Width="50" Height="50" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         
         <Grid Margin="30">

@@ -166,6 +166,16 @@ namespace Server.Hubs
 
         }
 
+        public void getPatientID(string caregiverID)
+        {
+            Trace.TraceInformation(String.Format("Retrieving patient ID for caregiver"));
+            Caregiver caregiverObj = CaregiverController.GetCaregiverObject(caregiverID);
+            Patient patientObj = PatientController.GetPatientObjectbyGroupID(caregiverObj.GroupID);
+
+            Trace.TraceInformation(String.Format("Sending patientID to caregiver {0} in response to request", caregiverID));
+            Clients.Client(ConnectionDictionary.mapUidToConnection[caregiverID]).patientID(patientObj.Id);
+        }
+
         ////Testing
         public void startWanderingDetection(string ID)
         {

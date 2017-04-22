@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Devices.Geolocation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -21,6 +22,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using PoleStar.Utils;
 using Windows.UI.Xaml.Controls.Maps;
+using Microsoft.AspNet.SignalR.Client;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -38,6 +40,8 @@ namespace PoleStar.Views
 
         private IMobileServiceTable<Location> locationTable = App.MobileService.GetTable<Location>();
 
+        private string patientID;
+
         public LocationsPage()
         {
             this.InitializeComponent();
@@ -48,7 +52,9 @@ namespace PoleStar.Views
             symLoading.IsActive = true;
             symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-            locations = await locationTable.ToCollectionAsync();
+            await getPatientID();//get patient ID from DB
+
+            locations = await locationTable.ToCollectionAsync(); //TODO FILTER BY PATIENT ID
 
             for (int i = 0; i < locations.Count; i++)
             {
@@ -254,7 +260,7 @@ namespace PoleStar.Views
                 Location location = new Location()
                 {
                     Id = Guid.NewGuid().ToString(),
-                    PatientID = Guid.NewGuid().ToString(),
+                    PatientID = patientID,
                     Description = txtDescription.Text,
                     HeartRate = 0,
                     Latitude = (float)mLastLat,
@@ -263,6 +269,22 @@ namespace PoleStar.Views
 
                 await locationTable.InsertAsync(location);
             }
+        }
+
+        private async Task getPatientID()
+        {
+            if (StoredData.isPatient())
+            {
+                this.patientID = StoredData.getUserGUID();
+                return;
+            }
+            //if caregiver
+            if (patientID == null)
+            {
+                //dont have ID yet
+                await Notifications.requestPatientID();
+            }
+            this.patientID = StoredData.getPatientID();
         }
     }
 }

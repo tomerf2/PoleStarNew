@@ -14,6 +14,7 @@ namespace PoleStar.Utils
         private static bool patient;
         private static bool caregiver;
         private static String userGUID;
+        private static string patientID;
 
 
         public static bool checkForPreviousLogin()
@@ -88,5 +89,14 @@ namespace PoleStar.Utils
             localSettings.Values.Remove("userGUID");
         }
 
+        public static void setPatientID(string ID)
+        {
+            patientID = ID;
+        }
+
+        public static string getPatientID()
+        {
+            return patientID;
+        }
     }
 }

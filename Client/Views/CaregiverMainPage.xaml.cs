@@ -70,6 +70,8 @@ namespace PoleStar.Views
 
             await Notifications.initHubConnection();
 
+            //Notifications.requestPatientID();
+
             samples = await sampleTable.ToCollectionAsync();
 
             //Create a list contains all groups of samples with distance up to 150m

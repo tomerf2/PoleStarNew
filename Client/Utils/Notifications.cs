@@ -47,7 +47,10 @@ namespace PoleStar.Utils
             if (StoredData.isCaregiver())
             {
                 NotificationHubProxy.Invoke("RegisterCaregiver", Utils.StoredData.getUserGUID());
-                NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse);
+                NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse);             
+                NotificationHubProxy.On<string>("patientID", ReceivePatientID);
+
+
             }
             else //patient
             {
@@ -57,6 +60,10 @@ namespace PoleStar.Utils
             }
         }
 
+        public async static Task requestPatientID()
+        {
+            await NotificationHubProxy.Invoke("getPatientID", StoredData.getUserGUID());
+        }
 
         //CAREGIVER LISTENERS
         private static void NotificationResponse(Message message)
@@ -131,6 +138,10 @@ namespace PoleStar.Utils
             //        CaregiverMainPage.SetPatientStatus("   OK", new SolidColorBrush(Colors.Green));
             //        return;
             //}
+        }
+        private static void ReceivePatientID(string patientID)
+        {
+            StoredData.setPatientID(patientID);
         }
 
         private static void OnWanderingAlert(string patientName)
