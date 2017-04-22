@@ -256,7 +256,6 @@ namespace PoleStar.Views
                 DialogBox.ShowOk("Error", "Please write a description.");
             else
             {
-                //TODO: get correct patient id
                 Location location = new Location()
                 {
                     Id = Guid.NewGuid().ToString(),
