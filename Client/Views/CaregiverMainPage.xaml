@@ -12,7 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -30,7 +30,7 @@
             <TextBlock x:Name="patientStatusInd" Text="      OK" FontSize="20" FontWeight="Bold" Foreground="Green" HorizontalAlignment="Center"></TextBlock>
         </StackPanel>
 
-        <Maps:MapControl Grid.Row="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="569" Width="340" x:Name="mcMap" MapServiceToken="idv0A7Nzs8EJDaTz8MCq~61YNKIzybFvVrB9RciWR3Q~As1isqoI6gH-WaY3g3xOY0Khz_P5vS-QxcrApAIaPhKFa5yQoVG9JPm5XM7Dp7e7"/>
+        <Maps:MapControl Grid.Row="2" Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" x:Name="mcMap" MapServiceToken="idv0A7Nzs8EJDaTz8MCq~61YNKIzybFvVrB9RciWR3Q~As1isqoI6gH-WaY3g3xOY0Khz_P5vS-QxcrApAIaPhKFa5yQoVG9JPm5XM7Dp7e7"/>
 
     </Grid>
 </Page>
