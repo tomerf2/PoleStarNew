@@ -65,13 +65,17 @@ namespace Server.Hubs
 
                 Caregiver currCaregiver = CaregiverController.GetCaregiverObject(ID);
                 Patient currPatient = PatientController.GetPatientObjectbyGroupID(currCaregiver.GroupID);
+                //send patient ID to caregiver
+                Trace.TraceInformation("Sending message back to caregiver with patient ID");
+                Message message = new Message() {ID = currPatient.Id, status = AlgoUtils.Status.Safety, name = ""};
+                Clients.Client(ConnectionDictionary.mapUidToConnection[ID]).receiveNotification(message);
                 WanderingAlgo algo = new WanderingAlgo();
                 Trace.TraceInformation("Starting Detection Algo for Patient {0} due to caregiver registration", currPatient.Id);
                 algo.wanderingDetectionAlgo(currPatient.Id);
             }
             catch (Exception e)
             {
-                Trace.TraceError("Registration of " + ID + " failed: " + e.Message);
+                Trace.TraceError("Registration of " + ID + " failed or Exception in wandering Algo: " + e.Message);
             }
         }
 
@@ -141,7 +145,6 @@ namespace Server.Hubs
 
             foreach (var caregiver in caregiversArr)
             {
-
                 try
                 {
                     ConnectionDictionary.mapUidToStatus[caregiver.Id] = status;

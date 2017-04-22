@@ -255,30 +255,39 @@ namespace PoleStar.Views
 
         private async void btnBrowse_Click(object sender, RoutedEventArgs e)
         {
-            BeginLoadingIcon();
-
-            string addressToGeocode = txtAddress.Text;
-
-            // The nearby location to use as a query hint.
-            BasicGeoposition queryHint = new BasicGeoposition();
-            queryHint.Latitude = 47.643;
-            queryHint.Longitude = -122.131;
-            Geopoint hintPoint = new Geopoint(queryHint);
-
-            MapLocationFinderResult result =
-                  await MapLocationFinder.FindLocationsAsync(
-                                    addressToGeocode,
-                                    hintPoint,
-                                    3);
-
-            if (result.Status == MapLocationFinderStatus.Success)
+            try
             {
-                mLastLat = result.Locations[0].Point.Position.Latitude;
-                mLastLong = result.Locations[0].Point.Position.Longitude;
-                CenterMap(mLastLat, mLastLong, 17);
+                BeginLoadingIcon();
+
+                string addressToGeocode = txtAddress.Text;
+
+                // The nearby location to use as a query hint.
+                BasicGeoposition queryHint = new BasicGeoposition();
+                queryHint.Latitude = 47.643;
+                queryHint.Longitude = -122.131;
+                Geopoint hintPoint = new Geopoint(queryHint);
+
+                MapLocationFinderResult result =
+                    await MapLocationFinder.FindLocationsAsync(
+                        addressToGeocode,
+                        hintPoint,
+                        3);
+
+                if (result.Status == MapLocationFinderStatus.Success)
+                {
+                    mLastLat = result.Locations[0].Point.Position.Latitude;
+                    mLastLong = result.Locations[0].Point.Position.Longitude;
+                    CenterMap(mLastLat, mLastLong, 17);
+                }
+
+                EndLoadingIcon();
+            }
+            catch (Exception)
+            {
+                EndLoadingIcon();
+                DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
             }
 
-            EndLoadingIcon();
         }
 
         private void CenterMap(double lat, double lon, int zoom)
@@ -293,7 +302,15 @@ namespace PoleStar.Views
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(PatientMainPage), null);
+            if (StoredData.isCaregiver())
+            {
+                this.Frame.Navigate(typeof(CaregiverMainPage), null);
+            }
+            else
+            {
+                this.Frame.Navigate(typeof(PatientMainPage), null);
+            }
+
         }
         
         private void btnLogOut_Click(object sender, RoutedEventArgs e)
