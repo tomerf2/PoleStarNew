@@ -73,19 +73,19 @@ namespace Server.Utils
 
             double densityRatio = (closeDistanceSamples.Count / samplesArr.Length);
 
-            if (densityRatio < 0.1)
+            if (densityRatio < 0.05)
             {
                 return AlgoUtils.HeatMapDensity.Zero;
             }
-            else if (densityRatio < 0.25)
+            else if (densityRatio < 0.1)
             {
                 return AlgoUtils.HeatMapDensity.Low;
             }
-            else if (densityRatio < 0.45)
+            else if (densityRatio < 0.3)
             {
                 return AlgoUtils.HeatMapDensity.Medium;
             }
-            else //densityRatio is over 45%, very high!
+            else //densityRatio is over 35%, very high!
             {
                 return AlgoUtils.HeatMapDensity.High;
             }

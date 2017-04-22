@@ -78,7 +78,7 @@ namespace Server.Utils
 
             //get avg patient's HR, and set our limits
             AVG_PATIENT_HR = AlgoUtils.avgHeartRate(currentPatientID);
-            HEART_RATE_TOP_LIMIT = 1.7 * AVG_PATIENT_HR;
+            HEART_RATE_TOP_LIMIT = 1.6 * AVG_PATIENT_HR;
             HEART_RATE_BOTTOM_LIMIT = 0.5 * AVG_PATIENT_HR;
             Trace.TraceInformation(String.Format("Avg patient heartrate is {0}", AVG_PATIENT_HR));
             Trace.TraceInformation(String.Format("BottomLimit patient heartrate is {0}", HEART_RATE_BOTTOM_LIMIT));
