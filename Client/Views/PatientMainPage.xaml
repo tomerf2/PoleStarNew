@@ -24,6 +24,7 @@
                 <Image x:Name="locationsImage" Source="../Assets/google-location-icon2.png" Height="55" Stretch="Fill" VerticalAlignment="Top" Width="55" />
             </Button>
         </StackPanel>
+        
 
         <TextBlock Grid.Row="1" FontSize="18" FontWeight="Light" Foreground="Black" HorizontalAlignment="Center" >
             <Run Text="Rest easy. "/>
@@ -37,12 +38,10 @@
             <Run Text="button below."/>
         </TextBlock>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,20,0,0">
-            <Button x:Name="buttonMeasure" Content="Get Measurements" HorizontalAlignment="Left" Margin="0,20,20,0" Grid.Row="1" VerticalAlignment="Top" Height="82" Width="159" Click="buttonMeasure_Click"/>
-            <Button x:Name="buttonAlgo" Content="Start Wandering Algo" HorizontalAlignment="Left" Height="93" Margin="0,0,0,0" Grid.RowSpan="2" VerticalAlignment="Top" Width="159" Click="buttonAlgo_Click"/>
-        </StackPanel>
+        <Button x:Name="testButton" Grid.Row="2" Content="Testing" HorizontalAlignment="Left" Height="50" Background="White" Margin="40,10,0,20" Grid.RowSpan="2" VerticalAlignment="Top" Width="100" Click="buttonTest_Click"/>
+        <Button x:Name="meaurementsButton" Grid.Row="2" Content="Measurements" HorizontalAlignment="Right" Height="50" Background="White" Margin="0,10,50,20" Grid.RowSpan="2" VerticalAlignment="Top" Width="120" Click="MeaurementsButton_OnClick"/>
 
-        <Button x:Name="btnAssist" Grid.Row="3" Content="   I Need&#xD;&#xA;Assistance" HorizontalAlignment="Stretch" Margin="20,60,30,0" Background="Red" FontFamily="Roboto Condensed" Height="180" Foreground="White" FontWeight="SemiBold" FontSize="34" BorderThickness="5" BorderBrush="Black"  Click="btnAssist_Click"/>
+        <Button x:Name="btnAssist" Grid.Row="3" Content="   I Need&#xD;&#xA;Assistance" HorizontalAlignment="Stretch" Margin="20,100,30,0" Background="Red" FontFamily="Roboto Condensed" Height="180" Foreground="White" FontWeight="SemiBold" FontSize="34" BorderThickness="5" BorderBrush="Black"  Click="btnAssist_Click"/>
 
 
     </Grid>

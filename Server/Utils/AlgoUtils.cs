@@ -69,10 +69,10 @@ namespace Server.Utils
             //take samples from closeDistance (parameter)
             List<Sample> closeDistanceSamples = getGeoNearSamples(WanderingAlgo.latestSample);
             //take last 300 samples of current patient regardless of location
-            Sample[] samplesArr = db.Samples.Where(p => p.PatientID == WanderingAlgo.latestSample.PatientID).OrderByDescending(p => p.CreatedAt).Take(300).ToArray();
+            Sample[] samplesArr = db.Samples.Where(p => p.PatientID == WanderingAlgo.latestSample.PatientID).OrderByDescending(p => p.CreatedAt).Take(700).ToArray();
 
-            double densityRatio = (closeDistanceSamples.Count / samplesArr.Length);
-
+            double densityRatio = (((double)closeDistanceSamples.Count) / samplesArr.Length);
+            Trace.TraceInformation("found {0} relevant samples, density ratio is {1}", closeDistanceSamples.Count, densityRatio);
             if (densityRatio < 0.05)
             {
                 return AlgoUtils.HeatMapDensity.Zero;
@@ -217,7 +217,7 @@ namespace Server.Utils
                     relevantSamples.Add(sample);
                 }
             }
-
+            
             return relevantSamples;
         }
 
