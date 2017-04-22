@@ -21,6 +21,7 @@ namespace Server.Controllers
         }
 
         // GET tables/Sample
+        [EnableQuery(PageSize = 1000)]
         public IQueryable<Sample> GetAllSample()
         {
             return Query(); 

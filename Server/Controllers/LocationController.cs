@@ -19,6 +19,7 @@ namespace Server.Controllers
         }
 
         // GET tables/Location
+        [EnableQuery(PageSize = 1000)]
         public IQueryable<Location> GetAllLocation()
         {
             return Query(); 
