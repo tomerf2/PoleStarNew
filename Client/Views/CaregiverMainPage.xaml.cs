@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.AspNet.SignalR.Client;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -36,6 +37,8 @@ namespace PoleStar.Views
         private MobileServiceCollection<Sample, Sample> samples;
 
         private IMobileServiceTable<Sample> sampleTable = App.MobileService.GetTable<Sample>();
+
+        private static Notifications.Status patientStatus;
 
         public CaregiverMainPage()
         {
@@ -68,9 +71,23 @@ namespace PoleStar.Views
             //var samples1 = await App.MobileService.InvokeApiAsync<IQueryable<Sample>>("values/GetAllSamplesByPatientID", HttpMethod.Get,
             //    new Dictionary<string, string>() { { "patientID", "0ef25de3-50a5-4592-a365-155a45a357a1" } });
 
-            await Notifications.initHubConnection();
 
-            //Notifications.requestPatientID();
+            //init connection and set listeners
+            try
+            {
+                await Notifications.initHubConnection();
+                Notifications.NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse);
+                Notifications.NotificationHubProxy.Invoke("RegisterCaregiver", Utils.StoredData.getUserGUID());
+            }
+            catch (Exception connFail)
+            {
+                DialogBox.ShowOk("Error", "Could not connect Azure server, retrying");
+                this.Frame.Navigate(typeof(CaregiverMainPage), null);
+            }
+
+            //----------------------------------------------------------------
+            //TODO - BEN - only load heatmap is patientStatus != Learning
+            //----------------------------------------------------------------
 
             samples = await sampleTable.ToCollectionAsync();
 
@@ -203,6 +220,68 @@ namespace PoleStar.Views
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(LocationsPage), null);
+        }
+
+        private void NotificationResponse(Message message)
+        {
+            //store patient id
+            if (StoredData.getPatientID() == null)
+            {
+                StoredData.setPatientID(message.ID);
+            }
+            patientStatus = message.status;//set status
+            OnReceivePatientStatus(message.status);
+            switch (message.status)
+            {
+                case Notifications.Status.ConnectionLost:
+                    Notifications.OnLostConnAlert(message.name);
+                    break;
+                case Notifications.Status.Distress:
+                    Notifications.OnDistressAlert(message.name);
+                    break;
+                case Notifications.Status.NeedsAssistance:
+                    Notifications.OnHelpButtonAlert(message.name);
+                    break;
+                case Notifications.Status.Risk:
+                    Notifications.OnRiskAlert(message.name);
+                    break;
+                case Notifications.Status.Wandering:
+                    Notifications.OnWanderingAlert(message.name);
+                    break;
+            }
+        }
+        private void OnReceivePatientStatus(Notifications.Status status)
+        {
+            switch (status)
+            {
+                case Notifications.Status.ConnectionLost:
+                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " CONNECION LOST"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
+                    return;
+                case Notifications.Status.Distress:
+                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " DISTRESS"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Yellow); });
+                    return;
+                case Notifications.Status.NeedsAssistance:
+                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " NEEDS ASSISTANCE"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
+                    return;
+                case Notifications.Status.Risk:
+                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " RISK"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
+                    return;
+                case Notifications.Status.Wandering:
+                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " WANDERING"; patientStatusInd.Foreground = new SolidColorBrush(Colors.LightCoral); });
+                    return;
+                case Notifications.Status.Learning:
+                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " LEARNING"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Orange); });
+                    return;
+                case Notifications.Status.Safety:
+                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " OK"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Green); });
+                    return;
+            }
+        }
+
+        private void setStatus(string status, Brush color)
+        {
+            patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = status; patientStatusInd.Foreground = color;});
+
         }
     }
 }
