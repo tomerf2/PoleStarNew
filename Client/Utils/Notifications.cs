@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
+using Windows.UI.Xaml.Media;
 using Microsoft.AspNet.SignalR.Client;
 using PoleStar;
 using Microsoft.WindowsAzure.MobileServices;
 using PoleStar.DataModel;
+using PoleStar.Views;
 
 
 namespace PoleStar.Utils
@@ -25,7 +27,8 @@ namespace PoleStar.Utils
             Distress,
             Risk,
             ConnectionLost,
-            NeedsAssistance //help button pressed
+            NeedsAssistance, //help button pressed
+            Learning //not enough samples collected
         }
 
         public static async Task initHubConnection()
@@ -41,14 +44,14 @@ namespace PoleStar.Utils
             await NotificationHubConnection.Start();
 
             //register
-            await NotificationHubProxy.Invoke("Register", Utils.StoredData.getUserGUID());
-
             if (StoredData.isCaregiver())
             {
+                NotificationHubProxy.Invoke("RegisterCaregiver", Utils.StoredData.getUserGUID());
                 NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse);
             }
-            else
+            else //patient
             {
+                NotificationHubProxy.Invoke("RegisterPatient", Utils.StoredData.getUserGUID());
                 NotificationHubProxy.On<SMSMessage>("receiveSMS", SMSResponse);
                 NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse); //TODO - Remove
             }
@@ -56,27 +59,28 @@ namespace PoleStar.Utils
 
 
         //CAREGIVER LISTENERS
-
         private static void NotificationResponse(Message message)
         {
-            switch (message.status)
-            {
-                    case Status.ConnectionLost:
-                        OnLostConnAlert(message.name);
-                        break;
-                    case Status.Distress:
-                        OnDistressAlert(message.name);
-                        break;
-                    case Status.NeedsAssistance:
-                        OnHelpButtonAlert(message.name);
-                        break;
-                    case Status.Risk:
-                        OnRiskAlert(message.name);
-                        break;
-                    case Status.Wandering:
-                        OnWanderingAlert(message.name);
-                        break;
-            }
+            OnReceivePatientStatus(message.status);
+
+            //switch (message.status)
+            //{
+            //        case Status.ConnectionLost:
+            //            OnLostConnAlert(message.name);
+            //            break;
+            //        case Status.Distress:
+            //            OnDistressAlert(message.name);
+            //            break;
+            //        case Status.NeedsAssistance:
+            //            OnHelpButtonAlert(message.name);
+            //            break;
+            //        case Status.Risk:
+            //            OnRiskAlert(message.name);
+            //            break;
+            //        case Status.Wandering:
+            //            OnWanderingAlert(message.name);
+            //            break;
+            //}
         }
 
         private static void SMSResponse(SMSMessage message)
@@ -101,8 +105,34 @@ namespace PoleStar.Utils
 
         private static void OnReceivePatientStatus(Status status)
         {
-            //TODO: set status on screen
+            DialogBox.ShowOk("Status", "PoleStar detects that " + status.ToString());
+
+            //switch (status)
+            //{
+            //    case Status.ConnectionLost:
+            //        CaregiverMainPage.SetPatientStatus("   CONNECION LOST", new SolidColorBrush(Colors.Red));
+            //        return;
+            //    case Status.Distress:
+            //        CaregiverMainPage.SetPatientStatus("   DISTRESS", new SolidColorBrush(Colors.Yellow));
+            //        return;
+            //    case Status.NeedsAssistance:
+            //        CaregiverMainPage.SetPatientStatus("   NEEDS ASSISTANCE", new SolidColorBrush(Colors.Red));
+            //        return;
+            //    case Status.Risk:
+            //        CaregiverMainPage.SetPatientStatus("   RISK", new SolidColorBrush(Colors.Red));
+            //        return;
+            //    case Status.Wandering:
+            //        CaregiverMainPage.SetPatientStatus("   WANDERING", new SolidColorBrush(Colors.LightCoral));
+            //        return;
+            //    case Status.Learning:
+            //        CaregiverMainPage.SetPatientStatus("   LEARNING", new SolidColorBrush(Colors.Orange));
+            //        return;
+            //    case Status.Safety:
+            //        CaregiverMainPage.SetPatientStatus("   OK", new SolidColorBrush(Colors.Green));
+            //        return;
+            //}
         }
+
         private static void OnWanderingAlert(string patientName)
         {
             DialogBox.ShowOk("Wandering Alert", "PoleStar detects that " + patientName + " is at risk of wandering. Please check the PoleStar app for more details");

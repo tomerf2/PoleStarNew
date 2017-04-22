@@ -9,6 +9,7 @@ using Server.Models;
 using Server.Hubs;
 using System.Collections;
 using System.Diagnostics;
+using Server.Controllers;
 
 namespace Server.Utils
 {
@@ -49,7 +50,8 @@ namespace Server.Utils
             Distress,
             Risk,
             ConnectionLost,
-            NeedsAssistance //help button pressed
+            NeedsAssistance, //help button pressed
+            Learning //not enough samples collected
         }
 
         public enum HeatMapDensity
@@ -168,6 +170,16 @@ namespace Server.Utils
             {
                 return false;
             }
+        }
+
+        public static Boolean learningStage(string patientID)
+        {
+            int numOfSamples = SampleController.GetSampleCountforPatientrID(patientID);
+            if (numOfSamples < 200)
+            {
+                return true; //in learning stage
+            }
+            return false;//not in learning stage
         }
 
 

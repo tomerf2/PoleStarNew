@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Controllers;
@@ -28,6 +30,16 @@ namespace Server.Controllers
         public SingleResult<Sample> GetSample(string id)
         {
             return Lookup(id);
+        }
+
+        // GET a specific patient's sample count
+        public static int GetSampleCountforPatientrID(string patientID)
+        {
+            MobileServiceContext db = new MobileServiceContext();
+            Patient currentPatient = PatientController.GetPatientObject(patientID);
+            var samplesArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID);
+            Trace.TraceInformation("Number of samples found: {0}", samplesArr.Count());
+            return samplesArr.Count();
         }
 
         // GET latest sample for a specific patientID
