@@ -91,7 +91,7 @@ namespace PoleStar.Views
 
             samples = await sampleTable.ToCollectionAsync();
 
-            //Create a list contains all groups of samples with distance up to 150m
+            //Create a list contains all groups of samples with distance up to 100m
             List <List<Sample>> sampleGroups = new List<List<Sample>>();
             List<int> sampleIndexesAdded = new List<int>();
             int maxGroupCount = 0;
