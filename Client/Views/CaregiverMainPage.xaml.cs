@@ -35,10 +35,9 @@ namespace PoleStar.Views
     public sealed partial class CaregiverMainPage : Page
     {
         private MobileServiceCollection<Sample, Sample> samples;
-
         private IMobileServiceTable<Sample> sampleTable = App.MobileService.GetTable<Sample>();
-
         private static Notifications.Status patientStatus;
+        private MapIcon mLastPatientLocIcon = new MapIcon();
 
         public CaregiverMainPage()
         {
@@ -47,21 +46,6 @@ namespace PoleStar.Views
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            /*TimeSpan period = TimeSpan.FromSeconds(5);
-
-            ThreadPoolTimer PeriodicTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
-            {
-                //
-                // Update the UI thread by using the UI core dispatcher.
-                //
-                await Dispatcher.RunAsync(CoreDispatcherPriority.High,
-                    async () =>
-                    {
-                        await GetLatestSamples();
-                    });
-
-            }, period);*/
-
             //var caregiver = await App.MobileService.GetTable<Caregiver>().LookupAsync(StoredData.getUserGUID());
             //var patients = await App.MobileService.GetTable<Patient>().ToCollectionAsync();
             //var parameters = new Dictionary<string, string>();
@@ -77,7 +61,7 @@ namespace PoleStar.Views
             {
                 await Notifications.initHubConnection();
                 Notifications.NotificationHubProxy.On<Message>("receiveNotification", NotificationResponse);
-                Notifications.NotificationHubProxy.Invoke("RegisterCaregiver", Utils.StoredData.getUserGUID());
+                await Notifications.NotificationHubProxy.Invoke("RegisterCaregiver", Utils.StoredData.getUserGUID());
             }
             catch (Exception connFail)
             {
@@ -85,32 +69,56 @@ namespace PoleStar.Views
                 this.Frame.Navigate(typeof(CaregiverMainPage), null);
             }
 
-            //----------------------------------------------------------------
-            //TODO - BEN - only load heatmap is patientStatus != Learning
-            //----------------------------------------------------------------
+            TimeSpan lastSamplePeriod = TimeSpan.FromSeconds(5 * 60);
+            ThreadPoolTimer lastSamplePeriodicTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.High,
+                        async () =>
+                        {
+                            await ShowLatestSample();
+                        });
 
-            samples = await sampleTable.ToCollectionAsync();
+            }, lastSamplePeriod);
 
+            if (patientStatus != Notifications.Status.Learning)
+            {
+                await CreateHeatMap();
+
+                TimeSpan hmPeriod = TimeSpan.FromSeconds(24 * 60 * 60);
+                ThreadPoolTimer hmPeriodicTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
+                {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                        async () =>
+                        {
+                            await CreateHeatMap();
+                        });
+
+                }, hmPeriod);
+            }
+        }
+
+        private async Task CreateHeatMap()
+        {
             //Create a list contains all groups of samples with distance up to 100m
-            List <List<Sample>> sampleGroups = new List<List<Sample>>();
+            List<List<Sample>> sampleGroups = new List<List<Sample>>();
             List<int> sampleIndexesAdded = new List<int>();
             int maxGroupCount = 0;
 
-            for(int i = 0; i < samples.Count; i++)
+            for (int i = 0; i < samples.Count; i++)
             {
                 //Get group's index that contains the current sample
                 int groupIndex = -1;
 
-                for(int j = 0; j < sampleGroups.Count; j++)
+                for (int j = 0; j < sampleGroups.Count; j++)
                 {
-                    if(sampleGroups[j].Contains(samples[i]))
+                    if (sampleGroups[j].Contains(samples[i]))
                     {
                         groupIndex = j;
                         break;
                     }
                 }
 
-                if(groupIndex == -1)
+                if (groupIndex == -1)
                 {
                     sampleGroups.Add(new List<Sample>() { samples[i] });
                     groupIndex = sampleGroups.Count - 1;
@@ -121,9 +129,9 @@ namespace PoleStar.Views
                 }
 
                 //Find more samples to add this group
-                for(int j = i + 1; j < samples.Count; j++)
+                for (int j = i + 1; j < samples.Count; j++)
                 {
-                    if(samples[i].DistanceTo(samples[j]) < 100)
+                    if (samples[i].DistanceTo(samples[j]) < 100)
                     {
                         if (!sampleGroups[groupIndex].Contains(samples[j]) & !sampleIndexesAdded.Contains(j))
                         {
@@ -137,18 +145,9 @@ namespace PoleStar.Views
                 }
             }
 
-            foreach(var sampleGroup in sampleGroups)
+            foreach (var sampleGroup in sampleGroups)
             {
-                //TODO: Prevent showing groups with up to 20 samples
-                if (sampleGroup.Count == 1)
-                {
-                    MapIcon mi = new MapIcon();
-                    mi.Visible = true;
-                    mi.Title = "One sample group";
-                    mi.Location = new Geopoint(new BasicGeoposition() { Latitude = sampleGroup[0].Latitude, Longitude = sampleGroup[0].Longitude });
-                    mcMap.MapElements.Add(mi);
-                }
-                else
+                if (sampleGroup.Count > 2)
                 {
                     List<Sample> chSampleGroup = HeatMap.ConvexHull(sampleGroup);
 
@@ -171,20 +170,18 @@ namespace PoleStar.Views
                 }
             }
 
-            mcMap.ZoomLevel = 16;
-            CenterMap(32.3026161, 34.8748978);
+            await ShowLatestSample();
         }
 
-        private async Task GetLatestSamples()
+        private async Task ShowLatestSample()
         {
             MobileServiceInvalidOperationException exception = null;
+            Sample lastSample = null;
+
             try
             {
-                // This code refreshes the entries in the list view by querying the TodoItems table.
-                // The query excludes completed TodoItems.
-                /*groupCargivers = await groupCargiverTable
-                    .Where(groupCargiver => groupCargiver.CaregiverID == "123" && groupCargiver.GroupID == "123")
-                    .ToCollectionAsync();*/
+                samples = await sampleTable.ToCollectionAsync();
+                lastSample = samples.Last();
             }
             catch (MobileServiceInvalidOperationException e)
             {
@@ -193,17 +190,24 @@ namespace PoleStar.Views
 
             if (exception != null)
             {
-                await new MessageDialog(exception.Message, "Error loading items").ShowAsync();
+                DialogBox.ShowOk("Error", "Could not get last patient's location.");
             }
             else
             {
-                CenterMap(32.109333, 34.855499);
-                mcMap.ZoomLevel = 10;
+                mcMap.MapElements.Remove(mLastPatientLocIcon);
+                mLastPatientLocIcon.Visible = true;
+                mLastPatientLocIcon.Title = "Patient is here :)";
+                mLastPatientLocIcon.Location = new Geopoint(new BasicGeoposition() { Latitude = lastSample.Latitude, Longitude = lastSample.Longitude });
+                mcMap.MapElements.Add(mLastPatientLocIcon);
+
+                CenterMap(lastSample.Latitude, lastSample.Longitude, 16);
             }
         }
 
-        private void CenterMap(double lat, double lon)
+        private void CenterMap(double lat, double lon, int zoom)
         {
+            mcMap.ZoomLevel = zoom;
+
             mcMap.Center = new Geopoint(new BasicGeoposition()
             {
                 Latitude = lat,
@@ -250,38 +254,37 @@ namespace PoleStar.Views
                     break;
             }
         }
-        private void OnReceivePatientStatus(Notifications.Status status)
+        private async void OnReceivePatientStatus(Notifications.Status status)
         {
             switch (status)
             {
                 case Notifications.Status.ConnectionLost:
-                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " CONNECION LOST"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
+                    await patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " CONNECION LOST"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
                     return;
                 case Notifications.Status.Distress:
-                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " DISTRESS"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Yellow); });
+                    await patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " DISTRESS"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Yellow); });
                     return;
                 case Notifications.Status.NeedsAssistance:
-                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " NEEDS ASSISTANCE"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
+                    await patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " NEEDS ASSISTANCE"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
                     return;
                 case Notifications.Status.Risk:
-                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " RISK"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
+                    await patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " RISK"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Red); });
                     return;
                 case Notifications.Status.Wandering:
-                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " WANDERING"; patientStatusInd.Foreground = new SolidColorBrush(Colors.LightCoral); });
+                    await patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " WANDERING"; patientStatusInd.Foreground = new SolidColorBrush(Colors.LightCoral); });
                     return;
                 case Notifications.Status.Learning:
-                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " LEARNING"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Orange); });
+                    await patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " LEARNING"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Orange); });
                     return;
                 case Notifications.Status.Safety:
-                    patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " OK"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Green); });
+                    await patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = " OK"; patientStatusInd.Foreground = new SolidColorBrush(Colors.Green); });
                     return;
             }
         }
 
-        private void setStatus(string status, Brush color)
+        private async void setStatus(string status, Brush color)
         {
-            patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = status; patientStatusInd.Foreground = color;});
-
+            await patientStatusInd.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => { patientStatusInd.Text = status; patientStatusInd.Foreground = color;});
         }
     }
 }
