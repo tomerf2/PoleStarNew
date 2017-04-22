@@ -5,75 +5,93 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Geolocation;
+
 
 namespace PoleStar.Utils
 {
     class CreateData
     {
-        public static async void createGroup(string groupID, string groupName, string password)
+        private static Random random = new Random();
+        private static string patientID = StoredData.getPatientID();
+        private static IMobileServiceTable<Sample> sampleTable = App.MobileService.GetTable<Sample>();
+
+        //DemoDay Info:
+        /*
+         * Group:
+         * name: DemoGroup
+         * password: 123
+         * 
+         * Patient:
+         * name: DemoPatient
+         * email: Demopatient@gmail.com
+         * password: 123
+         * 
+         * Caregiver1:
+         * email: c1@gmail.com
+         * phone: 1111111111
+         * 
+         * Caregiver1:
+         * email: c2@gmail.com
+         * phone: 2222222222
+         */
+
+        //Sample Locations
+        //House - Shoftim 24 (over 100 samples)
+        public static double HouseLat = 32.076227;
+        public static double HouseLong = 34.780776;
+
+        //University (80 samples)
+        public static double UniLat = 32.112783;
+        public static double UniLong = 34.806206;
+
+        //Parents - Netanya (40+ samples)
+        public static double ParentsLat = 32.302502;
+        public static double ParentsLong = 34.876437;
+
+        //Store - London ministore (20+ samples)
+        public static double StoreLat = 32.074852;
+        public static double StoreLong = 34.781883;
+
+        //Grandparents - Haifa (20+ samples)
+        public static double GrandParLat = 32.799565;
+        public static double GrandParLong = 35.000884;
+
+        //Work (70+samples)
+        public static double WorkLat = 32.101180;
+        public static double WorkLong = 34.850500;
+
+        public static async Task insertSamples(int cnt, double latitude, double longitude)
+        {
+            for (int i = 0; i < cnt; i++)
             {
-                Group newGroup = new Group() { Id = groupID, Name = groupName, Code = password };
-                IMobileServiceTable<Group> groupTable = App.MobileService.GetTable<Group>();
-                await groupTable.InsertAsync(newGroup);
+                double lat = latitude + (random.Next(0, 2) * 2 - 1)*GetRandomNumber(0.000000001, 0.00012);
+                double lon = longitude + (random.Next(0, 2) * 2 - 1) * GetRandomNumber(0.000000001, 0.00012);
+                int heartrate = 75 + (random.Next(0, 2) * 2 - 1) * random.Next(0, 15);
+                Sample toInsert = new Sample()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    PatientID = patientID,
+                    HeartRate = heartrate,
+                    Latitude = (float)lat,
+                    Longitude = (float)lon
+                };
+
+                await sampleTable.InsertAsync(toInsert);
             }
-
-        public static async void createPatient(string patientID, string patientName, string email, string password, string groupID)
-        {
-            Patient newPatient = new Patient() { Id = patientID, GroupID = groupID, Name = patientName, Email = email, Password = Crypto.CreateMD5Hash(password) };
-            IMobileServiceTable<Patient> patientTable = App.MobileService.GetTable<Patient>();
-            await patientTable.InsertAsync(newPatient);
         }
 
-        public static async void createCaregiver(string caregiverID, string email, string password, string groupID)
+        public static double GetRandomNumber(double minimum, double maximum)
         {
-            IMobileServiceTable<Caregiver> caregiverTable = App.MobileService.GetTable<Caregiver>();
-            string phoneNum = GenerateNumber();
-            Caregiver newCaregiver = new Caregiver() { Id = caregiverID, GroupID = groupID, Phone = phoneNum, Email = email, IsApproved = false };
-            await caregiverTable.InsertAsync(newCaregiver);
+            return random.NextDouble() * (maximum - minimum) + minimum;
         }
 
-        public static async void createLocation(string locationID, string patientID, float latit, float longt, string desc, int heartrate)
-        {
-            IMobileServiceTable<Location> locationTable = App.MobileService.GetTable<Location>();
-            Location newLocation = new Location();
-            newLocation.Id = locationID;
-            newLocation.PatientID = patientID;
-            newLocation.HeartRate = heartrate;
-            newLocation.Longitude = longt;
-            newLocation.Latitude = latit;
-            newLocation.Description = desc;
-            await locationTable.InsertAsync(newLocation);
-        }
-
-
-
-        public static string GenerateNumber()
-        {
-            Random random = new Random();
-            string r = "";
-            int i;
-            for (i = 1; i < 11; i++)
-            {
-                r += random.Next(0, 9).ToString();
-            }
-            return r;
-        }
-
-        public static void createAndInsertData()
-        {
-            //createGroup("group1", "the tigers", "123456789");
-            //createPatient("patient1", "John Smith", "oldjohn@gmail.com", "123456789", "group1");
-
-            //createCaregiver("caregiver10", "tomerfried@gmail.com", "123456789", "5c8802bd-a002-4a54-90e3-a45b0aa61694");
-            //createCaregiver("caregiver20", "guygrin@gmail.com", "123456789", "5c8802bd-a002-4a54-90e3-a45b0aa61694");
-            //createCaregiver("caregiver30", "benliv@gmail.com", "123456789", "5c8802bd-a002-4a54-90e3-a45b0aa61694");
-            //createCaregiver("caregiver40", "yehudaaf@gmail.com", "123456789", "5c8802bd-a002-4a54-90e3-a45b0aa61694");
-
-            //createLocation("location1", "46ab7b52-f38d-47c6-9c2c-696d590d3da1", (float)32.087675, (float)34.782371, "home, ibn gabirol 130, TA", 75);
-            //createLocation("location2", "46ab7b52-f38d-47c6-9c2c-696d590d3da1", (float)32.089471, (float)34.782750, "doctor, ibn gabirol 150, TA", 89);
-            //createLocation("location3", "patient1", (float)32.078939, (float)34.773873, "gym, dizengoff 93, TA", 122);
-            //createLocation("location4", "patient1", (float)32.083164, (float)34.814402, "grandson's house, bialik 37, RG", 84);
-            //createLocation("location5", "patient1", (float)32.089368, (float)34.790280, "barber", 90);
-        }
+        //For Use
+        //await CreateData.insertSamples(30, CreateData.HouseLat, CreateData.HouseLong);
+        //await CreateData.insertSamples(22, CreateData.GrandParLat, CreateData.GrandParLong);
+        //await CreateData.insertSamples(46, CreateData.ParentsLat, CreateData.ParentsLong);
+        //await CreateData.insertSamples(25, CreateData.StoreLat, CreateData.StoreLong);
+        //await CreateData.insertSamples(80, CreateData.UniLat, CreateData.UniLong);
+        //await CreateData.insertSamples(77, CreateData.WorkLat, CreateData.WorkLong);
     }
 }

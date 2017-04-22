@@ -115,18 +115,26 @@ namespace PoleStar.Views
                 var resultGroups = groups.Where(g => g.Name == txtGroupname.Text);
                 if (resultGroups.Count() > 0)
                 {
-                    Group group = resultGroups.ToList()[0];
-                    var resultPatients = patients.Where(p => p.GroupID == group.Id);
-                    Patient patient = resultPatients.ToList()[0];
-
-                    if (patient.Password == Crypto.CreateMD5Hash(txtPassword.Password))
+                    try
                     {
-                        StoredData.storePatientData(patient.Id); //store in local app data
-                        StoredData.loadUserData();
-                        this.Frame.Navigate(typeof(PatientMainPage), null);
+                        Group group = resultGroups.ToList()[0];
+                        var resultPatients = patients.Where(p => p.GroupID == group.Id);
+                        Patient patient = resultPatients.ToList()[0];
+
+                        if (patient.Password == Crypto.CreateMD5Hash(txtPassword.Password))
+                        {
+                            StoredData.storePatientData(patient.Id); //store in local app data
+                            StoredData.loadUserData();
+                            this.Frame.Navigate(typeof(PatientMainPage), null);
+                        }
+                        else
+                            DialogBox.ShowOk("Error", "Wrong Groupname or Password. Please try again.");
                     }
-                    else
-                        DialogBox.ShowOk("Error", "Wrong Groupname or Password. Please try again.");
+                    catch (Exception e1)
+                    {
+                        DialogBox.ShowOk("Connection Error", "Could not connect to server, please try again.");
+                    }
+
                 }
                 else
                     DialogBox.ShowOk("Error", "Wrong Groupname or Password. Please try again.");

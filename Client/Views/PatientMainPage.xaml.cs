@@ -26,7 +26,7 @@ namespace PoleStar.Views
         static BandManager bandInstance;
         Measurements measurements;
 
-        int SendRateMinutes = 8;
+        int SendRateMinutes = 5;
         ThreadPoolTimer timer;
 
 
@@ -41,16 +41,12 @@ namespace PoleStar.Views
             await bandInstance.BandInit();
             measurements = new Measurements();
 
-            //set screen on
-            //Display display = new Display();
-            //display.ActivateDisplay();
-
             //initiate connection with server set listeners:
             await Notifications.initHubConnection();
 
 
             //start periodic timer
-            //StartTimer();
+            StartTimer();
 
         }
 
