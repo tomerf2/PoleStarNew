@@ -31,6 +31,9 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class LocationsPage : Page
     {
+        private double mLastLat = 0;
+        private double mLastLong = 0;
+
         private MobileServiceCollection<Location, Location> locations;
 
         private IMobileServiceTable<Location> locationTable = App.MobileService.GetTable<Location>();
@@ -141,6 +144,8 @@ namespace PoleStar.Views
             ListBoxItem lbi = (ListBoxItem)sender;
             BasicGeoposition geoPos = (BasicGeoposition)lbi.Tag;
             CenterMap(geoPos.Latitude, geoPos.Longitude, 17);
+            mLastLat = 0;
+            mLastLong = 0;
         }
 
         private void txtAddress_GotFocus(object sender, RoutedEventArgs e)
@@ -210,7 +215,9 @@ namespace PoleStar.Views
             // of the first result.
             if (result.Status == MapLocationFinderStatus.Success)
             {
-                CenterMap(result.Locations[0].Point.Position.Latitude, result.Locations[0].Point.Position.Longitude, 17);
+                mLastLat = result.Locations[0].Point.Position.Latitude;
+                mLastLong = result.Locations[0].Point.Position.Longitude;
+                CenterMap(mLastLat, mLastLong, 17);
             }
         }
 
@@ -227,6 +234,29 @@ namespace PoleStar.Views
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(PatientMainPage), null);
+        }
+
+        private async void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if ((mLastLat == 0) || (mLastLong == 0))
+                DialogBox.ShowOk("Error", "Please write an address and press the browse button.");
+            else if(txtDescription.Text == "Description")
+                DialogBox.ShowOk("Error", "Please write a description.");
+            else
+            {
+                //TODO: get correct patient id
+                Location location = new Location()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    PatientID = Guid.NewGuid().ToString(),
+                    Description = txtDescription.Text,
+                    HeartRate = 0,
+                    Latitude = (float)mLastLat,
+                    Longitude = (float)mLastLong
+                };
+
+                await locationTable.InsertAsync(location);
+            }
         }
     }
 }

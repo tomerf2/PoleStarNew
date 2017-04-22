@@ -59,12 +59,16 @@ namespace PoleStar.Views
 
             }, period);*/
 
-            var caregiver = await App.MobileService.GetTable<Caregiver>().LookupAsync(StoredData.getUserGUID());
+            //var caregiver = await App.MobileService.GetTable<Caregiver>().LookupAsync(StoredData.getUserGUID());
             //var patients = await App.MobileService.GetTable<Patient>().ToCollectionAsync();
-            var parameters = new Dictionary<string, string>();
-            parameters.Add("patientID", "0ef25de3-50a5-4592-a365-155a45a357a1");
+            //var parameters = new Dictionary<string, string>();
+            //parameters.Add("patientID", "0ef25de3-50a5-4592-a365-155a45a357a1");
             //samples = await sampleTable.WithParameters(parameters).ToCollectionAsync();
-            var samples1 = await App.MobileService.InvokeApiAsync<IQueryable<Sample>>("Values/GetAllSamplesByPatientID", HttpMethod.Get, parameters);
+            //var samples1 = await App.MobileService.InvokeApiAsync<IQueryable<Sample>>("Values/GetAllSamplesByPatientID", HttpMethod.Get, parameters);
+            //var samples1 = await App.MobileService.InvokeApiAsync<IQueryable<Sample>>("values/GetAllSamplesByPatientID", HttpMethod.Get,
+            //    new Dictionary<string, string>() { { "patientID", "0ef25de3-50a5-4592-a365-155a45a357a1" } });
+
+            samples = await sampleTable.ToCollectionAsync();
 
             //Create a list contains all groups of samples with distance up to 150m
             List <List<Sample>> sampleGroups = new List<List<Sample>>();
