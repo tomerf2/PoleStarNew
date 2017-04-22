@@ -62,6 +62,7 @@ namespace Server.Utils
             //extract patient's known locations
             LocationController locationController = new LocationController();
             knownLocations = locationController.GetKnownLocationsforPatientID(currentPatientID);
+            Trace.TraceInformation(String.Format("Found {0} known locations for this patient", knownLocations.Length));
             Trace.TraceInformation(String.Format("First known location is {0}", knownLocations[0].Description));
 
             //set currentLoc and closestKnowLocation

@@ -123,26 +123,31 @@ namespace PoleStar.Views
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            symLoading.IsActive = true;
-            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
-
-            if ((txtEmail.Text != "Email") && (txtGroupname.Text != "Groupname") && (txtCode.Password != "Code"))
+            try
             {
-                var resultCaregivers = caregivers.Where(c => c.Email == txtEmail.Text);
-                if (resultCaregivers.Count() == 1)
+                symLoading.IsActive = true;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                if ((txtEmail.Text != "Email") && (txtGroupname.Text != "Groupname") && (txtCode.Password != "Code"))
                 {
-                    Caregiver caregiver = resultCaregivers.ToList()[0];
-
-                    var resultGroups = groups.Where(g => g.Id == caregiver.GroupID);
-                    if (resultGroups.Count() > 0)
+                    var resultCaregivers = caregivers.Where(c => c.Email == txtEmail.Text);
+                    if (resultCaregivers.Count() == 1)
                     {
-                        Group group = resultGroups.ToList()[0];
+                        Caregiver caregiver = resultCaregivers.ToList()[0];
 
-                        if((group.Name == txtGroupname.Text) && (group.Code == txtCode.Password))
+                        var resultGroups = groups.Where(g => g.Id == caregiver.GroupID);
+                        if (resultGroups.Count() > 0)
                         {
-                            StoredData.storeCaregiverData(caregiver.Id); //store in local app data
-                            StoredData.loadUserData();
-                            this.Frame.Navigate(typeof(CaregiverMainPage), null);
+                            Group group = resultGroups.ToList()[0];
+
+                            if ((group.Name == txtGroupname.Text) && (group.Code == txtCode.Password))
+                            {
+                                StoredData.storeCaregiverData(caregiver.Id); //store in local app data
+                                StoredData.loadUserData();
+                                this.Frame.Navigate(typeof(CaregiverMainPage), null);
+                            }
+                            else
+                                DialogBox.ShowOk("Error", "Wrong Email, Groupname or Code. Please try again.");
                         }
                         else
                             DialogBox.ShowOk("Error", "Wrong Email, Groupname or Code. Please try again.");
@@ -151,13 +156,18 @@ namespace PoleStar.Views
                         DialogBox.ShowOk("Error", "Wrong Email, Groupname or Code. Please try again.");
                 }
                 else
-                    DialogBox.ShowOk("Error", "Wrong Email, Groupname or Code. Please try again.");
-            }
-            else
-                DialogBox.ShowOk("Error", "Please fill all the fields to login.");
+                    DialogBox.ShowOk("Error", "Please fill all the fields to login.");
 
-            symLoading.IsActive = false;
-            symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                symLoading.IsActive = false;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+            catch (Exception ConnFail)
+            {
+                symLoading.IsActive = false;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
+            }
+    
         }
     }
 }

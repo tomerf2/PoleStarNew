@@ -107,15 +107,15 @@ namespace PoleStar.Views
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            symLoading.IsActive = true;
-            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
-
-            if ((txtGroupname.Text != "Groupname") && (txtPassword.Password != "Password"))
+            try
             {
-                var resultGroups = groups.Where(g => g.Name == txtGroupname.Text);
-                if (resultGroups.Count() > 0)
+                symLoading.IsActive = true;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                if ((txtGroupname.Text != "Groupname") && (txtPassword.Password != "Password"))
                 {
-                    try
+                    var resultGroups = groups.Where(g => g.Name == txtGroupname.Text);
+                    if (resultGroups.Count() > 0)
                     {
                         Group group = resultGroups.ToList()[0];
                         var resultPatients = patients.Where(p => p.GroupID == group.Id);
@@ -130,20 +130,22 @@ namespace PoleStar.Views
                         else
                             DialogBox.ShowOk("Error", "Wrong Groupname or Password. Please try again.");
                     }
-                    catch (Exception e1)
-                    {
-                        DialogBox.ShowOk("Connection Error", "Could not connect to server, please try again.");
-                    }
-
+                    else
+                        DialogBox.ShowOk("Error", "Wrong Groupname or Password. Please try again.");
                 }
                 else
-                    DialogBox.ShowOk("Error", "Wrong Groupname or Password. Please try again.");
-            }
-            else
-                DialogBox.ShowOk("Error", "Please fill all the fields to login.");
+                    DialogBox.ShowOk("Error", "Please fill all the fields to login.");
 
-            symLoading.IsActive = false;
-            symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                symLoading.IsActive = false;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+            catch (Exception ConnFail)
+            {
+                symLoading.IsActive = false;
+                symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
+            }
+
         }
     }
 }

@@ -34,12 +34,12 @@ namespace Server.Controllers
         }
 
         // GET a specific patient's sample count
-        public static int GetSampleCountforPatientrID(string patientID)
+        public static int GetSampleCountforPatientID(string patientID)
         {
             MobileServiceContext db = new MobileServiceContext();
             Patient currentPatient = PatientController.GetPatientObject(patientID);
-            var samplesArr = db.Caregivers.Where(p => p.GroupID == currentPatient.GroupID);
-            Trace.TraceInformation("Number of samples found: {0}", samplesArr.Count());
+            var samplesArr = db.Samples.Where(p => p.PatientID == currentPatient.Id);
+            Trace.TraceInformation("Found: {0} samples for patient {1}", samplesArr.Count(), patientID);
             return samplesArr.Count();
         }
 

@@ -174,7 +174,7 @@ namespace Server.Utils
 
         public static Boolean learningStage(string patientID)
         {
-            int numOfSamples = SampleController.GetSampleCountforPatientrID(patientID);
+            int numOfSamples = SampleController.GetSampleCountforPatientID(patientID);
             if (numOfSamples < 200)
             {
                 return true; //in learning stage
