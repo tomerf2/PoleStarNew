@@ -259,8 +259,6 @@ namespace PoleStar.Views
         }
         private async void OnReceivePatientStatus(Notifications.Status status)
         {
-            await ShowLatestSample();
-
             switch (status)
             {
                 case Notifications.Status.ConnectionLost:
