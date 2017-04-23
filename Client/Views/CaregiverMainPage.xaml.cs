@@ -69,19 +69,6 @@ namespace PoleStar.Views
                 this.Frame.Navigate(typeof(CaregiverMainPage), null);
             }
 
-            await ShowLatestSample();
-
-            TimeSpan lastSamplePeriod = TimeSpan.FromSeconds(60 * 5);
-            ThreadPoolTimer lastSamplePeriodicTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
-            {
-                await Dispatcher.RunAsync(CoreDispatcherPriority.High,
-                        async () =>
-                        {
-                            await ShowLatestSample();
-                        });
-
-            }, lastSamplePeriod);
-
             if (patientStatus != Notifications.Status.Learning)
             {
                 await CreateHeatMap();
@@ -101,6 +88,9 @@ namespace PoleStar.Views
 
         private async Task CreateHeatMap()
         {
+            var samples = await sampleTable.ToCollectionAsync();
+            samplesList = samples.Where(s => s.PatientID == StoredData.getPatientID()).ToList();
+
             //Create a list contains all groups of samples with distance up to 100m
             List<List<Sample>> sampleGroups = new List<List<Sample>>();
             List<int> sampleIndexesAdded = new List<int>();
@@ -171,40 +161,17 @@ namespace PoleStar.Views
                     mcMap.MapElements.Add(polygon);
                 }
             }
-
-            await ShowLatestSample();
         }
 
-        private async Task ShowLatestSample()
+        private void ShowLatestSample(float lat, float lon)
         {
-            MobileServiceInvalidOperationException exception = null;
-            Sample lastSample = null;
+            mcMap.MapElements.Remove(mLastPatientLocIcon);
+            mLastPatientLocIcon.Visible = true;
+            mLastPatientLocIcon.Title = "Patient is here :)";
+            mLastPatientLocIcon.Location = new Geopoint(new BasicGeoposition() { Latitude = lat, Longitude = lon });
+            mcMap.MapElements.Add(mLastPatientLocIcon);
 
-            try
-            {
-                var samples = await sampleTable.ToCollectionAsync();
-                samplesList = samples.Where(s => s.PatientID == StoredData.getPatientID()).ToList();
-                lastSample = samplesList.Last();
-            }
-            catch (MobileServiceInvalidOperationException e)
-            {
-                exception = e;
-            }
-
-            if (exception != null)
-            {
-                DialogBox.ShowOk("Error", "Could not get last patient's location.");
-            }
-            else
-            {
-                mcMap.MapElements.Remove(mLastPatientLocIcon);
-                mLastPatientLocIcon.Visible = true;
-                mLastPatientLocIcon.Title = "Patient is here :)";
-                mLastPatientLocIcon.Location = new Geopoint(new BasicGeoposition() { Latitude = lastSample.Latitude, Longitude = lastSample.Longitude });
-                mcMap.MapElements.Add(mLastPatientLocIcon);
-
-                CenterMap(lastSample.Latitude, lastSample.Longitude, 16);
-            }
+            CenterMap(lat, lon, 16);
         }
 
         private void CenterMap(double lat, double lon, int zoom)
@@ -238,6 +205,9 @@ namespace PoleStar.Views
             }
             patientStatus = message.status;//set status
             OnReceivePatientStatus(message.status);
+
+            ShowLatestSample(message.lat, message.lon);
+
             switch (message.status)
             {
                 case Notifications.Status.ConnectionLost:
