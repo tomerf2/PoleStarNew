@@ -69,6 +69,8 @@ namespace PoleStar.Views
                 this.Frame.Navigate(typeof(CaregiverMainPage), null);
             }
 
+            await ShowLatestSample();
+
             TimeSpan lastSamplePeriod = TimeSpan.FromSeconds(5 * 60);
             ThreadPoolTimer lastSamplePeriodicTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
             {
