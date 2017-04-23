@@ -60,7 +60,7 @@ namespace PoleStar.Views
                     }
                     visited = true;
                     //start periodic timer
-                    StartTimer();
+                    //StartTimer();
                     EndLoadingIcon();
                 }
                 catch (Exception)

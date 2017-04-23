@@ -124,6 +124,8 @@ namespace Server.Utils
             }
 
             Trace.TraceInformation(String.Format("latest sample hour is: {0}", sampleTime.Hour));
+            AlgoUtils.HeatMapDensity measuredDensity = AlgoUtils.heatMapAreaDensityLevel(currentLoc);
+
             if (lessThanHalf) //patient is very close to a known location
             {
                 //time doesn't matter, just make sure heartRate is okay
@@ -146,7 +148,7 @@ namespace Server.Utils
                 return AlgoUtils.Status.Risk;
             }
 
-            else if (lessThan2 || AlgoUtils.heatMapAreaDensityLevel(currentLoc) == AlgoUtils.HeatMapDensity.High)
+            else if (lessThan2 || measuredDensity == AlgoUtils.HeatMapDensity.High)
             {
                 //patient is somewhat close to a known location, not in a dangerous time
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
@@ -173,7 +175,7 @@ namespace Server.Utils
 
 
             }
-            else if (lessThan5 || AlgoUtils.heatMapAreaDensityLevel(currentLoc) == AlgoUtils.HeatMapDensity.Medium)
+            else if (lessThan5 || measuredDensity == AlgoUtils.HeatMapDensity.Medium)
             {
                 //patient is not too far from a known location
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
@@ -192,7 +194,7 @@ namespace Server.Utils
                 }
 
             }
-            else if (lessThan10 || AlgoUtils.heatMapAreaDensityLevel(currentLoc) == AlgoUtils.HeatMapDensity.Low)
+            else if (lessThan10 || measuredDensity == AlgoUtils.HeatMapDensity.Low)
             {
                 //patient is somewhat far from a known location
                 if (AlgoUtils.isHeartRateInSafeRange(latestSample.HeartRate))
