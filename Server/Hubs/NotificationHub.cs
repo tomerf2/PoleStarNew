@@ -156,30 +156,20 @@ namespace Server.Hubs
                     Trace.TraceError(e.Message);
                 }
             }
-            Trace.TraceInformation(String.Format("Sending message to patient for testing"));
-            try
-            {
-                hubContext.Clients.Client(ConnectionDictionary.mapUidToConnection[patientID]).receiveNotification(message);
-                Trace.TraceInformation(String.Format("Sent message back to patient {0}", patientName));
-            }
-            catch (Exception e)
-            {
-                Trace.TraceError(e.Message);
-            }
+            //Trace.TraceInformation(String.Format("Sending message to patient for testing"));
+            //try
+            //{
+            //    hubContext.Clients.Client(ConnectionDictionary.mapUidToConnection[patientID]).receiveNotification(message);
+            //    Trace.TraceInformation(String.Format("Sent message back to patient {0}", patientName));
+            //}
+            //catch (Exception e)
+            //{
+            //    Trace.TraceError(e.Message);
+            //}
 
         }
 
-        //public void getPatientID(string caregiverID)
-        //{
-        //    Trace.TraceInformation(String.Format("Retrieving patient ID for caregiver"));
-        //    Caregiver caregiverObj = CaregiverController.GetCaregiverObject(caregiverID);
-        //    Patient patientObj = PatientController.GetPatientObjectbyGroupID(caregiverObj.GroupID);
 
-        //    Trace.TraceInformation(String.Format("Sending patientID to caregiver {0} in response to request", caregiverID));
-        //    Clients.Client(ConnectionDictionary.mapUidToConnection[caregiverID]).patientID(patientObj.Id);
-        //}
-
-        ////Testing
         public void startWanderingDetection(string ID)
         {
             Trace.TraceInformation("Starting Detection Algo for Patient {0}", ID);

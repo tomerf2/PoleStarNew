@@ -21,7 +21,7 @@ namespace PoleStar.Views
 
     public sealed partial class PatientMainPage : Page
     {
-
+        private static Boolean visited = false;
         private IMobileServiceTable<Sample> sampleTable = App.MobileService.GetTable<Sample>();
         static BandManager bandInstance;
         Measurements measurements;
@@ -37,33 +37,40 @@ namespace PoleStar.Views
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            bandInstance = new BandManager();
-            await bandInstance.BandInit();
-            measurements = new Measurements();
-
-            //initiate connection with server set listeners:
-            try
+            if (!visited)
             {
-                await Notifications.initHubConnection();
+                try
+                {
+                    BeginLoadingIcon();
+
+                    bandInstance = new BandManager();
+                    await bandInstance.BandInit();
+                    measurements = new Measurements();
+
+                    //initiate connection with server set listeners:
+                    try
+                    {
+                        await Notifications.initHubConnection();
+                    }
+                    catch (Exception)
+                    {
+                        EndLoadingIcon();
+                        DialogBox.ShowOk("Error", "Communication error with Azure server, attempting to reconnect.");
+                        this.Frame.Navigate(typeof(PatientMainPage), null);
+                    }
+                    visited = true;
+                    //start periodic timer
+                    StartTimer();
+                    EndLoadingIcon();
+                }
+                catch (Exception)
+                {
+                    EndLoadingIcon();
+                    DialogBox.ShowOk("Error", "Communication error with Azure server, attempting to reconnect.");
+                    this.Frame.Navigate(typeof(PatientMainPage), null);
+                }
             }
-            catch (Exception)
-            {
-                DialogBox.ShowOk("Error", "Communication error with Azure server, attempting to reconnect.");
-                this.Frame.Navigate(typeof(PatientMainPage), null);
-            }
-            //start periodic timer
-            //StartTimer();
-
-
-            //await CreateData.insertSamples(250, CreateData.HouseLat, CreateData.HouseLong, 75);
-            //await CreateData.insertSamples(62, CreateData.ClubLat, CreateData.ClubLong, 80);
-            //await CreateData.insertSamples(240, CreateData.DaugtherLat, CreateData.DaugtherLong, 78);
-            //await CreateData.insertSamples(22, CreateData.StoreLat, CreateData.StoreLong, 75);
-            //await CreateData.insertSamples(12, CreateData.GrandsonLat, CreateData.GrandsonLong, 75);
-            //await CreateData.insertSamples(86, CreateData.FeldenLat, CreateData.FeldenLong, 103);
-            //await CreateData.insertSamples(22, CreateData.DocLat, CreateData.DocLong, 83);
-
-
+          
         }
 
         public void StartTimer()
@@ -77,10 +84,10 @@ namespace PoleStar.Views
             {
                 await measurements.GetAllMeasurements(bandInstance);
                 await InsertSample();
-                
             }
             catch (Exception e)
             {
+                EndLoadingIcon();
             }
         }
 
@@ -135,15 +142,30 @@ namespace PoleStar.Views
         {
             try
             {
+                BeginLoadingIcon();
                 await measurements.GetAllMeasurements(bandInstance);
                 await InsertSample();
-                DialogBox.ShowOk("Success", "sent measurements to server");
+                EndLoadingIcon();
+                DialogBox.ShowOk("Success", "User location and heartrate sent to server");
+                
 
             }
             catch (Exception ex)
             {
+                EndLoadingIcon();
                 DialogBox.ShowOk("Error", "Communication error with Azure server, please try again.");
             }
+        }
+        private void BeginLoadingIcon()
+        {
+            symLoading.IsActive = true;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+        }
+
+        private void EndLoadingIcon()
+        {
+            symLoading.IsActive = false;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
     }
 }
