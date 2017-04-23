@@ -11,6 +11,8 @@ namespace Server.Hubs
         public string name;
         public string ID;
         public AlgoUtils.Status status;
+        public float lat = 0;
+        public float lon = 0;
     }
 
     public class SMSMessage

@@ -157,7 +157,7 @@
     <Content Include="Assets\google-location-icon2.png" />
     <Content Include="Assets\patient.png" />
     <Content Include="Assets\polestarbanner.png" />
-    <Content Include="Assets\Polestar_Icon.png" />
+    <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\search.png" />
     <Content Include="Assets\settings.png" />
     <Content Include="Assets\StoreLogo.png" />
@@ -165,7 +165,7 @@
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Square44x44Logo.scale-2002.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>

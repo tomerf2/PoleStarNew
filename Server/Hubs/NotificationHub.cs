@@ -66,8 +66,11 @@ namespace Server.Hubs
                 Caregiver currCaregiver = CaregiverController.GetCaregiverObject(ID);
                 Patient currPatient = PatientController.GetPatientObjectbyGroupID(currCaregiver.GroupID);
                 //send patient ID to caregiver
+                SampleController sampleController = new SampleController();
+                Sample latestSample = sampleController.GetLatestSampleForPatient(currPatient.Id);
+
                 Trace.TraceInformation("Sending message back to caregiver with patient ID");
-                Message message = new Message() {ID = currPatient.Id, status = AlgoUtils.Status.Safety, name = ""};
+                Message message = new Message() {ID = currPatient.Id, status = AlgoUtils.Status.Safety, name = "", lat = latestSample.Latitude, lon = latestSample.Longitude};
                 Clients.Client(ConnectionDictionary.mapUidToConnection[ID]).receiveNotification(message);
                 WanderingAlgo algo = new WanderingAlgo();
                 Trace.TraceInformation("Starting Detection Algo for Patient {0} due to caregiver registration", currPatient.Id);
@@ -138,10 +141,10 @@ namespace Server.Hubs
                 status.ToString()));
             ConnectionDictionary.mapUidToStatus[patientID] = status; //update patient status
 
-            Hubs.Message message = new Message();
-            message.status = status;
-            message.ID = patientID;
-            message.name = patientName;
+            SampleController sampleController = new SampleController();
+            Sample latestSample = sampleController.GetLatestSampleForPatient(patientID);
+
+            Message message = new Message() { ID = patientID, status = status, name = patientName, lat = latestSample.Latitude, lon = latestSample.Longitude };
 
             foreach (var caregiver in caregiversArr)
             {
