@@ -66,15 +66,38 @@ namespace Server.Hubs
                 Caregiver currCaregiver = CaregiverController.GetCaregiverObject(ID);
                 Patient currPatient = PatientController.GetPatientObjectbyGroupID(currCaregiver.GroupID);
                 //send patient ID to caregiver
-                SampleController sampleController = new SampleController();
-                Sample latestSample = sampleController.GetLatestSampleForPatient(currPatient.Id);
 
-                Trace.TraceInformation("Sending message back to caregiver with patient ID");
-                Message message = new Message() {ID = currPatient.Id, status = AlgoUtils.Status.Safety, name = "", lat = latestSample.Latitude, lon = latestSample.Longitude};
-                Clients.Client(ConnectionDictionary.mapUidToConnection[ID]).receiveNotification(message);
-                WanderingAlgo algo = new WanderingAlgo();
-                Trace.TraceInformation("Starting Detection Algo for Patient {0} due to caregiver registration", currPatient.Id);
-                algo.wanderingDetectionAlgo(currPatient.Id);
+                SampleController sampleController = new SampleController();
+
+                if (SampleController.GetSampleCountforPatientID(currPatient.Id) == 0)
+                {
+                    Trace.TraceInformation("No samples found for patient");
+                    Message message = new Message()
+                    {
+                        ID = currPatient.Id,
+                        status = AlgoUtils.Status.Learning,
+                        name = "",
+                        lat = 32.0808800F,
+                        lon = 34.7805700F
+                    };
+                    Clients.Client(ConnectionDictionary.mapUidToConnection[ID]).receiveNotification(message);
+                    WanderingAlgo algo = new WanderingAlgo();
+                    Trace.TraceInformation("Starting Detection Algo for Patient {0} due to caregiver registration",
+                        currPatient.Id);
+                    algo.wanderingDetectionAlgo(currPatient.Id);
+                }
+                else
+                {
+                    Sample latestSample = sampleController.GetLatestSampleForPatient(currPatient.Id);
+
+                    Trace.TraceInformation("Sending message back to caregiver with patient ID");
+                    Message message = new Message() { ID = currPatient.Id, status = AlgoUtils.Status.Safety, name = "", lat = latestSample.Latitude, lon = latestSample.Longitude };
+                    Clients.Client(ConnectionDictionary.mapUidToConnection[ID]).receiveNotification(message);
+                    WanderingAlgo algo = new WanderingAlgo();
+                    Trace.TraceInformation("Starting Detection Algo for Patient {0} due to caregiver registration", currPatient.Id);
+                    algo.wanderingDetectionAlgo(currPatient.Id);
+                }
+
             }
             catch (Exception e)
             {
