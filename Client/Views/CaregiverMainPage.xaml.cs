@@ -34,7 +34,7 @@ namespace PoleStar.Views
     /// </summary>
     public sealed partial class CaregiverMainPage : Page
     {
-        private MobileServiceCollection<Sample, Sample> samples;
+        private List<Sample> samplesList;
         private IMobileServiceTable<Sample> sampleTable = App.MobileService.GetTable<Sample>();
         private static Notifications.Status patientStatus;
         private MapIcon mLastPatientLocIcon = new MapIcon();
@@ -71,7 +71,7 @@ namespace PoleStar.Views
 
             await ShowLatestSample();
 
-            TimeSpan lastSamplePeriod = TimeSpan.FromSeconds(5 * 60);
+            TimeSpan lastSamplePeriod = TimeSpan.FromSeconds(60 * 5);
             ThreadPoolTimer lastSamplePeriodicTimer = ThreadPoolTimer.CreatePeriodicTimer(async (source) =>
             {
                 await Dispatcher.RunAsync(CoreDispatcherPriority.High,
@@ -106,14 +106,14 @@ namespace PoleStar.Views
             List<int> sampleIndexesAdded = new List<int>();
             int maxGroupCount = 0;
 
-            for (int i = 0; i < samples.Count; i++)
+            for (int i = 0; i < samplesList.Count; i++)
             {
                 //Get group's index that contains the current sample
                 int groupIndex = -1;
 
                 for (int j = 0; j < sampleGroups.Count; j++)
                 {
-                    if (sampleGroups[j].Contains(samples[i]))
+                    if (sampleGroups[j].Contains(samplesList[i]))
                     {
                         groupIndex = j;
                         break;
@@ -122,7 +122,7 @@ namespace PoleStar.Views
 
                 if (groupIndex == -1)
                 {
-                    sampleGroups.Add(new List<Sample>() { samples[i] });
+                    sampleGroups.Add(new List<Sample>() { samplesList[i] });
                     groupIndex = sampleGroups.Count - 1;
 
                     sampleIndexesAdded.Add(i);
@@ -131,13 +131,13 @@ namespace PoleStar.Views
                 }
 
                 //Find more samples to add this group
-                for (int j = i + 1; j < samples.Count; j++)
+                for (int j = i + 1; j < samplesList.Count; j++)
                 {
-                    if (samples[i].DistanceTo(samples[j]) < 100)
+                    if (samplesList[i].DistanceTo(samplesList[j]) < 100)
                     {
-                        if (!sampleGroups[groupIndex].Contains(samples[j]) & !sampleIndexesAdded.Contains(j))
+                        if (!sampleGroups[groupIndex].Contains(samplesList[j]) & !sampleIndexesAdded.Contains(j))
                         {
-                            sampleGroups[groupIndex].Add(samples[j]);
+                            sampleGroups[groupIndex].Add(samplesList[j]);
                             sampleIndexesAdded.Add(j);
 
                             if (maxGroupCount < sampleGroups[groupIndex].Count)
@@ -182,8 +182,9 @@ namespace PoleStar.Views
 
             try
             {
-                samples = await sampleTable.ToCollectionAsync();
-                lastSample = samples.Last();
+                var samples = await sampleTable.ToCollectionAsync();
+                samplesList = samples.Where(s => s.PatientID == StoredData.getPatientID()).ToList();
+                lastSample = samplesList.Last();
             }
             catch (MobileServiceInvalidOperationException e)
             {
@@ -258,6 +259,8 @@ namespace PoleStar.Views
         }
         private async void OnReceivePatientStatus(Notifications.Status status)
         {
+            await ShowLatestSample();
+
             switch (status)
             {
                 case Notifications.Status.ConnectionLost:
