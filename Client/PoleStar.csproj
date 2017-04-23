@@ -157,6 +157,8 @@
     <Content Include="Assets\google-location-icon2.png" />
     <Content Include="Assets\patient.png" />
     <Content Include="Assets\polestarbanner.png" />
+    <Content Include="Assets\splashscreen.png" />
+    <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\search.png" />
     <Content Include="Assets\settings.png" />
