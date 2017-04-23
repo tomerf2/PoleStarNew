@@ -196,7 +196,7 @@ namespace PoleStar.Views
             this.Frame.Navigate(typeof(LocationsPage), null);
         }
 
-        private void NotificationResponse(Message message)
+        private async void NotificationResponse(Message message)
         {
             //store patient id
             if (StoredData.getPatientID() == null)
@@ -206,7 +206,7 @@ namespace PoleStar.Views
             patientStatus = message.status;//set status
             OnReceivePatientStatus(message.status);
 
-            ShowLatestSample(message.lat, message.lon);
+            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () => ShowLatestSample(message.lat, message.lon));
 
             switch (message.status)
             {
