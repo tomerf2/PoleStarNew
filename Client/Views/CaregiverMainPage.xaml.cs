@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Microsoft.AspNet.SignalR.Client;
+using Windows.Services.Maps;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -88,6 +89,8 @@ namespace PoleStar.Views
 
         private async Task CreateHeatMap()
         {
+            BeginLoadingIcon();
+
             var samples = await sampleTable.ToCollectionAsync();
             samplesList = samples.Where(s => s.PatientID == StoredData.getPatientID()).ToList();
 
@@ -161,10 +164,26 @@ namespace PoleStar.Views
                     mcMap.MapElements.Add(polygon);
                 }
             }
+
+            EndLoadingIcon();
         }
 
-        private void ShowLatestSample(float lat, float lon)
+        private void BeginLoadingIcon()
         {
+            symLoading.IsActive = true;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Visible;
+        }
+
+        private void EndLoadingIcon()
+        {
+            symLoading.IsActive = false;
+            symLoading.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+        }
+
+        private async void ShowLatestSample(float lat, float lon)
+        {
+            BeginLoadingIcon();
+
             mcMap.MapElements.Remove(mLastPatientLocIcon);
             mLastPatientLocIcon.Visible = true;
             mLastPatientLocIcon.Title = "Patient is here :)";
@@ -172,6 +191,36 @@ namespace PoleStar.Views
             mcMap.MapElements.Add(mLastPatientLocIcon);
 
             CenterMap(lat, lon, 16);
+
+            MapAddress mapAddr = await Coordinates.CoordsToAddress(lat, lon);
+            tbAddress.Text = "(" + lat + ", " + lon + ")";
+
+            if (mapAddr.Street != "")
+            {
+                if (mapAddr.StreetNumber != "")
+                    tbAddress.Text = mapAddr.StreetNumber + " " + mapAddr.Street;
+                else
+                    tbAddress.Text = mapAddr.Street;
+            }
+
+
+            if (mapAddr.Town != "")
+            {
+                if (mapAddr.Street != "")
+                    tbAddress.Text += ", " + mapAddr.Town;
+                else
+                    tbAddress.Text = mapAddr.Town;
+            }
+
+            if (mapAddr.Country != "")
+            {
+                if (mapAddr.Town != "")
+                    tbAddress.Text += ", " + mapAddr.Country;
+                else
+                    tbAddress.Text = mapAddr.Country;
+            }
+
+            EndLoadingIcon();
         }
 
         private void CenterMap(double lat, double lon, int zoom)
