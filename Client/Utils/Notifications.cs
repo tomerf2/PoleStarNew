@@ -163,6 +163,8 @@ namespace PoleStar.Utils
         public string name;
         public string ID;
         public Notifications.Status status;
+        public float lat;
+        public float lon;
     }
     class SMSMessage
     {
